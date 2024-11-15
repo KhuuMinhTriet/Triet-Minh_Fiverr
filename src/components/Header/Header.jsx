@@ -22,20 +22,24 @@ export default function Header() {
     width: "100%",
     padding: "1rem",
     backgroundColor: scrolled ? "white" : "transparent",
-    color: "black",
     transition: "background-color 0.3s ease",
+    borderBottom: scrolled ? "2px solid #e5e7eb" : "none",
   };
 
   const searchBar = {
     display: scrolled ? "block" : "none",
   };
 
+  const textColor = {
+    color: scrolled ? "#4b5563" : "white",
+  };
+
   return (
-    <div style={navbarStyle} className="border-b-2 border-b-gray-200">
+    <div style={navbarStyle} className="border-b-2 border-b-gray-200 z-20">
       <div className="container flex justify-between">
         <div className="flex">
           <img src={logo} className="max-w-36 max-h-16" alt="" />
-          <form class="w-96 mx-6" style={searchBar}>
+          <form class="w-80 mx-8" style={searchBar}>
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -64,7 +68,7 @@ export default function Header() {
                 type="search"
                 id="default-search"
                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Looking for your the services you want..."
+                placeholder="Search Mockups, Logos..."
                 required
               />
               <button
@@ -78,34 +82,52 @@ export default function Header() {
         </div>
         <nav>
           <ul>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300">
                 Fiverr Pro
               </button>
             </li>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300">
                 Explore
               </button>
             </li>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300 flex items-center">
                 <img src={global} className="max-w-3" alt="" />
                 <p className="pl-2">English</p>
               </button>
             </li>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300 flex items-center">
                 <img src={dollar} className="max-w-3" alt="" />
                 <p className="pl-2">USD</p>
               </button>
             </li>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300">
                 Become a Seller
               </button>
             </li>
-            <li className="inline-block ml-8 font-medium py-4 text-lg text-gray-600">
+            <li
+              className="inline-block ml-8 font-medium py-4 text-lg"
+              style={textColor}
+            >
               <button className="hover:text-green-500 transition duration-300">
                 Sign in
               </button>
