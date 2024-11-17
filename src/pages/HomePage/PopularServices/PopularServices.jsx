@@ -60,7 +60,7 @@ const sliderImageUrl = [
 export default function PopularServices() {
   return (
     <div className="container py-20">
-      <h2 className="text-5xl font-medium tracking-normal text-gray-500">
+      <h2 className="text-5xl font-medium tracking-normal text-gray-600">
         Popular Services
       </h2>
       <Carousel
