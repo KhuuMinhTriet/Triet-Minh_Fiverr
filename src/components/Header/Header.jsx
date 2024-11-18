@@ -2,15 +2,54 @@ import React, { useState, useEffect } from "react";
 import logo from "./HeaderImg/logo.png";
 import global from "./HeaderImg/language.png";
 import dollar from "./HeaderImg/dollar.png";
+import { fiverrService } from "../../services/fetchAPI";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuCongViec, setMenuCongViec] = useState([]);
+  const [hoveredMenu, setHoveredMenu] = useState(null);
+
+  let renderChiTietLoai = (dsChiTietLoai) => {
+    return (
+      <ul>
+        {dsChiTietLoai.map((chiTiet) => (
+          <li
+            key={chiTiet.id}
+            style={{ color: "#7d7d7d", paddingLeft: "20px" }}
+          >
+            {chiTiet.tenChiTiet}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  let renderNhomChiTietLoai = (dsNhomChiTietLoai) => {
+    return (
+      <ul>
+        {dsNhomChiTietLoai.map((nhom) => (
+          <li key={nhom.id} style={{ fontWeight: "bold", marginTop: "10px" }}>
+            {nhom.tenNhom}
+            {nhom.dsChiTietLoai.length > 0 &&
+              renderChiTietLoai(nhom.dsChiTietLoai)}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 1;
       setScrolled(isScrolled);
     };
+
+    fiverrService
+      .layMenuLoaiCongViec()
+      .then((result) => {
+        setMenuCongViec(result.data.content);
+      })
+      .catch((err) => {});
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -68,7 +107,7 @@ export default function Header() {
                 type="search"
                 id="default-search"
                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search Mockups, Logos..."
+                placeholder="Search for your favorite service"
                 required
               />
               <button
@@ -139,6 +178,32 @@ export default function Header() {
             </li>
           </ul>
         </nav>
+      </div>
+      <div
+        className="flex justify-center relative container"
+        style={{ display: scrolled ? "block" : "none" }}
+      >
+        <ul className="flex list-none gap-5 cursor-pointer mt-6">
+          {/* Render danh sách các loại công việc */}
+          {menuCongViec.map((loaiCongViec) => (
+            <li
+              key={loaiCongViec.id}
+              onMouseEnter={() => setHoveredMenu(loaiCongViec.id)} // Xác định menu đang hover
+              onMouseLeave={() => setHoveredMenu(null)} // Xóa trạng thái hover khi rời chuột
+              className="relative"
+            >
+              {loaiCongViec.tenLoaiCongViec}
+
+              {/* Hiển thị menu chi tiết nếu đang hover */}
+              {hoveredMenu === loaiCongViec.id &&
+                loaiCongViec.dsNhomChiTietLoai.length > 0 && (
+                  <div className="absolute top-full left-0 bg-white border border-solid border-gray-200  min-w-72 w-auto p-6">
+                    {renderNhomChiTietLoai(loaiCongViec.dsNhomChiTietLoai)}
+                  </div>
+                )}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
