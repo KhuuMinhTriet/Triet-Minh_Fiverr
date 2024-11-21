@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import logo from "./HeaderImg/logo.png";
 import global from "./HeaderImg/language.png";
 import dollar from "./HeaderImg/dollar.png";
 import { fiverrService } from "../../services/fetchAPI";
+import { NavLink } from "react-router-dom";
+import logoWhite from "./HeaderImg/logo-white.png";
+import logoBlack from "./HeaderImg/logo-black.png";
+import { useSelector } from "react-redux";
 
-export default function Header() {
+export default function Header({ enableScroll }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuCongViec, setMenuCongViec] = useState([]);
   const [hoveredMenu, setHoveredMenu] = useState(null);
+  let user = useSelector((state) => state.userSlice.dataLogin);
 
   let renderChiTietLoai = (dsChiTietLoai) => {
     return (
@@ -38,12 +42,62 @@ export default function Header() {
     );
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 1;
-      setScrolled(isScrolled);
-    };
+  let renderUser = () => {
+    if (user) {
+      return (
+        <li
+          className="inline-block ml-8 font-medium py-4 text-lg"
+          style={textColor}
+        >
+          <div className="flex items-center space-x-4">
+            <p className="hover:text-green-500 transition duration-300">
+              {user.user.name}
+            </p>
+            <button
+              onClick={handleLogout}
+              className="border-2 border-green-500 rounded-lg px-4 pb-1 text-xl text-green-500 bg-transparent hover:text-white hover:bg-green-500 transition duration-300"
+            >
+              Log out
+            </button>
+          </div>
+        </li>
+      );
+    } else {
+      return (
+        <>
+          <li
+            className="inline-block ml-8 font-medium py-4 text-lg"
+            style={textColor}
+          >
+            <NavLink
+              className="hover:text-green-500 transition duration-300"
+              to="/login"
+            >
+              Sign in
+            </NavLink>
+          </li>
+          <li
+            className="inline-block ml-8 font-medium py-4 text-lg"
+            style={textColor}
+          >
+            <NavLink
+              className="border-2 border-green-500 rounded-lg px-4 pb-1 text-xl text-green-500 bg-transparent hover:text-white hover:bg-green-500 transition duration-300"
+              to="/register"
+            >
+              Join
+            </NavLink>
+          </li>
+        </>
+      );
+    }
+  };
 
+  let handleLogout = () => {
+    localStorage.removeItem("USER_LOGIN");
+    window.location.href = "/";
+  };
+
+  useEffect(() => {
     fiverrService
       .layMenuLoaiCongViec()
       .then((result) => {
@@ -51,9 +105,20 @@ export default function Header() {
       })
       .catch((err) => {});
 
+    //Chỉ trang home mang hiệu ứng, các trang còn lại thì không
+    if (!enableScroll) {
+      setScrolled(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 1;
+      setScrolled(isScrolled);
+    };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [enableScroll]);
 
   const navbarStyle = {
     position: "fixed",
@@ -77,7 +142,13 @@ export default function Header() {
     <div style={navbarStyle} className="border-b-2 border-b-gray-200 z-20">
       <div className="container flex justify-between">
         <div className="flex">
-          <img src={logo} className="max-w-36 max-h-16" alt="" />
+          <NavLink to="/">
+            <img
+              src={scrolled ? logoBlack : logoWhite}
+              className="w-36 h-16"
+              alt=""
+            />
+          </NavLink>
           <form class="w-80 mx-8" style={searchBar}>
             <label
               for="default-search"
@@ -112,7 +183,7 @@ export default function Header() {
               />
               <button
                 type="submit"
-                class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                class="text-white absolute end-2.5 bottom-2.5 bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
               >
                 Search
               </button>
@@ -163,22 +234,11 @@ export default function Header() {
                 Become a Seller
               </button>
             </li>
-            <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
-              style={textColor}
-            >
-              <button className="hover:text-green-500 transition duration-300">
-                Sign in
-              </button>
-            </li>
-            <li className="inline-block ml-8">
-              <button className="border-2 border-green-500 rounded-lg px-4 pb-1 text-xl text-green-500 bg-transparent hover:text-white hover:bg-green-500 transition duration-300">
-                Join
-              </button>
-            </li>
+            {renderUser()}
           </ul>
         </nav>
       </div>
+
       <div
         className="flex justify-center relative container"
         style={{ display: scrolled ? "block" : "none" }}
