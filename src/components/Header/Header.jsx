@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import global from "./HeaderImg/language.png";
 import dollar from "./HeaderImg/dollar.png";
 import { fiverrService } from "../../services/fetchAPI";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logoWhite from "./HeaderImg/logo-white.png";
 import logoBlack from "./HeaderImg/logo-black.png";
 import { useSelector } from "react-redux";
@@ -11,6 +11,7 @@ export default function Header({ enableScroll }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuCongViec, setMenuCongViec] = useState([]);
   const [hoveredMenu, setHoveredMenu] = useState(null);
+  let navigate = useNavigate();
   let user = useSelector((state) => state.userSlice.dataLogin);
 
   let renderChiTietLoai = (dsChiTietLoai) => {
@@ -252,7 +253,13 @@ export default function Header({ enableScroll }) {
               onMouseLeave={() => setHoveredMenu(null)} // Xóa trạng thái hover khi rời chuột
               className="relative"
             >
-              {loaiCongViec.tenLoaiCongViec}
+              <button
+                onClick={() => {
+                  navigate(`/job-detail/${loaiCongViec.id}`);
+                }}
+              >
+                {loaiCongViec.tenLoaiCongViec}
+              </button>
 
               {/* Hiển thị menu chi tiết nếu đang hover */}
               {hoveredMenu === loaiCongViec.id &&

@@ -4,4 +4,8 @@ export let fiverrService = {
   layMenuLoaiCongViec: () => {
     return http.get("/api/cong-viec/lay-menu-loai-cong-viec");
   },
+
+  layChiTietLoaiCongViec: (id) => {
+    return http.get(`/api/cong-viec/lay-chi-tiet-loai-cong-viec/${id}`);
+  },
 };
