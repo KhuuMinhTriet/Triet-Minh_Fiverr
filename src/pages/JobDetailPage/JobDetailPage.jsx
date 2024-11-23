@@ -9,7 +9,7 @@ export default function JobDetailPage() {
   const params = useParams();
 
   let renderDetailInfo = () => {
-    if (!detail.length || !detail[0].dsNhomChiTietLoai) {
+    if (!detail.length || !detail[0]?.dsNhomChiTietLoai) {
       return <p>Loading...</p>; // Hiển thị Loading nếu chưa có dữ liệu
     }
 
@@ -52,9 +52,12 @@ export default function JobDetailPage() {
     fiverrService
       .layChiTietLoaiCongViec(params.id)
       .then((result) => {
-        setDetail(result.data.content);
+        const data = result?.data?.content || [];
+        setDetail(data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setDetail([]);
+      });
   }, [params.id]);
 
   return (
@@ -71,7 +74,9 @@ export default function JobDetailPage() {
 
       <div className="my-10">
         <h1 className="text-2xl font-bold">
-          Most popular in {detail[0].tenLoaiCongViec}
+          {detail.length > 0
+            ? `Most popular in ${detail[0]?.tenLoaiCongViec}`
+            : "Loading..."}
         </h1>
         <div className="flex my-4 justify-between">
           <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
@@ -124,8 +129,8 @@ export default function JobDetailPage() {
 
       <div>
         <h1 className="text-2xl font-bold mb-4">
-          {detail.length
-            ? "Explore " + detail[0].tenLoaiCongViec
+          {detail.length > 0
+            ? "Explore " + detail[0]?.tenLoaiCongViec
             : "Loading..."}
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -135,7 +140,9 @@ export default function JobDetailPage() {
 
       <div className="my-16">
         <h1 className="text-center text-3xl font-bold">
-          Services Related To {detail[0].tenLoaiCongViec}
+          {detail.length > 0
+            ? `Services Related To ${detail[0]?.tenLoaiCongViec}`
+            : "Loading..."}
         </h1>
         <div className="mt-4 w-11/12 mx-auto flex justify-between flex-wrap">
           <p className="text-gray-500 bg-gray-200 font-medium p-2 rounded-xl my-2">
