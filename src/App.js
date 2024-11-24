@@ -4,7 +4,8 @@ import Layout from "./Template/Layout";
 import HomePage from "./pages/HomePage/HomePage";
 import SignInPage from "./pages/SignInPage/SignInPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
-import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
+import JobByCategoriesPage from "./pages/JobByCategoriesPage/JobByCategoriesPage";
+import JobTypePage from "./pages/JobTypePage/JobTypePage";
 
 function App() {
   return (
@@ -16,11 +17,15 @@ function App() {
             element={<Layout enableScroll={true} content={<HomePage />} />}
           />
           <Route
-            path="/job-detail/:id"
+            path="/job-type/:id"
+            element={<Layout enableScroll={false} content={<JobTypePage />} />}
+          />
+          <Route
+            path="/job-by-categories/:id"
             element={
-              <Layout enableScroll={false} content={<JobDetailPage />} />
+              <Layout enableScroll={false} content={<JobByCategoriesPage />} />
             }
-          ></Route>
+          />
           <Route
             path="/login"
             element={<Layout enableScroll={false} content={<SignInPage />} />}

@@ -22,7 +22,14 @@ export default function Header({ enableScroll }) {
             key={chiTiet.id}
             style={{ color: "#7d7d7d", paddingLeft: "20px" }}
           >
-            {chiTiet.tenChiTiet}
+            <button
+              className="hover:text-green-500 transition duration-300"
+              onClick={() => {
+                navigate(`/job-by-categories/${chiTiet.id}`);
+              }}
+            >
+              {chiTiet.tenChiTiet}
+            </button>
           </li>
         ))}
       </ul>
@@ -34,7 +41,7 @@ export default function Header({ enableScroll }) {
       <ul>
         {dsNhomChiTietLoai.map((nhom) => (
           <li key={nhom.id} style={{ fontWeight: "bold", marginTop: "10px" }}>
-            {nhom.tenNhom}
+            <p className="hover:cursor-auto">{nhom.tenNhom}</p>
             {nhom.dsChiTietLoai.length > 0 &&
               renderChiTietLoai(nhom.dsChiTietLoai)}
           </li>
@@ -255,7 +262,7 @@ export default function Header({ enableScroll }) {
             >
               <button
                 onClick={() => {
-                  navigate(`/job-detail/${loaiCongViec.id}`);
+                  navigate(`/job-type/${loaiCongViec.id}`);
                 }}
               >
                 {loaiCongViec.tenLoaiCongViec}

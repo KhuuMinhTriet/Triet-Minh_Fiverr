@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { fiverrService } from "../../services/fetchAPI";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import play from "./play-button.png";
 import arrow from "./right-arrow.png";
 
-export default function JobDetailPage() {
+export default function JobTypePage() {
   const [detail, setDetail] = useState([]);
   const params = useParams();
+  let navigate = useNavigate();
 
   let renderDetailInfo = () => {
     if (!detail.length || !detail[0]?.dsNhomChiTietLoai) {
@@ -31,13 +32,22 @@ export default function JobDetailPage() {
           </div>
         )}
 
-        <h2 className="text-xl font-semibold mb-2">{nhom.tenNhom}</h2>
+        <h2 className="text-2xl font-semibold mb-4">{nhom.tenNhom}</h2>
         {/* Danh sách chi tiết loại */}
         {nhom.dsChiTietLoai.length > 0 ? (
-          <ul className="list-disc list-inside">
+          <ul>
             {nhom.dsChiTietLoai.map((chiTiet) => (
-              <li key={chiTiet.id} className="text-gray-700 list-none">
-                {chiTiet.tenChiTiet}
+              <li
+                key={chiTiet.id}
+                className="text-gray-700 text-xl tracking-wide list-none my-2 hover:text-green-500 transition duration-300"
+              >
+                <button
+                  onClick={() => {
+                    navigate(`/job-by-categories/${chiTiet.id}`);
+                  }}
+                >
+                  {chiTiet.tenChiTiet}
+                </button>
               </li>
             ))}
           </ul>

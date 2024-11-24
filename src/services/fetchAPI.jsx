@@ -8,4 +8,8 @@ export let fiverrService = {
   layChiTietLoaiCongViec: (id) => {
     return http.get(`/api/cong-viec/lay-chi-tiet-loai-cong-viec/${id}`);
   },
+
+  layCongViecTheoChiTietLoai: (id) => {
+    return http.get(`/api/cong-viec/lay-cong-viec-theo-chi-tiet-loai/${id}`);
+  },
 };
