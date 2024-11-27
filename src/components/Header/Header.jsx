@@ -8,11 +8,19 @@ import logoBlack from "./HeaderImg/logo-black.png";
 import { useSelector } from "react-redux";
 
 export default function Header({ enableScroll }) {
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false); // quan sát hành vi của header khi cuộn trang
   const [menuCongViec, setMenuCongViec] = useState([]);
-  const [hoveredMenu, setHoveredMenu] = useState(null);
+  const [hoveredMenu, setHoveredMenu] = useState(null); // hover menu để xổ xuống chi tiết
+  const [searchValue, setSearchValue] = useState("");
   let navigate = useNavigate();
   let user = useSelector((state) => state.userSlice.dataLogin);
+
+  const handleSearch = (e) => {
+    e.preventDefault(); // Ngăn form submit mặc định
+    if (searchValue.trim() !== "") {
+      navigate(`/job-by-name/${searchValue}`);
+    }
+  };
 
   let renderChiTietLoai = (dsChiTietLoai) => {
     return (
@@ -157,7 +165,7 @@ export default function Header({ enableScroll }) {
               alt=""
             />
           </NavLink>
-          <form class="w-80 mx-8" style={searchBar}>
+          <form class="w-80 mx-8" style={searchBar} onSubmit={handleSearch}>
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -187,6 +195,8 @@ export default function Header({ enableScroll }) {
                 id="default-search"
                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search for your favorite service"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 required
               />
               <button

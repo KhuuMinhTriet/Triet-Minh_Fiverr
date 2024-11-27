@@ -13,6 +13,10 @@ export let fiverrService = {
     return http.get(`/api/cong-viec/lay-cong-viec-theo-chi-tiet-loai/${id}`);
   },
 
+  layCongViecTheoTen: (name) => {
+    return http.get(`/api/cong-viec/lay-danh-sach-cong-viec-theo-ten/${name}`);
+  },
+
   layCongViecChiTiet: (id) => {
     return http.get(`/api/cong-viec/lay-cong-viec-chi-tiet/${id}`);
   },

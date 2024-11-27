@@ -1,91 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { fiverrService } from "../../services/fetchAPI";
+import {
+  dropDownBox,
+  switchButton,
+} from "../JobByCategoriesPage/JobByCategoriesPage";
 import { useNavigate, useParams } from "react-router";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { fiverrService } from "../../services/fetchAPI";
 
-export let dropDownBox = (title) => {
-  return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-lg font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-          {title}
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/7996/7996254.png"
-            className="max-w-7 bg-transparent"
-            alt=""
-          />
-        </MenuButton>
-      </div>
-
-      <MenuItems
-        transition
-        className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-      >
-        <div className="py-1">
-          <MenuItem>
-            <p className="block px-4 py-2 text-lg text-green-500 font-medium data-[focus]:outline-none">
-              Service Offerings
-            </p>
-          </MenuItem>
-          <MenuItem>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-            >
-              Offer subscriptions <span className="text-gray-400">(375)</span>
-            </a>
-          </MenuItem>
-          <MenuItem>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-            >
-              Pald video consultations{" "}
-              <span className="text-gray-400">(175)</span>
-            </a>
-          </MenuItem>
-        </div>
-      </MenuItems>
-    </Menu>
-  );
-};
-
-export let switchButton = (title) => {
-  return (
-    <div>
-      <label className="inline-flex items-center cursor-pointer">
-        <input type="checkbox" defaultValue className="sr-only peer" />
-        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500" />
-        <span className="ms-3 text-lg font-medium text-gray-900 dark:text-gray-300">
-          {title}
-        </span>
-      </label>
-      ;
-    </div>
-  );
-};
-
-export default function JobByCategoriesPage() {
-  const [categories, setCategories] = useState(null);
+export default function JobFindByNamePage() {
+  const [result, setResult] = useState(null);
   let params = useParams();
   let navigate = useNavigate();
 
-  let renderCategories = () => {
-    if (!categories || !categories.content) {
-      return <p>{categories ? "No data found" : "Loading..."}</p>;
+  let renderResult = () => {
+    if (!result || !result.content) {
+      return <p>{result ? "No data found" : "Loading..."}</p>;
     }
 
     return (
       <div>
         <div className="flex justify-between">
           <h2 className="my-4 text-gray-600 text-xl">
-            {categories.content.length} results
+            {result.content.length} results
           </h2>
           <form className="flex justify-center items-center">
             <span className="min-w-16 text-gray-600">Sort by:</span>
             <div className="flex items-center">
               <select
-                id="selectSort"
+                id="selectSortName"
                 className="block py-2.5 px-0 w-full text-lg font-medium bg-transparent appearance-none dark:text-gray-400 focus:outline-none focus:ring-0 focus:border-gray-200 peer mx-2"
               >
                 <option selected>Recommended</option>
@@ -96,7 +37,7 @@ export default function JobByCategoriesPage() {
           </form>
         </div>
         <div className="grid gap-4 grid-cols-4">
-          {categories.content.map((jobs) => (
+          {result.content.map((jobs) => (
             <div
               key={jobs.id}
               className="border border-solid border-gray-300 rounded-lg shadow-md"
@@ -162,13 +103,13 @@ export default function JobByCategoriesPage() {
 
   useEffect(() => {
     fiverrService
-      .layCongViecTheoChiTietLoai(params.id)
+      .layCongViecTheoTen(params.id)
       .then((result) => {
         const data = result?.data || {};
-        setCategories(data);
+        setResult(data);
       })
       .catch((err) => {
-        setCategories({ content: [] });
+        setResult({ content: [] });
       });
   }, [params.id]);
 
@@ -193,7 +134,7 @@ export default function JobByCategoriesPage() {
           </div>
         </div>
       </div>
-      <div className="my-8">{renderCategories()}</div>
+      <div className="my-8">{renderResult()}</div>
     </div>
   );
 }

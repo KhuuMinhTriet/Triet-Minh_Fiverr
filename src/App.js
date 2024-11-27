@@ -7,6 +7,7 @@ import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import JobByCategoriesPage from "./pages/JobByCategoriesPage/JobByCategoriesPage";
 import JobTypePage from "./pages/JobTypePage/JobTypePage";
 import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
+import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
 
 function App() {
   return (
@@ -25,6 +26,12 @@ function App() {
             path="/job-by-categories/:id"
             element={
               <Layout enableScroll={false} content={<JobByCategoriesPage />} />
+            }
+          />
+          <Route
+            path="/job-by-name/:id"
+            element={
+              <Layout enableScroll={false} content={<JobFindByNamePage />} />
             }
           />
           <Route
