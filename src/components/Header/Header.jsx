@@ -251,7 +251,7 @@ export default function Header({ enableScroll }) {
         className="flex justify-center relative container"
         style={{ display: scrolled ? "block" : "none" }}
       >
-        <ul className="flex list-none gap-5 cursor-pointer mt-6">
+        <ul className="flex justify-between list-none gap-5 cursor-pointer mt-6">
           {/* Render danh sách các loại công việc */}
           {menuCongViec.map((loaiCongViec) => (
             <li

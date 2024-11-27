@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { fiverrService } from "../../services/fetchAPI";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 export default function JobByCategoriesPage() {
   const [categories, setCategories] = useState(null);
   let params = useParams();
+  let navigate = useNavigate();
 
   let renderCategories = () => {
     if (!categories || !categories.content) {
@@ -62,7 +63,12 @@ export default function JobByCategoriesPage() {
                     </p>
                   </div>
                 </div>
-                <h3 className="text-base my-2 mx-0">
+                <h3
+                  className="text-base my-2 mx-0 hover:text-green-500 hover:cursor-pointer transition duration-300"
+                  onClick={() => {
+                    navigate(`/job-detail/${jobs.id}`);
+                  }}
+                >
                   {jobs.congViec?.tenCongViec || "Unnamed job"}
                 </h3>
 

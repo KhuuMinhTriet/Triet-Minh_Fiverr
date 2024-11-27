@@ -12,4 +12,12 @@ export let fiverrService = {
   layCongViecTheoChiTietLoai: (id) => {
     return http.get(`/api/cong-viec/lay-cong-viec-theo-chi-tiet-loai/${id}`);
   },
+
+  layCongViecChiTiet: (id) => {
+    return http.get(`/api/cong-viec/lay-cong-viec-chi-tiet/${id}`);
+  },
+
+  layBinhLuanTheoCongViec: (id) => {
+    return http.get(`/api/binh-luan/lay-binh-luan-theo-cong-viec/${id}`);
+  },
 };

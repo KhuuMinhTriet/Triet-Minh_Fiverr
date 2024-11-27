@@ -12,7 +12,7 @@ import man from "./FooterImg/man.png";
 
 export default function Footer() {
   return (
-    <div className="border-t-2 border-t-gray-200 pt-16">
+    <div id="footer" className="border-t-2 border-t-gray-200 pt-16">
       <div className="container">
         <div className="flex">
           <article className="w-1/5">
