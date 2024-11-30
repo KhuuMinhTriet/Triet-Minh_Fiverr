@@ -9,7 +9,6 @@ export let http = axios.create({
   baseURL: baseUrl,
   headers: {
     TokenCybersoft: token,
-    // Authorization:
-    //   "bearer " + JSON.parse(localStorage.getItem("USER_LOGIN"))?.accessToken,
+    Token: JSON.parse(localStorage.getItem("USER_LOGIN"))?.token,
   },
 });

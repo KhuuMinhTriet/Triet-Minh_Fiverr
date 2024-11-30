@@ -8,6 +8,8 @@ import JobByCategoriesPage from "./pages/JobByCategoriesPage/JobByCategoriesPage
 import JobTypePage from "./pages/JobTypePage/JobTypePage";
 import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
 import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
+import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 function App() {
   return (
@@ -47,6 +49,15 @@ function App() {
           <Route
             path="/register"
             element={<Layout enableScroll={false} content={<SignUpPage />} />}
+          />
+          <Route
+            path="/user/:id"
+            element={
+              <Layout
+                enableScroll={false}
+                content={<PrivateRoute content={<UserAccountPage />} />}
+              />
+            }
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

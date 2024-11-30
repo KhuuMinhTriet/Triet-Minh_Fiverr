@@ -15,7 +15,6 @@ const FormLogin = () => {
       .then((result) => {
         let dataJson = JSON.stringify(result);
         localStorage.setItem("USER_LOGIN", dataJson);
-        console.log(dataJson);
         navigate("/");
       })
       .catch((err) => {});

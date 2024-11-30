@@ -60,15 +60,36 @@ export default function Header({ enableScroll }) {
 
   let renderUser = () => {
     if (user) {
-      return (
-        <li
-          className="inline-block ml-8 font-medium py-4 text-lg"
-          style={textColor}
-        >
-          <div className="flex items-center space-x-4">
-            <p className="hover:text-green-500 transition duration-300">
+      let renderIdentity = () => {
+        if (user.user.avatar === "")
+          return (
+            <p
+              className="hover:text-green-500 transition duration-300"
+              onClick={() => {
+                navigate(`/user/${user.user.id}`);
+              }}
+            >
               {user.user.name}
             </p>
+          );
+        else
+          return (
+            <img
+              src={user.user.avatar}
+              alt=""
+              className="w-14 h-14 hover:cursor-pointer"
+              style={{ borderRadius: "3.5rem" }}
+              onClick={() => {
+                navigate(`/user/${user.user.id}`);
+              }}
+            />
+          );
+      };
+
+      return (
+        <li className="inline-block ml-8 font-medium text-lg" style={textColor}>
+          <div className="flex items-center space-x-4">
+            {renderIdentity()}
             <button
               onClick={handleLogout}
               className="border-2 border-green-500 rounded-lg px-4 pb-1 text-xl text-green-500 bg-transparent hover:text-white hover:bg-green-500 transition duration-300"
@@ -161,7 +182,7 @@ export default function Header({ enableScroll }) {
           <NavLink to="/">
             <img
               src={scrolled ? logoBlack : logoWhite}
-              className="w-36 h-16"
+              className="w-28 h-12"
               alt=""
             />
           </NavLink>
@@ -209,9 +230,9 @@ export default function Header({ enableScroll }) {
           </form>
         </div>
         <nav>
-          <ul>
+          <ul className="flex items-center">
             <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
+              className="inline-block ml-8 font-medium text-lg"
               style={textColor}
             >
               <button className="hover:text-green-500 transition duration-300">
@@ -219,7 +240,7 @@ export default function Header({ enableScroll }) {
               </button>
             </li>
             <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
+              className="inline-block ml-8 font-medium text-lg"
               style={textColor}
             >
               <button className="hover:text-green-500 transition duration-300">
@@ -227,7 +248,7 @@ export default function Header({ enableScroll }) {
               </button>
             </li>
             <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
+              className="inline-block ml-8 font-medium text-lg"
               style={textColor}
             >
               <button className="hover:text-green-500 transition duration-300 flex items-center">
@@ -236,7 +257,7 @@ export default function Header({ enableScroll }) {
               </button>
             </li>
             <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
+              className="inline-block ml-8 font-medium text-lg"
               style={textColor}
             >
               <button className="hover:text-green-500 transition duration-300 flex items-center">
@@ -245,7 +266,7 @@ export default function Header({ enableScroll }) {
               </button>
             </li>
             <li
-              className="inline-block ml-8 font-medium py-4 text-lg"
+              className="inline-block ml-8 font-medium text-lg"
               style={textColor}
             >
               <button className="hover:text-green-500 transition duration-300">

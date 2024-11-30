@@ -1,8 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
 .container {
   width: 90%;
   margin: 0 auto;
 }
 
 .react-multiple-carousel__arrow {
-  @apply z-0 !important
+  @apply z-0 !important;
 }
