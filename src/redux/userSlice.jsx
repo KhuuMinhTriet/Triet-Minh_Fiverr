@@ -17,6 +17,14 @@ export let registerActionService = createAsyncThunk(
   }
 );
 
+export let uploadAvatarActionService = createAsyncThunk(
+  "userSlice/uploadAvatarActionService",
+  async (dataForm) => {
+    let result = await http.post("/api/users/upload-avatar", dataForm);
+    return result.data.content;
+  }
+);
+
 // lấy dữ liệu từ localStorage khi user bật web
 // localStorage.getItem('key') ? JSON.parse(localStorage.getItem('key)) : null
 
@@ -36,6 +44,9 @@ const userSlice = createSlice({
     setUserAction: (state, action) => {
       state.dataLogin = action.payload;
     },
+    updateAvatarAction: (state, action) => {
+      state.avatar = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //fullfilled: khi gọi api thành công
@@ -51,9 +62,15 @@ const userSlice = createSlice({
     // REGISTER
     builder.addCase(registerActionService.fulfilled, (state, action) => {});
     builder.addCase(registerActionService.rejected, (state, action) => {});
+
+    //UPLOAD AVATAR
+    builder.addCase(uploadAvatarActionService.fulfilled, (state, action) => {
+      state.avatar = action.payload;
+    });
+    builder.addCase(uploadAvatarActionService.rejected, (state, action) => {});
   },
 });
 
-export const { setUserAction } = userSlice.actions;
+export const { setUserAction, updateAvatarAction } = userSlice.actions;
 
 export default userSlice.reducer;

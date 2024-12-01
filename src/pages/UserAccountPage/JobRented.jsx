@@ -18,7 +18,10 @@ export default function JobRented() {
     return (
       <div className="flex flex-col gap-8">
         {rentedJob.content.map((jobs) => (
-          <div className="border shadow-lg shadow-green-300 rounded-lg p-4 flex gap-4">
+          <div
+            key={jobs.id}
+            className="border shadow-lg shadow-green-300 rounded-lg p-4 flex gap-4"
+          >
             <div className="w-2/5">
               <img src={jobs.congViec?.hinhAnh} alt="" />
             </div>

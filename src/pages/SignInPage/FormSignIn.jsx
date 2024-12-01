@@ -22,7 +22,7 @@ const FormLogin = () => {
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
-    alert("No?");
+    alert("Something is wrong");
   };
 
   return (
