@@ -75,7 +75,7 @@ export default function Info() {
                   </h1>
                   <div className="flex items-center gap-8">
                     <img
-                      src={info.avatar}
+                      src={info.avatar|| "https://via.placeholder.com/40"}
                       className="max-w-36 max-h-36 rounded-full"
                       alt=""
                     />

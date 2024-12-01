@@ -69,7 +69,7 @@ export default function Comments() {
           >
             <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
               <img
-                src={comment.avatar}
+                src={comment.avatar|| "https://via.placeholder.com/40"}
                 className="rounded-full max-w-16"
                 alt=""
               />

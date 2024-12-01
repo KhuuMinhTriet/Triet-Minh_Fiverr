@@ -10,7 +10,7 @@ import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
 import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
 import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-
+import AdminPage from './pages/AdminPage/admin';
 function App() {
   return (
     <div>
@@ -56,6 +56,15 @@ function App() {
               <Layout
                 enableScroll={false}
                 content={<PrivateRoute content={<UserAccountPage />} />}
+              />
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <Layout
+                enableScroll={false}
+                content={<PrivateRoute content={<AdminPage />} />}
               />
             }
           />
