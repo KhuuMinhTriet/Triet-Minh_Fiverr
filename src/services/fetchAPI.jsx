@@ -32,4 +32,8 @@ export let fiverrService = {
   layDanhSachDaThue: () => {
     return http.get("/api/thue-cong-viec/lay-danh-sach-da-thue");
   },
+
+  xoaCongViecDaThue: (id) => {
+    return http.delete(`/api/thue-cong-viec/${id}`);
+  },
 };

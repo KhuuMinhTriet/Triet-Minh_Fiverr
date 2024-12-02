@@ -25,6 +25,22 @@ export let uploadAvatarActionService = createAsyncThunk(
   }
 );
 
+export let postCommentActionService = createAsyncThunk(
+  "userSlice/postCommentActionService",
+  async (dataForm) => {
+    let result = await http.post("/api/binh-luan", dataForm);
+    return result.data.content;
+  }
+);
+
+export let rentingGigActionService = createAsyncThunk(
+  "userSlice/rentingGigActionService",
+  async (dataForm) => {
+    let result = await http.post("/api/thue-cong-viec", dataForm);
+    return result.data.content;
+  }
+);
+
 // lấy dữ liệu từ localStorage khi user bật web
 // localStorage.getItem('key') ? JSON.parse(localStorage.getItem('key)) : null
 
@@ -47,6 +63,12 @@ const userSlice = createSlice({
     updateAvatarAction: (state, action) => {
       state.avatar = action.payload;
     },
+    postCommentAction: (state, action) => {
+      state.postComment = action.payload;
+    },
+    rentingGigAction: (state, action) => {
+      state.rentingGig = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //fullfilled: khi gọi api thành công
@@ -68,9 +90,26 @@ const userSlice = createSlice({
       state.avatar = action.payload;
     });
     builder.addCase(uploadAvatarActionService.rejected, (state, action) => {});
+
+    //POST COMMENT
+    builder.addCase(postCommentActionService.fulfilled, (state, action) => {
+      state.postComment = action.payload;
+    });
+    builder.addCase(postCommentActionService.rejected, (state, action) => {});
+
+    //RENTING GIG
+    builder.addCase(rentingGigActionService.fulfilled, (state, action) => {
+      state.rentingGig = action.payload;
+    });
+    builder.addCase(rentingGigActionService.rejected, (state, action) => {});
   },
 });
 
-export const { setUserAction, updateAvatarAction } = userSlice.actions;
+export const {
+  setUserAction,
+  updateAvatarAction,
+  postCommentAction,
+  rentingGigAction,
+} = userSlice.actions;
 
 export default userSlice.reducer;

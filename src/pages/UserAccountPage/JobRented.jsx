@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fiverrService } from "../../services/fetchAPI";
 import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 export default function JobRented() {
   const [rentedJob, setRentedJob] = useState(null);
@@ -54,7 +55,12 @@ export default function JobRented() {
                   >
                     Details
                   </button>
-                  <button className="text-white text-xl px-4 py-2 rounded-lg bg-red-500">
+                  <button
+                    className="text-white text-xl px-4 py-2 rounded-lg bg-red-500"
+                    onClick={() => {
+                      delRentedJob(jobs.id);
+                    }}
+                  >
                     Delete
                   </button>
                 </div>
@@ -64,6 +70,26 @@ export default function JobRented() {
         ))}
       </div>
     );
+  };
+
+  let delRentedJob = (id) => {
+    Swal.fire({
+      title: "Do you want to delete this Gig?",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      confirmButtonColor: "#f04343",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fiverrService
+          .xoaCongViecDaThue(id)
+          .then((result) => {
+            window.location.reload();
+          })
+          .catch((err) => {
+            Swal.fire("Error! You can't delete this Gig");
+          });
+      }
+    });
   };
 
   useEffect(() => {

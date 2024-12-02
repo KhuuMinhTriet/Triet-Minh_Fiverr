@@ -1,18 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { fiverrService } from "../../services/fetchAPI";
 import { Flex, Progress } from "antd";
 import Comments from "./Comments";
 import StickyBox from "react-sticky-box";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { rentingGigActionService } from "../../redux/userSlice";
 
 export default function Info() {
   const [detail, setDetail] = useState(null);
   const [activeFAQ, setActiveFAQ] = useState(null);
   let params = useParams();
+  let dispatch = useDispatch();
+  let navigate = useNavigate();
+  let user = useSelector((state) => state.userSlice.dataLogin);
 
   //đóng mở FAQ
   let toggleFAQ = (index) => {
     setActiveFAQ(activeFAQ === index ? null : index);
+  };
+
+  let handleRentingGig = () => {
+    if (!user) {
+      Swal.fire({
+        title: "You must log in to rent a gig! Do you want to log in now?",
+        showDenyButton: true,
+        confirmButtonText: "Log in now",
+        confirmButtonColor: "#21c45d",
+        denyButtonText: `Maybe later`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+    } else {
+      const values = {
+        maCongViec: params.id,
+        maNguoiThue: user.user.id,
+        ngayThue: new Date().toLocaleDateString("en-GB"),
+        hoanThanh: false,
+      };
+
+      dispatch(rentingGigActionService(values))
+        .unwrap()
+        .then((result) => {
+          Swal.fire("Congratulations! You've rented a Gig");
+        })
+        .catch((err) => {
+          Swal.fire("Hmmm... Something is wrong!");
+        });
+    }
   };
 
   let renderDetail = () => {
@@ -181,7 +219,10 @@ export default function Info() {
                     </div>
 
                     <div className="font-medium text-center">
-                      <button className="w-full rounded-lg bg-green-500 text-white py-2">
+                      <button
+                        className="w-full rounded-lg bg-green-500 text-white py-2"
+                        onClick={handleRentingGig}
+                      >
                         Continue (US${info.congViec?.giaTien})
                       </button>
                       <button className="w-full text-green-500 bg-transparent py-2">

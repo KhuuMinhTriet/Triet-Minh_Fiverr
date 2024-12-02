@@ -1,15 +1,131 @@
 import React, { useState, useEffect } from "react";
 import { fiverrService } from "../../services/fetchAPI";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Rate } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { postCommentActionService } from "../../redux/userSlice";
 
 export default function Comments() {
   const [comments, setComments] = useState({ content: [] });
   const [rating, setRating] = useState(0);
   let params = useParams();
+  let user = useSelector((state) => state.userSlice.dataLogin);
+  let navigate = useNavigate();
+  let dispatch = useDispatch();
 
   let handleRateChange = (number) => {
     setRating(number);
+  };
+
+  let renderComments = () => {
+    if (!comments?.content?.length) {
+      return (
+        <p className="text-center py-4 text-lg font-medium">
+          There are no comments yet.
+        </p>
+      );
+    }
+
+    return comments.content.map((comment) => (
+      <div
+        key={comment.id}
+        className="border border-gray-300 p-4 my-8 rounded-lg"
+      >
+        <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
+          <img
+            src={comment.avatar}
+            className="w-16 h-16"
+            style={{ borderRadius: "50%" }}
+            alt=""
+          />
+          <div>
+            <div className="flex items-center gap-4">
+              <p className="text-xl font-medium">{comment.tenNguoiBinhLuan}</p>
+              <span className="text-xl text-yellow-500 font-bold flex items-center gap-2">
+                {comment.saoBinhLuan}{" "}
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/12709/12709532.png"
+                  className="max-w-8"
+                  alt=""
+                />
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png"
+                className="max-w-6 rounded-sm"
+                alt=""
+              />
+              <p className="text-lg text-gray-500">Vietnam</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="py-3 border-b border-b-gray-300">
+          <p>{comment.noiDung}</p>
+        </div>
+
+        <div className="flex gap-4 text-gray-600 text-lg pt-4">
+          <p>Helpful? </p>
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/126/126473.png"
+            className="max-w-6"
+            alt=""
+          />
+          <p>Yes</p>
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/4466/4466315.png"
+            className="max-w-6"
+            alt=""
+          />
+          <p>No</p>
+        </div>
+      </div>
+    ));
+  };
+
+  let handleCommentButton = (values) => {
+    if (!user) {
+      Swal.fire({
+        title: "You must log in to post a comment! Do you want to log in now?",
+        showDenyButton: true,
+        confirmButtonText: "Log in now",
+        confirmButtonColor: "#21c45d",
+        denyButtonText: `Maybe later`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+    } else {
+      if (rating === 0) {
+        Swal.fire("Please rating us!");
+      } else {
+        const comment = document.getElementById("comment").value.trim();
+        if (!comment) {
+          Swal.fire("Please write a comment before submitting!");
+          return;
+        }
+
+        const values = {
+          maCongViec: params.id,
+          maNguoiBinhLuan: user.user.id,
+          ngayBinhLuan: new Date().toLocaleDateString("en-GB"),
+          noiDung: comment,
+          saoBinhLuan: rating,
+        };
+
+        dispatch(postCommentActionService(values))
+          .unwrap()
+          .then((result) => {
+            window.location.reload();
+          })
+          .catch((err) => {
+            Swal.fire("Oops! Something is wrong when you tried to comment");
+          });
+      }
+    }
   };
 
   useEffect(() => {
@@ -61,65 +177,7 @@ export default function Comments() {
         </div>
       </form>
 
-      <div>
-        {comments?.content?.map((comment) => (
-          <div
-            key={comment.id}
-            className="border border-gray-300 p-4 my-8 rounded-lg"
-          >
-            <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
-              <img
-                src={comment.avatar}
-                className="rounded-full max-w-16"
-                alt=""
-              />
-              <div>
-                <div className="flex items-center gap-4">
-                  <p className="text-xl font-medium">
-                    {comment.tenNguoiBinhLuan}
-                  </p>
-                  <span className="text-xl text-yellow-500 font-bold flex items-center gap-2">
-                    {comment.saoBinhLuan}{" "}
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/12709/12709532.png"
-                      className="max-w-8"
-                      alt=""
-                    />
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png"
-                    className="max-w-6 rounded-sm"
-                    alt=""
-                  />
-                  <p className="text-lg text-gray-500">Vietnam</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="py-3 border-b border-b-gray-300">
-              <p>{comment.noiDung}</p>
-            </div>
-
-            <div className="flex gap-4 text-gray-600 text-lg pt-4">
-              <p>Helpful? </p>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/126/126473.png"
-                className="max-w-6"
-                alt=""
-              />
-              <p>Yes</p>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/4466/4466315.png"
-                className="max-w-6"
-                alt=""
-              />
-              <p>No</p>
-            </div>
-          </div>
-        )) || <p className="text-center">There are no comments yet.</p>}
-      </div>
+      <div>{renderComments()}</div>
 
       <div className="my-5">
         <div className="flex items-center justify-between text-xl font-bold">
@@ -130,12 +188,15 @@ export default function Comments() {
           </div>
         </div>
         <textarea
-          id="message"
+          id="comment"
           rows="4"
           class="block p-4 my-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Write your thoughts here..."
         ></textarea>
-        <button className="text-white bg-green-500 py-2 px-6 rounded-lg">
+        <button
+          className="text-white bg-green-500 py-2 px-6 rounded-lg"
+          onClick={handleCommentButton}
+        >
           Comment
         </button>
       </div>

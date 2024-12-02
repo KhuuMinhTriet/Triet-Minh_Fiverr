@@ -20,11 +20,9 @@ export default function UserAccountPage() {
       dispatch(uploadAvatarActionService(formData))
         .unwrap()
         .then((result) => {
-          console.log("Avatar uploaded successfully:", result);
+          window.location.reload();
         })
-        .catch((err) => {
-          console.error("Error uploading avatar:", err);
-        });
+        .catch((err) => {});
     }
   };
 
@@ -38,6 +36,11 @@ export default function UserAccountPage() {
         <div className="w-1/3 p-6 border border-gray-300 rounded-lg shadow-lg shadow-green-300">
           <div>
             <div className="relative">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/14034/14034699.png"
+                className="absolute top-0 right-0 w-10 h-10 hover:cursor-pointer"
+                alt=""
+              />
               <img
                 src={
                   user.content.avatar === ""
