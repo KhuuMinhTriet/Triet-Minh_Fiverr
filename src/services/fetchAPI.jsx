@@ -36,4 +36,8 @@ export let fiverrService = {
   xoaCongViecDaThue: (id) => {
     return http.delete(`/api/thue-cong-viec/${id}`);
   },
+
+  laySkill: () => {
+    return http.get("/api/skill");
+  },
 };

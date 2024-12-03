@@ -3,6 +3,7 @@ import { Form, Input, DatePicker, Checkbox, Radio } from "antd";
 import { useDispatch } from "react-redux";
 import { registerActionService } from "../../redux/userSlice";
 import { NavLink } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const FormSignUp = () => {
   let dispatch = useDispatch();
@@ -11,10 +12,10 @@ const FormSignUp = () => {
     dispatch(registerActionService(values))
       .unwrap()
       .then(() => {
-        alert("success");
+        Swal.fire("", "Registration successfully", "success");
       })
       .catch((err) => {
-        alert("fail");
+        Swal.fire("", "Registration fail", "error");
       });
   };
 
