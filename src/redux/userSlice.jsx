@@ -25,6 +25,14 @@ export let uploadAvatarActionService = createAsyncThunk(
   }
 );
 
+export let updateUserActionService = createAsyncThunk(
+  "userSlice/updateUserActionService",
+  async ({ dataForm, id }) => {
+    let result = await http.put(`/api/users/${id}`, dataForm);
+    return result.data.content;
+  }
+);
+
 export let postCommentActionService = createAsyncThunk(
   "userSlice/postCommentActionService",
   async (dataForm) => {
@@ -63,6 +71,9 @@ const userSlice = createSlice({
     updateAvatarAction: (state, action) => {
       state.avatar = action.payload;
     },
+    updateUserAction: (state, action) => {
+      state.updateUser = action.payload;
+    },
     postCommentAction: (state, action) => {
       state.postComment = action.payload;
     },
@@ -91,6 +102,12 @@ const userSlice = createSlice({
     });
     builder.addCase(uploadAvatarActionService.rejected, (state, action) => {});
 
+    //UPDATE USER
+    builder.addCase(updateUserActionService.fulfilled, (state, action) => {
+      state.updateUser = action.payload;
+    });
+    builder.addCase(updateUserActionService.rejected, (state, action) => {});
+
     //POST COMMENT
     builder.addCase(postCommentActionService.fulfilled, (state, action) => {
       state.postComment = action.payload;
@@ -108,6 +125,7 @@ const userSlice = createSlice({
 export const {
   setUserAction,
   updateAvatarAction,
+  updateUserAction,
   postCommentAction,
   rentingGigAction,
 } = userSlice.actions;

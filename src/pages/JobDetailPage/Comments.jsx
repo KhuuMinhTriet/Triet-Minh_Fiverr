@@ -85,7 +85,7 @@ export default function Comments() {
     ));
   };
 
-  let handleCommentButton = (values) => {
+  let handleCommentButton = () => {
     if (!user) {
       Swal.fire({
         title: "You must log in to post a comment! Do you want to log in now?",

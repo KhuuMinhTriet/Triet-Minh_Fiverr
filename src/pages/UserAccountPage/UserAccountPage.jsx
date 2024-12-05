@@ -3,18 +3,36 @@ import { fiverrService } from "../../services/fetchAPI";
 import { useParams } from "react-router";
 import JobRented from "./JobRented";
 import { useDispatch } from "react-redux";
-import { uploadAvatarActionService } from "../../redux/userSlice";
+import {
+  updateUserActionService,
+  uploadAvatarActionService,
+} from "../../redux/userSlice";
 import Select from "react-select";
+import Swal from "sweetalert2";
 
 export default function UserAccountPage() {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [skills, setSkills] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
+
+  const [formValues, setFormValues] = useState({
+    name: user?.content?.name || "",
+    email: user?.content?.email || "",
+    birthday: user?.content?.birthday || "",
+    phone: user?.content?.phone || "",
+    gender: user?.content?.gender || true,
+    role: "USER",
+    certification: user?.content?.certification || [],
+    skill: user?.content?.skill || [],
+  });
+
   let params = useParams();
   let dispatch = useDispatch();
   let fileInputRef = useRef(null);
+  let userID = params.id;
 
+  // đóng, mở modal
   let openModal = () => {
     setIsModalOpen(true);
   };
@@ -36,9 +54,27 @@ export default function UserAccountPage() {
     }
   };
 
+  //Xử lý nhập vào input
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
   // Xử lý chọn skill
   const handleSelectChange = (selectedOptions) => {
     setSelectedSkills(selectedOptions);
+    setFormValues((prev) => ({
+      ...prev,
+      skill: selectedOptions.map((skill) => skill.label),
+    }));
+  };
+
+  //Xử lý certification
+  const handleCertificationChange = (e) => {
+    setFormValues((prev) => ({
+      ...prev,
+      certification: [e.target.value], // Đảm bảo là một mảng chứa chuỗi
+    }));
   };
 
   let renderSkills = () => {
@@ -57,6 +93,21 @@ export default function UserAccountPage() {
         />
       </div>
     );
+  };
+
+  let handleUpdateUser = () => {
+    dispatch(updateUserActionService({ dataForm: formValues, id: userID }))
+      .unwrap()
+      .then((result) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        Swal.fire(
+          "Something is wrong when you tried to updated your's account",
+          "",
+          "error"
+        );
+      });
   };
 
   let renderUser = () => {
@@ -81,7 +132,7 @@ export default function UserAccountPage() {
                 />
               </button>
               {/* Update Modal */}
-              {isModalOpen && (
+              {isModalOpen && user && user.content && (
                 <div
                   id="update-modal"
                   tabIndex={-1}
@@ -110,11 +161,12 @@ export default function UserAccountPage() {
                               Email
                             </label>
                             <input
+                              name="email"
                               type="email"
                               id="updateEmail"
-                              placeholder="you@example.com"
                               className="p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white disabled:text-gray-400"
-                              defaultValue={user.content.email}
+                              value={formValues.email}
+                              onChange={handleInputChange}
                               disabled
                             />
                           </div>
@@ -128,10 +180,12 @@ export default function UserAccountPage() {
                               Phone number
                             </label>
                             <input
+                              name="phone"
                               type="tel"
                               id="updatePhone"
                               className="p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                              defaultValue={user.content.phone}
+                              value={formValues.phone}
+                              onChange={handleInputChange}
                             />
                           </div>
                         </div>
@@ -144,10 +198,12 @@ export default function UserAccountPage() {
                               Name
                             </label>
                             <input
+                              name="name"
                               type="text"
                               id="updateName"
                               className="p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                              defaultValue={user.content.name}
+                              value={formValues.name}
+                              onChange={handleInputChange}
                             />
                           </div>
                         </div>
@@ -160,10 +216,12 @@ export default function UserAccountPage() {
                               Birthday
                             </label>
                             <input
+                              name="birthday"
                               type="date"
                               id="updateBirthday"
                               className="p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                              defaultValue={user.content.birthday}
+                              value={formValues.birthday}
+                              onChange={handleInputChange}
                             />
                           </div>
                         </div>
@@ -176,9 +234,13 @@ export default function UserAccountPage() {
                               <input
                                 className="hidden peer"
                                 type="radio"
-                                name="flexRadioDefault"
+                                name="gender"
                                 id="genderMale"
-                                checked={user.content.gender ? true : false}
+                                value={true}
+                                checked={formValues.gender === true}
+                                onChange={(e) =>
+                                  setFormValues({ ...formValues, gender: true })
+                                }
                               />
                               <label
                                 className="inline-block h-5 w-5 cursor-pointer rounded-full border-2 border-gray-300 bg-transparent peer-checked:bg-blue-500"
@@ -195,9 +257,16 @@ export default function UserAccountPage() {
                               <input
                                 className="hidden peer"
                                 type="radio"
-                                name="flexRadioDefault"
+                                name="gender"
                                 id="genderFemale"
-                                checked={user.content.gender ? false : true}
+                                value={false}
+                                checked={formValues.gender === false}
+                                onChange={(e) =>
+                                  setFormValues({
+                                    ...formValues,
+                                    gender: false,
+                                  })
+                                }
                               />
                               <label
                                 className="inline-block h-5 w-5 cursor-pointer rounded-full border-2 border-gray-300 bg-transparent peer-checked:bg-blue-500"
@@ -222,10 +291,12 @@ export default function UserAccountPage() {
                               Certification
                             </label>
                             <input
+                              name="certification"
                               type="text"
                               id="updateCertification"
                               className="p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                              defaultValue={user.content.certification}
+                              value={formValues.certification[0] || ""}
+                              onChange={handleCertificationChange}
                             />
                           </div>
                         </div>
@@ -235,6 +306,7 @@ export default function UserAccountPage() {
                         <button
                           type="button"
                           className="text-white bg-green-500 hover:bg-green-700 focus:outline-none font-medium rounded-lg text-lg px-5 py-2.5 text-center"
+                          onClick={handleUpdateUser}
                         >
                           Save
                         </button>
@@ -333,16 +405,19 @@ export default function UserAccountPage() {
 
           <div className="border-t border-green-300 py-4">
             <h2 className="text-xl font-bold">Skills</h2>
+            {user.content.skill.map((skill) => {
+              return <p>- {skill}</p>;
+            })}
           </div>
 
           <div className="border-t border-green-300 py-4">
             <h2 className="text-xl font-bold">Education</h2>
-            <p>-CYBERSOFT</p>
-            <p>-HUFI</p>
+            <p>- CYBERSOFT</p>
           </div>
 
           <div className="border-t border-green-300 py-4">
-            <h2 className="text-xl font-bold">Certification</h2>
+            <h2 className="text-xl font-bold">Certification</h2>-{" "}
+            {user.content.certification[0]}
           </div>
 
           <div className="border-t border-green-300 py-4">
@@ -432,6 +507,26 @@ export default function UserAccountPage() {
       .then((result) => {
         const data = result.data || {};
         setUser(data);
+
+        if (data.content) {
+          setFormValues({
+            name: data.content.name || "",
+            email: data.content.email || "",
+            phone: data.content.phone || "",
+            birthday: data.content.birthday || "",
+            role: data.content.role,
+            gender:
+              data.content.gender !== undefined ? data.content.gender : true, // Giả định giá trị mặc định là true (Male)
+            certification: data.content.certification || [],
+            skill: data.content.skill || [],
+          });
+          setSelectedSkills(
+            (data.content.skill || []).map((skill) => ({
+              value: skill,
+              label: skill,
+            }))
+          );
+        }
       })
       .catch((err) => {
         setUser({ content: [] });
