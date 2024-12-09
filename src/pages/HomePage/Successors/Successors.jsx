@@ -1,11 +1,6 @@
 import React from "react";
 
 export default function Successors() {
-  const services = {
-    width: "18%",
-    borderRadius: "0.375rem",
-  };
-
   return (
     <div className="py-12 container">
       <div>
@@ -34,9 +29,9 @@ export default function Successors() {
         <h2 className="text-4xl text-gray-600 tracking-normal mt-10">
           Vontélle’s go-to services
         </h2>
-        <div className="flex justify-between pt-6">
-          <button style={services}>
-            <div className="shadow-md px-10 py-6 hover:shadow-xl h-44 rounded-xl">
+        <div className="grid max-lg:grid-cols-3 gap-5 lg:grid-cols-5">
+          <button>
+            <div className="shadow-md py-6 hover:shadow-xl h-44 rounded-xl">
               <img
                 src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_80,dpr_1.0/v1/attachments/generic_asset/asset/818fbc450c6b7f14664e7d15584f008b-1722417666557/3D-Industrial-Design_2x.png"
                 alt=""
@@ -45,8 +40,8 @@ export default function Successors() {
               <p>3D Industrial Design</p>
             </div>
           </button>
-          <button style={services}>
-            <div className="shadow-md px-10 py-6 hover:shadow-xl h-44 rounded-xl">
+          <button>
+            <div className="shadow-md py-6 hover:shadow-xl h-44 rounded-xl">
               <img
                 src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_80,dpr_1.0/v1/attachments/generic_asset/asset/818fbc450c6b7f14664e7d15584f008b-1722417666565/E-commerce-Website-Development_2x.png"
                 alt=""
@@ -57,8 +52,8 @@ export default function Successors() {
               </p>
             </div>
           </button>
-          <button style={services}>
-            <div className="shadow-md px-10 py-6 hover:shadow-xl h-44 rounded-xl">
+          <button>
+            <div className="shadow-md py-6 hover:shadow-xl h-44 rounded-xl">
               <img
                 src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_80,dpr_1.0/v1/attachments/generic_asset/asset/818fbc450c6b7f14664e7d15584f008b-1722417666560/Email-Marketing_2x.png"
                 alt=""
@@ -67,8 +62,8 @@ export default function Successors() {
               <p>Email Marketing</p>
             </div>
           </button>
-          <button style={services}>
-            <div className="shadow-md px-10 py-6 hover:shadow-xl h-44 rounded-xl">
+          <button>
+            <div className="shadow-md py-6 hover:shadow-xl h-44 rounded-xl">
               <img
                 src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_80,dpr_1.0/v1/attachments/generic_asset/asset/818fbc450c6b7f14664e7d15584f008b-1722417666567/Press-Releases_2x.png"
                 alt=""
@@ -77,8 +72,8 @@ export default function Successors() {
               <p>Press Releases</p>
             </div>
           </button>
-          <button style={services}>
-            <div className="shadow-md px-10 py-6 hover:shadow-xl h-44 rounded-xl">
+          <button>
+            <div className="shadow-md py-6 hover:shadow-xl h-44 rounded-xl">
               <img
                 src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_80,dpr_1.0/v1/attachments/generic_asset/asset/818fbc450c6b7f14664e7d15584f008b-1722417666561/Logo-Design_2x.png"
                 alt=""

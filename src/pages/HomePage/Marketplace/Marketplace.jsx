@@ -15,7 +15,7 @@ export default function Marketplace() {
       <h1 className="text-5xl text-gray-600 font-medium tracking-normal">
         Explore the marketplace
       </h1>
-      <ul className="grid grid-cols-6 gap-4">
+      <ul className="grid max-md:grid-cols-2 max-lg:grid-cols-3 lg:grid-cols-6 gap-5">
         <li className="text-center shadow-lg hover:shadow-xl my-8 px-6 py-8 rounded-xl">
           <a href="">
             <img src={graphics} alt="" className="block w-12 h-12 mx-auto" />

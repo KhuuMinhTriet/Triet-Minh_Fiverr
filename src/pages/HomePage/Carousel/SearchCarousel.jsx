@@ -13,14 +13,9 @@ export default function SearchCarousel() {
     }
   };
 
-  const searchCarousel = {
-    left: "6%",
-    top: "30%",
-  };
-
   return (
-    <div className="absolute z-10" style={searchCarousel}>
-      <div className="text-5xl tracking-wide leading-normal text-white font-semibold">
+    <div className="absolute z-10" style={{ top: "30%", left: "6%" }}>
+      <div className="max-md:text-3xl max-lg:text-4xl lg:text-5xl tracking-wide leading-normal text-white font-semibold">
         <h1>Scale your professional</h1>
         <h1>
           workplace with <span className="italic">freelancers</span>

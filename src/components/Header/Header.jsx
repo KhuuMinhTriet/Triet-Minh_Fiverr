@@ -12,6 +12,7 @@ export default function Header({ enableScroll }) {
   const [menuCongViec, setMenuCongViec] = useState([]);
   const [hoveredMenu, setHoveredMenu] = useState(null); // hover menu để xổ xuống chi tiết
   const [searchValue, setSearchValue] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   let navigate = useNavigate();
   let user = useSelector((state) => state.userSlice.dataLogin);
 
@@ -78,7 +79,7 @@ export default function Header({ enableScroll }) {
               src={user.user.avatar}
               alt=""
               className="w-14 h-14 hover:cursor-pointer"
-              style={{ borderRadius: "3.5rem" }}
+              style={{ borderRadius: "50%" }}
               onClick={() => {
                 navigate(`/user/${user.user.id}`);
               }}
@@ -87,7 +88,10 @@ export default function Header({ enableScroll }) {
       };
 
       return (
-        <li className="inline-block ml-8 font-medium text-lg" style={textColor}>
+        <li
+          className="inline-block font-medium text-lg xl:ml-8"
+          style={textColor}
+        >
           <div className="flex items-center space-x-4">
             {renderIdentity()}
             <button
@@ -103,7 +107,7 @@ export default function Header({ enableScroll }) {
       return (
         <>
           <li
-            className="inline-block ml-8 font-medium py-4 text-lg"
+            className="inline-block font-medium py-4 text-lg xl:ml-8"
             style={textColor}
           >
             <NavLink
@@ -154,7 +158,9 @@ export default function Header({ enableScroll }) {
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [enableScroll]);
 
   const navbarStyle = {
@@ -230,7 +236,61 @@ export default function Header({ enableScroll }) {
           </form>
         </div>
         <nav>
-          <ul className="flex items-center">
+          {/* Toggle sidebar button */}
+          <div className="flex items-center justify-between px-6 xl:hidden">
+            <button
+              className="text-3xl focus:outline-none"
+              style={{ color: scrolled ? "black" : "white" }}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              ☰
+            </button>
+          </div>
+
+          {/* Overlay */}
+          {isSidebarOpen && (
+            <div
+              className="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-50 z-40"
+              onClick={() => setIsSidebarOpen(false)} // Đóng sidebar khi nhấn overlay
+            />
+          )}
+
+          {/* Sidebar (screen < 1024px) */}
+          <div
+            className={`absolute top-0 left-0 w-56 h-screen bg-white shadow-lg z-50 transition-transform duration-300 ${
+              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } xl:hidden`}
+          >
+            <ul className="flex flex-col items-start space-y-6 p-6">
+              <li className="font-medium text-lg">
+                <button className="hover:text-green-500 transition duration-300">
+                  Fiverr Pro
+                </button>
+              </li>
+              <li className="font-medium text-lg">
+                <button className="hover:text-green-500 transition duration-300">
+                  Explore
+                </button>
+              </li>
+              <li className="font-medium text-lg flex items-center">
+                <img src={global} className="max-w-3" alt="" />
+                <p className="pl-2">English</p>
+              </li>
+              <li className="font-medium text-lg flex items-center">
+                <img src={dollar} className="max-w-3" alt="" />
+                <p className="pl-2">USD</p>
+              </li>
+              <li className="font-medium text-lg">
+                <button className="hover:text-green-500 transition duration-300">
+                  Become a Seller
+                </button>
+              </li>
+              {renderUser()}
+            </ul>
+          </div>
+
+          {/* Default navbar */}
+          <ul className="hidden xl:flex items-center">
             <li
               className="inline-block ml-8 font-medium text-lg"
               style={textColor}
@@ -278,37 +338,39 @@ export default function Header({ enableScroll }) {
         </nav>
       </div>
 
-      <div
-        className="flex justify-center relative container"
-        style={{ display: scrolled ? "block" : "none" }}
-      >
-        <ul className="flex justify-between list-none gap-5 cursor-pointer mt-6">
-          {/* Render danh sách các loại công việc */}
-          {menuCongViec.map((loaiCongViec) => (
-            <li
-              key={loaiCongViec.id}
-              onMouseEnter={() => setHoveredMenu(loaiCongViec.id)} // Xác định menu đang hover
-              onMouseLeave={() => setHoveredMenu(null)} // Xóa trạng thái hover khi rời chuột
-              className="relative"
-            >
-              <button
-                onClick={() => {
-                  navigate(`/job-type/${loaiCongViec.id}`);
-                }}
+      <div className="relative">
+        <div
+          className="flex gap-5 container"
+          style={{ display: scrolled ? "block" : "none" }}
+        >
+          <ul className="flex justify-between list-none gap-5 cursor-pointer mt-6">
+            {/* Render danh sách các loại công việc */}
+            {menuCongViec.map((loaiCongViec) => (
+              <li
+                key={loaiCongViec.id}
+                onMouseEnter={() => setHoveredMenu(loaiCongViec.id)} // Xác định menu đang hover
+                onMouseLeave={() => setHoveredMenu(null)} // Xóa trạng thái hover khi rời chuột
+                className="relative"
               >
-                {loaiCongViec.tenLoaiCongViec}
-              </button>
+                <button
+                  onClick={() => {
+                    navigate(`/job-type/${loaiCongViec.id}`);
+                  }}
+                >
+                  {loaiCongViec.tenLoaiCongViec}
+                </button>
 
-              {/* Hiển thị menu chi tiết nếu đang hover */}
-              {hoveredMenu === loaiCongViec.id &&
-                loaiCongViec.dsNhomChiTietLoai.length > 0 && (
-                  <div className="absolute top-full left-0 bg-white border border-solid border-gray-200  min-w-72 w-auto p-6">
-                    {renderNhomChiTietLoai(loaiCongViec.dsNhomChiTietLoai)}
-                  </div>
-                )}
-            </li>
-          ))}
-        </ul>
+                {/* Hiển thị menu chi tiết nếu đang hover */}
+                {hoveredMenu === loaiCongViec.id &&
+                  loaiCongViec.dsNhomChiTietLoai.length > 0 && (
+                    <div className="absolute top-full left-0 bg-white border border-solid border-gray-200  min-w-72 w-auto p-6">
+                      {renderNhomChiTietLoai(loaiCongViec.dsNhomChiTietLoai)}
+                    </div>
+                  )}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

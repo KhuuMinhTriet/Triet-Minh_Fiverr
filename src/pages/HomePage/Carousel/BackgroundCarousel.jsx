@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const BackgroundCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const images = [
     "https://img.freepik.com/premium-photo/portrait-young-woman-standing-against-yellow-background_1048944-15729169.jpg?w=1380",
     "https://img.freepik.com/free-photo/attractive-stylish-ginger-girl-with-confident-glance-selfassured-smile-pulling-mobile-phone_1258-140035.jpg?t=st=1731652358~exp=1731655958~hmac=78e9743c991bb3f5d2f6ee875c142aa8e09bb26cbfe5686f09039e47ecda564d&w=1380",
@@ -11,21 +12,32 @@ const BackgroundCarousel = () => {
   ];
 
   useEffect(() => {
+    // set thời gian chạy slide carousel
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 5000);
 
-    return () => clearInterval(interval);
+    // quan sát co giãn khung hình
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("resize", handleResize);
+    };
   }, [images.length]);
+
+  let carouselWidth =
+    screenWidth >= 1024 ? 600 : screenWidth >= 768 ? 400 : 300;
 
   return (
     <div
       className="relative w-full z-0"
       data-carousel="static"
-      style={{ height: 600 }}
+      style={{ height: carouselWidth }}
     >
       {/* Carousel wrapper */}
-      <div className="relative h-96 md:h-96">
+      <div className="relative">
         {images.map((src, index) => (
           <div
             key={index}
@@ -37,7 +49,7 @@ const BackgroundCarousel = () => {
             <img
               src={src}
               className="block w-full"
-              style={{ height: 600 }}
+              style={{ height: carouselWidth }}
               alt={`Slide ${index + 1}`}
             />
           </div>

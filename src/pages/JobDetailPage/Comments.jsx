@@ -8,6 +8,7 @@ import { postCommentActionService } from "../../redux/userSlice";
 
 export default function Comments() {
   const [comments, setComments] = useState({ content: [] });
+  const [visibleComments, setVisibleComments] = useState(3); //số lượng comments hiển thị
   const [rating, setRating] = useState(0);
   let params = useParams();
   let user = useSelector((state) => state.userSlice.dataLogin);
@@ -16,6 +17,11 @@ export default function Comments() {
 
   let handleRateChange = (number) => {
     setRating(number);
+  };
+
+  // hàm load thêm comments
+  let handleLoadMore = () => {
+    setVisibleComments((prev) => prev + 3);
   };
 
   let renderComments = () => {
@@ -27,62 +33,83 @@ export default function Comments() {
       );
     }
 
-    return comments.content.map((comment) => (
-      <div
-        key={comment.id}
-        className="border border-gray-300 p-4 my-8 rounded-lg"
-      >
-        <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
-          <img
-            src={comment.avatar}
-            className="w-16 h-16"
-            style={{ borderRadius: "50%" }}
-            alt=""
-          />
-          <div>
-            <div className="flex items-center gap-4">
-              <p className="text-xl font-medium">{comment.tenNguoiBinhLuan}</p>
-              <span className="text-xl text-yellow-500 font-bold flex items-center gap-2">
-                {comment.saoBinhLuan}{" "}
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/12709/12709532.png"
-                  className="max-w-8"
-                  alt=""
-                />
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
+    // hiển thị comments dựa trên state visibleComments
+    let visible = comments.content.slice(0, visibleComments);
+
+    return (
+      <>
+        {visible.map((comment) => (
+          <div
+            key={comment.id}
+            className="border border-gray-300 p-4 my-8 rounded-lg"
+          >
+            <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png"
-                className="max-w-6 rounded-sm"
+                src={comment.avatar}
+                className="w-16 h-16"
+                style={{ borderRadius: "50%" }}
                 alt=""
               />
-              <p className="text-lg text-gray-500">Vietnam</p>
+              <div>
+                <div className="flex items-center gap-4">
+                  <p className="text-xl font-medium">
+                    {comment.tenNguoiBinhLuan}
+                  </p>
+                  <span className="text-xl text-yellow-500 font-bold flex items-center gap-2">
+                    {comment.saoBinhLuan}{" "}
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/12709/12709532.png"
+                      className="max-w-8"
+                      alt=""
+                    />
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png"
+                    className="max-w-6 rounded-sm"
+                    alt=""
+                  />
+                  <p className="text-lg text-gray-500">Vietnam</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="py-3 border-b border-b-gray-300">
+              <p>{comment.noiDung}</p>
+            </div>
+
+            <div className="flex gap-4 text-gray-600 text-lg pt-4">
+              <p>Helpful? </p>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/126/126473.png"
+                className="max-w-6"
+                alt=""
+              />
+              <p>Yes</p>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/4466/4466315.png"
+                className="max-w-6"
+                alt=""
+              />
+              <p>No</p>
             </div>
           </div>
-        </div>
+        ))}
 
-        <div className="py-3 border-b border-b-gray-300">
-          <p>{comment.noiDung}</p>
-        </div>
-
-        <div className="flex gap-4 text-gray-600 text-lg pt-4">
-          <p>Helpful? </p>
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/126/126473.png"
-            className="max-w-6"
-            alt=""
-          />
-          <p>Yes</p>
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/4466/4466315.png"
-            className="max-w-6"
-            alt=""
-          />
-          <p>No</p>
-        </div>
-      </div>
-    ));
+        {/* Hiển thị nút Load more comments nếu còn comments */}
+        {visibleComments < comments.content.length && (
+          <div className="text-center my-4 font-bold text-lg">
+            <button
+              onClick={handleLoadMore}
+              className="text-white bg-green-500 hover:bg-green-700 transition py-4 rounded-lg w-full"
+            >
+              Load more comments
+            </button>
+          </div>
+        )}
+      </>
+    );
   };
 
   let handleCommentButton = () => {

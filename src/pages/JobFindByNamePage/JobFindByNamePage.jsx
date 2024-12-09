@@ -5,23 +5,37 @@ import {
 } from "../JobByCategoriesPage/JobByCategoriesPage";
 import { useNavigate, useParams } from "react-router";
 import { fiverrService } from "../../services/fetchAPI";
+import ReactPaginate from "react-paginate";
 
 export default function JobFindByNamePage() {
   const [result, setResult] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   let params = useParams();
   let navigate = useNavigate();
+
+  let jobsPerPage = screenWidth >= 1024 ? 8 : screenWidth >= 768 ? 6 : 4;
+
+  let handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+  };
 
   let renderResult = () => {
     if (!result || !result.content) {
       return <p>{result ? "No data found" : "Loading..."}</p>;
     }
 
+    let totalJobs = result.content.length;
+    let pagesCount = Math.ceil(totalJobs / jobsPerPage);
+    let currentJobs = result.content.slice(
+      currentPage * jobsPerPage,
+      (currentPage + 1) * jobsPerPage
+    );
+
     return (
       <div>
         <div className="flex justify-between">
-          <h2 className="my-4 text-gray-600 text-xl">
-            {result.content.length} results
-          </h2>
+          <h2 className="my-4 text-gray-600 text-xl">{totalJobs} results</h2>
           <form className="flex justify-center items-center">
             <span className="min-w-16 text-gray-600">Sort by:</span>
             <div className="flex items-center">
@@ -36,8 +50,9 @@ export default function JobFindByNamePage() {
             </div>
           </form>
         </div>
-        <div className="grid gap-4 grid-cols-4">
-          {result.content.map((jobs) => (
+
+        <div className="grid gap-4 max-md:grid-cols-2 max-lg:grid-cols-3 lg:grid-cols-4">
+          {currentJobs.map((jobs) => (
             <div
               key={jobs.id}
               className="border border-solid border-gray-300 rounded-lg shadow-md"
@@ -97,6 +112,22 @@ export default function JobFindByNamePage() {
             </div>
           ))}
         </div>
+
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={"..."}
+          pageCount={pagesCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={3}
+          onPageChange={handlePageClick}
+          containerClassName={"flex justify-center mt-4 space-x-2"}
+          pageClassName={"px-4 py-2 bg-gray-200 text-gray-700 rounded"}
+          activeClassName={"bg-green-500 text-white"}
+          previousClassName={"px-4 py-2 bg-gray-200 text-gray-700 rounded"}
+          nextClassName={"px-4 py-2 bg-gray-200 text-gray-700 rounded"}
+          disabledClassName={"opacity-50"}
+        />
       </div>
     );
   };
@@ -111,18 +142,25 @@ export default function JobFindByNamePage() {
       .catch((err) => {
         setResult({ content: [] });
       });
+
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [params.id]);
 
   return (
     <div className="container">
-      <div className="flex justify-between mt-48">
-        <div className="flex justify-between w-1/2">
+      <div className="lg:flex justify-between mt-48">
+        <div className="flex justify-between lg:w-1/2">
           {dropDownBox("Service options")}
           {dropDownBox("Seller details")}
           {dropDownBox("Budget")}
           {dropDownBox("Delivery times")}
         </div>
-        <div className="flex justify-between w-5/12">
+        <div className="flex justify-between max-lg:mt-10 lg:w-5/12">
           <div className="flex justify-center items-center">
             {switchButton("Pro services")}
           </div>

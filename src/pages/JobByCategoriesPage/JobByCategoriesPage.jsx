@@ -95,7 +95,7 @@ export default function JobByCategoriesPage() {
             </div>
           </form>
         </div>
-        <div className="grid gap-4 grid-cols-4">
+        <div className="grid gap-4 max-md:grid-cols-2 max-lg:grid-cols-3 lg:grid-cols-4">
           {categories.content.map((jobs) => (
             <div
               key={jobs.id}
@@ -174,14 +174,14 @@ export default function JobByCategoriesPage() {
 
   return (
     <div className="container">
-      <div className="flex justify-between mt-48">
-        <div className="flex justify-between w-1/2">
+      <div className="lg:flex justify-between mt-48">
+        <div className="flex justify-between lg:w-1/2">
           {dropDownBox("Service options")}
           {dropDownBox("Seller details")}
           {dropDownBox("Budget")}
           {dropDownBox("Delivery times")}
         </div>
-        <div className="flex justify-between w-5/12">
+        <div className="flex justify-between max-lg:mt-10 lg:w-5/12">
           <div className="flex justify-center items-center">
             {switchButton("Pro services")}
           </div>

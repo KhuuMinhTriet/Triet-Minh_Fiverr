@@ -14,8 +14,8 @@ export default function Footer() {
   return (
     <div id="footer" className="border-t-2 border-t-gray-200 pt-16">
       <div className="container">
-        <div className="flex">
-          <article className="w-1/5">
+        <div className="grid grid-cols-3 xl:grid-cols-5">
+          <article>
             <div>
               <h1 className="text-black font-medium text-lg">Categories</h1>
               <ul>
@@ -67,7 +67,7 @@ export default function Footer() {
               </ul>
             </div>
           </article>
-          <article className="w-1/5">
+          <article>
             <div>
               <h1 className="text-black font-medium text-lg">For Clients</h1>
               <ul>
@@ -95,7 +95,7 @@ export default function Footer() {
               </ul>
             </div>
           </article>
-          <article className="w-1/5">
+          <article>
             <div>
               <h1 className="text-black font-medium text-lg">
                 For Freelancers
@@ -122,7 +122,7 @@ export default function Footer() {
               </ul>
             </div>
           </article>
-          <article className="w-1/5">
+          <article>
             <div>
               <h1 className="text-black font-medium text-lg">
                 Business Solutions
@@ -152,7 +152,7 @@ export default function Footer() {
               </ul>
             </div>
           </article>
-          <article className="w-1/5">
+          <article>
             <div>
               <h1 className="text-black font-medium text-lg">Company</h1>
               <ul>
