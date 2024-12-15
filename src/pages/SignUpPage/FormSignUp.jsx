@@ -12,10 +12,10 @@ const FormSignUp = () => {
     dispatch(registerActionService(values))
       .unwrap()
       .then(() => {
-        Swal.fire("", "Registration successfully", "success");
+        Swal.fire("Registration successfully", "", "success");
       })
       .catch((err) => {
-        Swal.fire("", "Registration fail", "error");
+        Swal.fire("This account is already exists", "", "error");
       });
   };
 

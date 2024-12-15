@@ -104,5 +104,5 @@ export default function JobRented() {
       });
   }, []);
 
-  return <div className="mb-8">{renderRentedJobs()}</div>;
+  return <div className="max-xl:mt-8 xl:mb-8">{renderRentedJobs()}</div>;
 }

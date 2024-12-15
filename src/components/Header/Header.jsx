@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import global from "./HeaderImg/language.png";
 import dollar from "./HeaderImg/dollar.png";
 import { fiverrService } from "../../services/fetchAPI";
@@ -6,6 +6,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logoWhite from "./HeaderImg/logo-white.png";
 import logoBlack from "./HeaderImg/logo-black.png";
 import { useSelector } from "react-redux";
+import "./Header.css";
+import DropDownMenu from "./DropDownMenu";
 
 export default function Header({ enableScroll }) {
   const [scrolled, setScrolled] = useState(false); // quan sát hành vi của header khi cuộn trang
@@ -15,11 +17,25 @@ export default function Header({ enableScroll }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   let navigate = useNavigate();
   let user = useSelector((state) => state.userSlice.dataLogin);
+  let containerMenuRef = useRef(null);
+  let itemRefs = useRef({});
 
   const handleSearch = (e) => {
     e.preventDefault(); // Ngăn form submit mặc định
     if (searchValue.trim() !== "") {
       navigate(`/job-by-name/${searchValue}`);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (containerMenuRef.current) {
+      containerMenuRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerMenuRef.current) {
+      containerMenuRef.current.scrollBy({ left: 200, behavior: "smooth" });
     }
   };
 
@@ -49,7 +65,10 @@ export default function Header({ enableScroll }) {
     return (
       <ul>
         {dsNhomChiTietLoai.map((nhom) => (
-          <li key={nhom.id} style={{ fontWeight: "bold", marginTop: "10px" }}>
+          <li
+            key={nhom.id}
+            className="font-bold mt-2.5 border-t border-gray-400 pt-3"
+          >
             <p className="hover:cursor-auto">{nhom.tenNhom}</p>
             {nhom.dsChiTietLoai.length > 0 &&
               renderChiTietLoai(nhom.dsChiTietLoai)}
@@ -107,18 +126,18 @@ export default function Header({ enableScroll }) {
       return (
         <>
           <li
-            className="inline-block font-medium py-4 text-lg xl:ml-8"
+            className="xl:inline-block font-medium xl:py-4 text-lg xl:ml-8"
             style={textColor}
           >
             <NavLink
-              className="hover:text-green-500 transition duration-300"
+              className="hover:text-green-500 text-black transition duration-300"
               to="/login"
             >
               Sign in
             </NavLink>
           </li>
           <li
-            className="inline-block ml-8 font-medium py-4 text-lg"
+            className="xl:inline-block xl:ml-8 font-medium xl:py-4 text-lg"
             style={textColor}
           >
             <NavLink
@@ -192,17 +211,17 @@ export default function Header({ enableScroll }) {
               alt=""
             />
           </NavLink>
-          <form class="w-80 mx-8" style={searchBar} onSubmit={handleSearch}>
+          <form className="w-80 mx-8" style={searchBar} onSubmit={handleSearch}>
             <label
-              for="default-search"
-              class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+              htmlFor="default-search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
             >
               Search
             </label>
-            <div class="relative">
-              <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg
-                  class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -210,9 +229,9 @@ export default function Header({ enableScroll }) {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                   />
                 </svg>
@@ -220,7 +239,7 @@ export default function Header({ enableScroll }) {
               <input
                 type="search"
                 id="default-search"
-                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search for your favorite service"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
@@ -228,7 +247,7 @@ export default function Header({ enableScroll }) {
               />
               <button
                 type="submit"
-                class="text-white absolute end-2.5 bottom-2.5 bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
+                className="text-white absolute end-2.5 bottom-2.5 bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
               >
                 Search
               </button>
@@ -340,15 +359,28 @@ export default function Header({ enableScroll }) {
 
       <div className="relative">
         <div
-          className="flex gap-5 container"
+          className="flex items-center gap-5 container relative"
           style={{ display: scrolled ? "block" : "none" }}
         >
-          <ul className="flex justify-between list-none gap-5 cursor-pointer mt-6">
+          <button
+            onClick={scrollLeft}
+            className="max-xl:absolute xl:hidden -left-10 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-300 rounded-full p-2"
+          >
+            &lt;
+          </button>
+
+          <ul
+            className="flex justify-between overflow-x-auto overflow-y-visible whitespace-nowrap list-none gap-5 cursor-pointer mt-6 no-scrollbar"
+            ref={containerMenuRef}
+          >
             {/* Render danh sách các loại công việc */}
             {menuCongViec.map((loaiCongViec) => (
               <li
                 key={loaiCongViec.id}
-                onMouseEnter={() => setHoveredMenu(loaiCongViec.id)} // Xác định menu đang hover
+                ref={(el) => (itemRefs.current[loaiCongViec.id] = el)}
+                onMouseEnter={() => {
+                  setHoveredMenu(loaiCongViec.id);
+                }} // Xác định menu đang hover
                 onMouseLeave={() => setHoveredMenu(null)} // Xóa trạng thái hover khi rời chuột
                 className="relative"
               >
@@ -363,13 +395,20 @@ export default function Header({ enableScroll }) {
                 {/* Hiển thị menu chi tiết nếu đang hover */}
                 {hoveredMenu === loaiCongViec.id &&
                   loaiCongViec.dsNhomChiTietLoai.length > 0 && (
-                    <div className="absolute top-full left-0 bg-white border border-solid border-gray-200  min-w-72 w-auto p-6">
+                    <DropDownMenu parentRef={itemRefs.current[loaiCongViec.id]}>
                       {renderNhomChiTietLoai(loaiCongViec.dsNhomChiTietLoai)}
-                    </div>
+                    </DropDownMenu>
                   )}
               </li>
             ))}
           </ul>
+
+          <button
+            onClick={scrollRight}
+            className="max-xl:absolute xl:hidden -right-10 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-300 rounded-full p-2"
+          >
+            &gt;
+          </button>
         </div>
       </div>
     </div>

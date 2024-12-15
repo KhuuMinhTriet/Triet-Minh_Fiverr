@@ -3,6 +3,7 @@ import { Form, Input } from "antd";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginActionService } from "../../redux/userSlice";
+import Swal from "sweetalert2";
 
 const FormLogin = () => {
   let navigate = useNavigate();
@@ -17,7 +18,9 @@ const FormLogin = () => {
         localStorage.setItem("USER_LOGIN", dataJson);
         navigate("/");
       })
-      .catch((err) => {});
+      .catch((err) => {
+        Swal.fire("Wrong email or password!", "", "error");
+      });
   };
 
   const onFinishFailed = (errorInfo) => {

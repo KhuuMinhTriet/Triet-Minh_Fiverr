@@ -14,7 +14,7 @@ export default function Footer() {
   return (
     <div id="footer" className="border-t-2 border-t-gray-200 pt-16">
       <div className="container">
-        <div className="grid grid-cols-3 xl:grid-cols-5">
+        <div className="grid max-md:grid-cols-2 max-xl:grid-cols-3 xl:grid-cols-5">
           <article>
             <div>
               <h1 className="text-black font-medium text-lg">Categories</h1>
@@ -196,12 +196,12 @@ export default function Footer() {
             </div>
           </article>
         </div>
-        <div className="border-t-2 border-gray-200 mt-4 py-10 flex justify-between">
+        <div className="border-t-2 border-gray-200 mt-4 py-10 md:flex justify-between">
           <div className="flex justify-center items-center">
             <img src={logo2} alt="" className="max-w-28 mr-10" />
             <p className="text-gray-400">© Fiverr International Ltd. 2024</p>
           </div>
-          <div className="flex justify-between">
+          <div className="flex md:justify-between max-md:justify-center max-md:my-10">
             <div className="flex">
               <a href="https://www.tiktok.com/@fiverr">
                 <img src={tiktok} alt="" className="max-w-8 mx-3" />
@@ -222,7 +222,7 @@ export default function Footer() {
                 <img src={twitter} alt="" className="max-w-8 mx-3" />
               </a>
             </div>
-            <div className="flex mx-6">
+            <div className="hidden lg:flex mx-6">
               <div className="flex items-center mx-3">
                 <img src={language} className="max-h-4 max-w-4" alt="" />
                 <p className="pl-2">English</p>
@@ -232,7 +232,7 @@ export default function Footer() {
                 <p className="pl-2">USD</p>
               </div>
             </div>
-            <img src={man} alt="" className="max-h-8" />
+            <img src={man} alt="" className="hidden lg:max-h-8" />
           </div>
         </div>
       </div>

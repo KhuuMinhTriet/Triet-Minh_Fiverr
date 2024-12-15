@@ -116,8 +116,8 @@ export default function UserAccountPage() {
     }
 
     return (
-      <div className="mt-40 mb-6 flex gap-6">
-        <div className="w-1/3 p-6 border border-gray-300 rounded-lg shadow-lg shadow-green-300">
+      <div className="mt-40 mb-6 xl:flex gap-6">
+        <div className="xl:w-1/3 max-xl:w-full p-6 border border-gray-300 rounded-lg shadow-lg shadow-green-300">
           <div>
             <div className="relative">
               <button
@@ -323,6 +323,7 @@ export default function UserAccountPage() {
                 </div>
               )}
 
+              {/* User information */}
               <img
                 src={
                   user.content.avatar === ""
@@ -383,31 +384,33 @@ export default function UserAccountPage() {
             <h2 className="font-bold text-xl">Account info</h2>
             <div className="flex items-center leading-10">
               <h3 className="w-1/2">Name:</h3>
-              <p className="w-1/2">{user.content.name}</p>
+              <p className="w-1/2 max-md:text-right">{user.content.name}</p>
             </div>
             <div className="flex items-center leading-10">
               <h3 className="w-1/2">Mobile phone:</h3>
-              <p className="w-1/2">{user.content.phone}</p>
+              <p className="w-1/2 max-md:text-right">{user.content.phone}</p>
             </div>
             <div className="flex items-center leading-10">
               <h3 className="w-1/2">Birthday:</h3>
-              <p className="w-1/2">{user.content.birthday}</p>
+              <p className="w-1/2 max-md:text-right">{user.content.birthday}</p>
             </div>
             <div className="flex items-center leading-10">
               <h3 className="w-1/2">Language Preference:</h3>
-              <p className="w-1/2">English</p>
+              <p className="w-1/2 max-md:text-right">English</p>
             </div>
             <div className="flex items-center leading-10">
               <h3 className="w-1/2">Native language:</h3>
-              <p className="w-1/2">Vietnamese</p>
+              <p className="w-1/2 max-md:text-right">Vietnamese</p>
             </div>
           </div>
 
           <div className="border-t border-green-300 py-4">
             <h2 className="text-xl font-bold">Skills</h2>
-            {user.content.skill.map((skill) => {
-              return <p>- {skill}</p>;
-            })}
+            <div className="max-xl:grid max-sm:grid-cols-3 max-md:grid-cols-4 max-xl:grid-cols-5">
+              {user.content.skill.map((skill) => {
+                return <p>- {skill}</p>;
+              })}
+            </div>
           </div>
 
           <div className="border-t border-green-300 py-4">
@@ -422,79 +425,102 @@ export default function UserAccountPage() {
 
           <div className="border-t border-green-300 py-4">
             <h2 className="text-xl font-bold">Socialize</h2>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Facebook
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/2111/2111432.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Github
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/15059/15059911.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Stack overflow
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/300/300221.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Google
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/733/733544.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Dribbble
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968830.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                Twitter (X)
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png"
-                className="max-w-6"
-                alt=""
-              />
-              <a href="#" className="text-blue-500 hover:underline leading-10">
-                LinkedIn
-              </a>
+            <div className="max-xl:grid max-md:grid-cols-3 max-lg:grid-cols-4 max-xl:grid-cols-5">
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Facebook
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/2111/2111432.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Github
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/15059/15059911.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Stackoverflow
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/300/300221.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Google
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/733/733544.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Dribbble
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/5968/5968830.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  Twitter (X)
+                </a>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png"
+                  className="max-w-6"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline leading-10"
+                >
+                  LinkedIn
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <div className="w-2/3">
+        <div className="max-xl:w-full xl:w-2/3">
           <JobRented />
         </div>
       </div>

@@ -13,11 +13,9 @@ export default function Successors() {
         </p>
         <video
           poster="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/ef51b45f79342925d5268e0b2377eae8-1704717764992/thumbnail.png"
-          autoPlay
           controls
           preload="auto"
-          className="w-full rounded-2xl object-cover"
-          style={{ height: 620 }}
+          className="w-full rounded-2xl object-cover aspect-video"
         >
           <source
             src="https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/v1/video-attachments/generic_asset/asset/4934b0c8f6441211d97f83585a7c9c00-1722433273322/Vontelle%20Cutdown-%20Breakthrough%20V5"

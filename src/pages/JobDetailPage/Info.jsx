@@ -11,6 +11,7 @@ import { rentingGigActionService } from "../../redux/userSlice";
 export default function Info() {
   const [detail, setDetail] = useState(null);
   const [activeFAQ, setActiveFAQ] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
   let params = useParams();
   let dispatch = useDispatch();
   let navigate = useNavigate();
@@ -59,8 +60,8 @@ export default function Info() {
     }
 
     return (
-      <div className="flex justify-between">
-        <div className="w-3/5 my-3">
+      <div className="lg:flex justify-between">
+        <div className="lg:w-3/5 my-3">
           <div>
             {detail.content.map((info) => (
               <div key={info.id}>
@@ -150,7 +151,8 @@ export default function Info() {
           </div>
         </div>
 
-        <div className="w-2/6">
+        {/* Packages hiển thị ở màn hình 1024px trở lên */}
+        <div className="lg:w-2/6 max-lg:hidden">
           <StickyBox offsetTop={200}>
             <div className="border border-gray-300 mt-6">
               <div className="text-center font-medium text-2xl border-b-black border-b p-4">
@@ -235,6 +237,113 @@ export default function Info() {
             </div>
           </StickyBox>
         </div>
+
+        {/* Nút mở modal package khi màn hình nhỏ hơn 1024px */}
+        <div
+          className="hidden max-lg:flex justify-center items-center w-16 h-16 fixed bottom-40 right-20 bg-green-500"
+          style={{ borderRadius: "50%" }}
+        >
+          <button onClick={() => setModalOpen(true)}>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/726/726546.png"
+              alt="Open Modal"
+              className="w-12 h-12"
+            />
+          </button>
+        </div>
+
+        {/* Modal package cho màn hình nhỏ hơn 1024px */}
+        {isModalOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+            onClick={() => setModalOpen(false)}
+          >
+            <div
+              className="bg-white rounded-lg p-6 w-11/12 md:w-2/3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center font-medium text-2xl border-b-black border-b p-4">
+                Basic pack
+              </div>
+              <div className="p-4">
+                {detail.content.map((info) => (
+                  <div key={info.id}>
+                    <p className="text-2xl font-medium">
+                      US${info.congViec?.giaTien}
+                    </p>
+                    <p className="font-medium">
+                      Save up to 10% with{" "}
+                      <span className="text-green-500 hover:cursor-pointer">
+                        Subscribe to Save
+                      </span>
+                    </p>
+                    <p className="my-4 text-gray-600">
+                      {info.congViec?.moTaNgan}
+                    </p>
+
+                    <div className="flex">
+                      <div className="flex items-center mr-6">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/109/109613.png"
+                          alt=""
+                          className="max-w-4"
+                        />
+                        <p className="mx-2">7-days Delivery</p>
+                      </div>
+                      <div className="flex items-center">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/1250/1250694.png"
+                          alt=""
+                          className="max-w-4"
+                        />
+                        <p className="mx-2">Unlimited Revisions</p>
+                      </div>
+                    </div>
+
+                    <div className="my-4">
+                      <p className="flex items-center">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/14034/14034688.png"
+                          alt=""
+                          className="max-w-5 mx-4"
+                        />
+                        Good feature
+                      </p>
+                      <p className="flex items-center">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/14034/14034688.png"
+                          alt=""
+                          className="max-w-5 mx-4"
+                        />
+                        Good feature
+                      </p>
+                      <p className="flex items-center">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/14034/14034688.png"
+                          alt=""
+                          className="max-w-5 mx-4"
+                        />
+                        Good feature
+                      </p>
+                    </div>
+
+                    <div className="font-medium text-center">
+                      <button
+                        className="w-full rounded-lg bg-green-500 text-white py-2"
+                        onClick={handleRentingGig}
+                      >
+                        Continue (US${info.congViec?.giaTien})
+                      </button>
+                      <button className="w-full text-green-500 bg-transparent py-2">
+                        Compare packages
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -482,8 +591,8 @@ export default function Info() {
             </span>
           </div>
         </div>
-        <div className="flex">
-          <div className="w-1/2 pr-2">
+        <div className="flex justify-between">
+          <div className="w-2/5 pr-2">
             <ul>
               <li className="flex items-center">
                 <button className="text-lg font-medium text-green-500 hover:text-green-600 hover:bg-gray-100 rounded-lg p-1">
@@ -493,7 +602,7 @@ export default function Info() {
                   <Progress
                     showInfo={false}
                     percent={((reviewAmount - 5) / reviewAmount) * 100}
-                    className="w-64 mx-6"
+                    className="w-48 mx-3"
                     strokeColor="green"
                   />
                 </Flex>
@@ -507,7 +616,7 @@ export default function Info() {
                   <Progress
                     showInfo={false}
                     percent={(3 / reviewAmount) * 100}
-                    className="w-64 mx-6"
+                    className="w-48 mx-3"
                     strokeColor="green"
                   />
                 </Flex>
@@ -521,7 +630,7 @@ export default function Info() {
                   <Progress
                     showInfo={false}
                     percent={(1 / reviewAmount) * 100}
-                    className="w-64 mx-6"
+                    className="w-48 mx-3"
                     strokeColor="green"
                   />
                 </Flex>
@@ -535,7 +644,7 @@ export default function Info() {
                   <Progress
                     showInfo={false}
                     percent={(1 / reviewAmount) * 100}
-                    className="w-64 mx-6"
+                    className="w-48 mx-3"
                     strokeColor="green"
                   />
                 </Flex>
@@ -549,7 +658,7 @@ export default function Info() {
                   <Progress
                     showInfo={false}
                     percent={0}
-                    className="w-64 mx-6"
+                    className="w-48 mx-3"
                     strokeColor="green"
                   />
                 </Flex>
@@ -557,7 +666,7 @@ export default function Info() {
               </li>
             </ul>
           </div>
-          <div className="w-1/2 pl-2 text-lg font-medium">
+          <div className="w-2/5 pl-2 text-lg font-medium">
             <p className="my-1">Rating Breakdown</p>
             <ul>
               <li className="flex justify-between">

@@ -3,6 +3,26 @@ import { fiverrService } from "../../services/fetchAPI";
 import { useNavigate, useParams } from "react-router";
 import play from "./play-button.png";
 import arrow from "./right-arrow.png";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1280 },
+    items: 5,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1280, min: 768 },
+    items: 3,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 767, min: 464 },
+    items: 2,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
 
 export default function JobTypePage() {
   const [detail, setDetail] = useState([]);
@@ -88,52 +108,60 @@ export default function JobTypePage() {
             ? `Most popular in ${detail[0]?.tenLoaiCongViec}`
             : "Loading..."}
         </h1>
-        <div className="flex my-4 justify-between">
-          <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
-            <img
-              src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/8ab683c462bb7021359f813a67f0a210-1727008217020/HTML%20_%20CSS%20Developers.png"
-              className="max-w-14"
-              alt=""
-            />
-            <p className="mx-6 font-medium">HTML & CSS Developers</p>
-            <img src={arrow} className="max-w-6" alt="" />
-          </div>
-          <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
-            <img
-              src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/148a459235c2efcccf74882dd6790246-1727083583530/Singers%20_%20Vocalists.png"
-              className="max-w-14"
-              alt=""
-            />
-            <p className="mx-6 font-medium">Single & Vocalists</p>
-            <img src={arrow} className="max-w-6" alt="" />
-          </div>
-          <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
-            <img
-              src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/1857ea6cdffed9de2c5739f010338061-1727172011185/CRM%20management.png"
-              className="max-w-14"
-              alt=""
-            />
-            <p className="mx-6 font-medium">CRM Management</p>
-            <img src={arrow} className="max-w-6" alt="" />
-          </div>
-          <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
-            <img
-              src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/a4f23e7ad88e3c639e545e7f1ef6c24c-1727084447011/Website%20Design.png"
-              className="max-w-14"
-              alt=""
-            />
-            <p className="mx-6 font-medium">Website Designs</p>
-            <img src={arrow} className="max-w-6" alt="" />
-          </div>
-          <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300">
-            <img
-              src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/148a459235c2efcccf74882dd6790246-1727083583540/SEO.png"
-              className="max-w-14"
-              alt=""
-            />
-            <p className="mx-6 font-medium">SEO</p>
-            <img src={arrow} className="max-w-6" alt="" />
-          </div>
+        <div className="mt-4">
+          <Carousel
+            responsive={responsive}
+            autoPlay={false}
+            swipeable={true}
+            draggable={true}
+            partialVisbile={false}
+          >
+            <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300 mx-2">
+              <img
+                src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/8ab683c462bb7021359f813a67f0a210-1727008217020/HTML%20_%20CSS%20Developers.png"
+                className="max-w-14"
+                alt=""
+              />
+              <p className="mx-6 font-medium">HTML & CSS Developers</p>
+              <img src={arrow} className="max-w-6" alt="" />
+            </div>
+            <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300 mx-2">
+              <img
+                src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/148a459235c2efcccf74882dd6790246-1727083583530/Singers%20_%20Vocalists.png"
+                className="max-w-14"
+                alt=""
+              />
+              <p className="mx-6 font-medium">Single & Vocalists</p>
+              <img src={arrow} className="max-w-6" alt="" />
+            </div>
+            <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300 mx-2">
+              <img
+                src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/1857ea6cdffed9de2c5739f010338061-1727172011185/CRM%20management.png"
+                className="max-w-14"
+                alt=""
+              />
+              <p className="mx-6 font-medium">CRM Management</p>
+              <img src={arrow} className="max-w-6" alt="" />
+            </div>
+            <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300 mx-2">
+              <img
+                src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/a4f23e7ad88e3c639e545e7f1ef6c24c-1727084447011/Website%20Design.png"
+                className="max-w-14"
+                alt=""
+              />
+              <p className="mx-6 font-medium">Website Designs</p>
+              <img src={arrow} className="max-w-6" alt="" />
+            </div>
+            <div className="flex justify-center items-center p-2 border shadow-lg rounded-xl hover:text-green-500 transition duration-300 mx-2">
+              <img
+                src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/148a459235c2efcccf74882dd6790246-1727083583540/SEO.png"
+                className="max-w-14"
+                alt=""
+              />
+              <p className="mx-6 font-medium">SEO</p>
+              <img src={arrow} className="max-w-6" alt="" />
+            </div>
+          </Carousel>
         </div>
       </div>
 
