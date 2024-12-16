@@ -127,7 +127,7 @@ export default function Comments() {
       });
     } else {
       if (rating === 0) {
-        Swal.fire("Please rating us!");
+        Swal.fire("Please give us a rate!");
       } else {
         const comment = document.getElementById("comment").value.trim();
         if (!comment) {
@@ -169,22 +169,22 @@ export default function Comments() {
 
   return (
     <div>
-      <form class="w-1/2 my-10">
-        <div class="flex">
-          <div class="relative w-full">
+      <form className="w-1/2 my-10">
+        <div className="flex">
+          <div className="relative w-full">
             <input
               type="search"
               id="location-search"
-              class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg  border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-green-500 rounded-s-lg"
+              className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg  border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-green-500 rounded-s-lg"
               placeholder="Search reviews"
               required
             />
             <button
               type="submit"
-              class="absolute top-0 end-0 h-full p-2.5 text-sm font-medium text-white bg-black rounded-e-lg focus:ring-4 focus:outline-none"
+              className="absolute top-0 end-0 h-full p-2.5 text-sm font-medium text-white bg-black rounded-e-lg focus:ring-4 focus:outline-none"
             >
               <svg
-                class="w-4 h-4"
+                className="w-4 h-4"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -192,13 +192,13 @@ export default function Comments() {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                 />
               </svg>
-              <span class="sr-only">Search</span>
+              <span className="sr-only">Search</span>
             </button>
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function Comments() {
         <textarea
           id="comment"
           rows="4"
-          class="block p-4 my-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="block p-4 my-4 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Write your thoughts here..."
         ></textarea>
         <button

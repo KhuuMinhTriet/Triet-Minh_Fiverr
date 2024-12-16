@@ -408,7 +408,7 @@ export default function UserAccountPage() {
             <h2 className="text-xl font-bold">Skills</h2>
             <div className="max-xl:grid max-sm:grid-cols-3 max-md:grid-cols-4 max-xl:grid-cols-5">
               {user.content.skill.map((skill) => {
-                return <p>- {skill}</p>;
+                return <p key={skill}>- {skill}</p>;
               })}
             </div>
           </div>

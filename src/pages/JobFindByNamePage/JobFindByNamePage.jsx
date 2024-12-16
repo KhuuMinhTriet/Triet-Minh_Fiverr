@@ -42,10 +42,11 @@ export default function JobFindByNamePage() {
               <select
                 id="selectSortName"
                 className="block py-2.5 px-0 w-full text-lg font-medium bg-transparent appearance-none dark:text-gray-400 focus:outline-none focus:ring-0 focus:border-gray-200 peer mx-2"
+                defaultValue="recommend"
               >
-                <option selected>Recommended</option>
-                <option>Best selling</option>
-                <option>Newest arrivals</option>
+                <option value="recommend">Recommended</option>
+                <option value="bestSelling">Best selling</option>
+                <option value="newest">Newest arrivals</option>
               </select>
             </div>
           </form>

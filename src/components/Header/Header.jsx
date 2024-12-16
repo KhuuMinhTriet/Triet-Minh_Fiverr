@@ -130,7 +130,7 @@ export default function Header({ enableScroll }) {
             style={textColor}
           >
             <NavLink
-              className="hover:text-green-500 text-black transition duration-300"
+              className="border-2 border-green-500 rounded-lg px-4 pb-1 text-xl text-green-500 bg-transparent hover:text-white hover:bg-green-500 transition duration-300"
               to="/login"
             >
               Sign in
