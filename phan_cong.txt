@@ -1,0 +1,13 @@
+- Khưu Minh Triết:
+
++ Trang chủ
++ Trang loại công việc
++ Trang công việc theo loại
++ Trang chi tiết công việc
++ Trang tìm kiếm kết quả công việc
++ Trang đăng nhập, đăng ký
++ Trang tài khoản người dùng
+
+- Lê Viết Minh:
+
++ Admin
