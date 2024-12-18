@@ -175,26 +175,28 @@ export default function JobByCategoriesPage() {
 
   return (
     <div className="container">
-      <div className="lg:flex justify-between mt-48">
-        <div className="flex justify-between lg:w-1/2">
-          {dropDownBox("Service options")}
-          {dropDownBox("Seller details")}
-          {dropDownBox("Budget")}
-          {dropDownBox("Delivery times")}
+      <div className="mt-48">
+        <div className="lg:flex justify-between">
+          <div className="flex justify-between lg:w-1/2">
+            {dropDownBox("Service options")}
+            {dropDownBox("Seller details")}
+            {dropDownBox("Budget")}
+            {dropDownBox("Delivery times")}
+          </div>
+          <div className="flex justify-between max-lg:mt-10 lg:w-5/12">
+            <div className="flex justify-center items-center">
+              {switchButton("Pro services")}
+            </div>
+            <div className="flex justify-center items-center">
+              {switchButton("Local sellers")}
+            </div>
+            <div className="flex justify-center items-center">
+              {switchButton("Online sellers")}
+            </div>
+          </div>
         </div>
-        <div className="flex justify-between max-lg:mt-10 lg:w-5/12">
-          <div className="flex justify-center items-center">
-            {switchButton("Pro services")}
-          </div>
-          <div className="flex justify-center items-center">
-            {switchButton("Local sellers")}
-          </div>
-          <div className="flex justify-center items-center">
-            {switchButton("Online sellers")}
-          </div>
-        </div>
+        <div className="mb-8">{renderCategories()}</div>
       </div>
-      <div className="my-8">{renderCategories()}</div>
     </div>
   );
 }
