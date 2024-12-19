@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { addItem, fetchUsers, fetchJobs, fetchJobTypes, fetchServices, resetState } from '../../redux/adminSlice';
-import formConfig from './formData/formConfig.json';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import {
+  addItem,
+  fetchUsers,
+  fetchJobs,
+  fetchJobTypes,
+  fetchServices,
+  resetState,
+} from "../../redux/adminSlice";
+import formConfig from "./formData/formConfig.json";
 
 // Styled-components
 const ModalOverlay = styled.div`
@@ -16,7 +23,7 @@ const ModalOverlay = styled.div`
   justify-content: center;
   align-items: center;
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  pointer-events: ${(props) => (props.isVisible ? 'auto' : 'none')};
+  pointer-events: ${(props) => (props.isVisible ? "auto" : "none")};
   transition: opacity 0.3s ease;
 `;
 
@@ -26,7 +33,7 @@ const ModalContent = styled.div`
   max-width: 90%;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  transform: ${(props) => (props.isVisible ? 'scale(1)' : 'scale(0.8)')};
+  transform: ${(props) => (props.isVisible ? "scale(1)" : "scale(0.8)")};
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
   transition: transform 0.3s ease, opacity 0.3s ease;
 `;
@@ -54,7 +61,7 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
     resetState();
     if (modalType && formConfig[modalType]) {
       const initialData = formConfig[modalType].reduce((acc, field) => {
-        acc[field.name] = '';
+        acc[field.name] = "";
         return acc;
       }, {});
       setFormData(initialData);
@@ -72,30 +79,33 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
         validationErrors[field.name] = `${field.title} là bắt buộc.`;
       }
 
-      if (field.name === 'email' && value) {
+      if (field.name === "email" && value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
           validationErrors[field.name] = `${field.title} không hợp lệ.`;
         }
       }
 
-      if (field.type === 'number') {
+      if (field.type === "number") {
         const numericValue = Number(value); // Chuyển đổi thành số
         if (isNaN(numericValue)) {
           validationErrors[field.name] = `${field.title} phải là số hợp lệ.`;
         }
       }
-      
 
-      if (field.type === 'text' && field.maxLength && value) {
+      if (field.type === "text" && field.maxLength && value) {
         if (value.length > field.maxLength) {
-          validationErrors[field.name] = `${field.title} không được dài hơn ${field.maxLength} ký tự.`;
+          validationErrors[
+            field.name
+          ] = `${field.title} không được dài hơn ${field.maxLength} ký tự.`;
         }
       }
-      if (field.type === 'date') {
+      if (field.type === "date") {
         const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
         if (!dateRegex.test(value)) {
-          validationErrors[field.name] = `${field.title} không đúng định dạng (YYYY-MM-DD).`;
+          validationErrors[
+            field.name
+          ] = `${field.title} không đúng định dạng (YYYY-MM-DD).`;
         } else {
           // Kiểm tra tính hợp lệ của ngày tháng
           const date = new Date(value);
@@ -105,7 +115,6 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
           }
         }
       }
-      
     });
 
     return validationErrors;
@@ -116,7 +125,7 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -139,27 +148,29 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
   const renderFields = (fields) => {
     return fields.map((field) => (
       <td key={field.name} className="py-3 px-6">
-        {field.type !== 'select' ? (
+        {field.type !== "select" ? (
           <div>
             <input
               type={field.type}
               name={field.name}
-              value={formData[field.name] || ''}
+              value={formData[field.name] || ""}
               onChange={handleInputChange}
               className={`w-full px-3 py-2 border ${
-                errors[field.name] ? 'border-red-500' : 'border-gray-300'
+                errors[field.name] ? "border-red-500" : "border-gray-300"
               } rounded-md`}
               placeholder={field.placeholder}
             />
-            {errors[field.name] && <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>}
+            {errors[field.name] && (
+              <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
+            )}
           </div>
         ) : (
           <select
             name={field.name}
-            value={formData[field.name] || ''}
+            value={formData[field.name] || ""}
             onChange={handleInputChange}
             className={`w-full px-3 py-2 border ${
-              errors[field.name] ? 'border-red-500' : 'border-gray-300'
+              errors[field.name] ? "border-red-500" : "border-gray-300"
             } rounded-md`}
           >
             <option value="">Chọn {field.title}</option>
@@ -178,17 +189,20 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
   return (
     <ModalOverlay isVisible={isVisible} onClick={closeModal}>
       <ModalContent isVisible={isVisible} onClick={(e) => e.stopPropagation()}>
-        <h2>{modalType === 'user' && 'Thêm người dùng'}</h2>
-        <h2>{modalType === 'job' && 'Thêm công việc'}</h2>
-        <h2>{modalType === 'service' && 'Thêm dịch vụ'}</h2>
-        <h2>{modalType === 'jobType' && 'Thêm loại công việc'}</h2>
+        <h2>{modalType === "user" && "Thêm người dùng"}</h2>
+        <h2>{modalType === "job" && "Thêm công việc"}</h2>
+        <h2>{modalType === "service" && "Thêm dịch vụ"}</h2>
+        <h2>{modalType === "jobType" && "Thêm loại công việc"}</h2>
 
         {modalType && (
           <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
             <thead className="bg-gray-200">
               <tr>
                 {formConfig[modalType].map((field) => (
-                  <th key={field.name} className="py-3 px-6 text-left text-gray-600 font-bold">
+                  <th
+                    key={field.name}
+                    className="py-3 px-6 text-left text-gray-600 font-bold"
+                  >
                     {field.title}
                   </th>
                 ))}
@@ -205,7 +219,12 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
             onClick={handleSubmit}
           >
-            Thêm {modalType === 'user' ? 'người dùng' : modalType === 'job' ? 'công việc' : 'dịch vụ'}
+            Thêm{" "}
+            {modalType === "user"
+              ? "người dùng"
+              : modalType === "job"
+              ? "công việc"
+              : "dịch vụ"}
           </button>
           <CloseButton onClick={closeModal}>Đóng Modal</CloseButton>
         </div>
