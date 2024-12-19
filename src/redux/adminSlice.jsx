@@ -3,7 +3,7 @@ import { fiverrService } from '../services/fetchAPI';
 
 // Hàm xử lý trạng thái của các resources
 const handleResourceState = (state, resource, status, action) => {
-  const resourceState = state[resource]; // jobs, users, v.v.
+  const resourceState = state[resource]; 
 
   switch (status) {
     case "pending":
@@ -50,22 +50,23 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ modalType
     let response;
     switch (modalType) {
       case 'user':
-        response = await fiverrService.themnguoidung(formData.user);
+        response = await fiverrService.themnguoidung(formData);
         break;
+     
       case 'job':
-        response = await fiverrService.themcongviec(formData.job);
+        response = await fiverrService.themcongviec(formData);
         break;
       case 'jobType':
-        response = await fiverrService.themloaiwork(formData.jobType);
+        response = await fiverrService.themloaiwork(formData);
         break;
       case 'service':
-        response = await fiverrService.themdichvu(formData.service);
+        response = await fiverrService.themdichvu(formData);
         break;
       default:
         throw new Error("Modal type không hợp lệ");
     }
 
-    console.log(`${modalType} đã thêm thành công:`, response);
+    console.log(`${modalType} đã thêm thành công:`, response.data);
     return response.data;
   } catch (error) {
     console.error('Lỗi khi thêm:', formData);
@@ -79,32 +80,31 @@ export const updateItem = createAsyncThunk(
         let response;
         switch (modalType) {
           case "user":
-            response = await fiverrService.capNhatNguoiDung(id, formData.user);
+            response = await fiverrService.capNhatNguoiDung(id, formData);
             break;
           case "job":
-            response = await fiverrService.capNhatCongViec(id, formData.job);
+            response = await fiverrService.capNhatCongViec(id, formData);
             break;
           case "jobType":
-            response = await fiverrService.capNhatLoaiCongViec(id, formData.jobType);
+            response = await fiverrService.capNhatLoaiCongViec(id, formData);
             break;
           case "service":
-            response = await fiverrService.capNhatDichVu(id, formData.service);
+            response = await fiverrService.capNhatDichVu(id, formData);
             break;
           default:
             throw new Error("Modal type không hợp lệ");
         }
   
-        console.log(`${modalType} đã cập nhật thành công:`, response);
+        console.log(`${modalType} đã cập nhật thành công:`, response.data);
         return { modalType, id, data: response.data };
       } catch (error) {
         console.error("Lỗi khi cập nhật:", error);
         throw error;
       }
     }
-  );
-  export const deleteItemAsync = createAsyncThunk(
+  );export const deleteItemAsync = createAsyncThunk(
     "adminSlice/deleteItemAsync",
-    async ({ modalType, id }, { rejectWithValue }) => {
+    async ({ modalType, id }, { dispatch }) => {
       try {
         let response;
         switch (modalType) {
@@ -123,10 +123,13 @@ export const updateItem = createAsyncThunk(
           default:
             throw new Error("Modal type không hợp lệ");
         }
+  
+        // Cập nhật lại store sau khi xóa thành công
+        dispatch(deleteItem({ type: modalType, id }));
         return { modalType, id };
       } catch (error) {
         console.error("Lỗi khi xóa:", error);
-        return rejectWithValue(error.message);
+        throw error;
       }
     }
   );
@@ -145,10 +148,13 @@ const adminSlice = createSlice({
     setPage: (state, action) => {
       state.currentPage = action.payload;
     },
-    deleteItem: (state, action) => {
-      const { type, id } = action.payload;
-      state[type].list = state[type].list.filter(item => item.id !== id);
-    },
+    reducers: {
+        deleteItem: (state, action) => {
+          const { type, id } = action.payload;
+          state[type].list = state[type].list.filter((item) => item.id !== id);
+        },
+      },
+      
     resetState: (state) => {
       // Reset tất cả các resource
       state.users = { list: [], loading: false, error: null };

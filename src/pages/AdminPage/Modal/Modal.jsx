@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
+import formConfig from "../formData/formConfig.json";
+import validateFormData from "./validateInput";
 import {
-  addItem,
   fetchUsers,
   fetchJobs,
   fetchJobTypes,
   fetchServices,
-  resetState,
-} from "../../redux/adminSlice";
-import formConfig from "./formData/formConfig.json";
+  addItem,
+  deleteItemAsync
+} from "../../../redux/adminSlice";
 
 // Styled-components
 const ModalOverlay = styled.div`
@@ -51,93 +52,57 @@ const CloseButton = styled.button`
   }
 `;
 
-// Component
 const Modal = ({ isVisible, closeModal, modalType }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    resetState();
+ 
     if (modalType && formConfig[modalType]) {
-      const initialData = formConfig[modalType].reduce((acc, field) => {
-        acc[field.name] = "";
-        return acc;
-      }, {});
+      const initialData = formConfig[modalType].reduce((acc, field) => acc, {});
       setFormData(initialData);
     }
   }, [modalType]);
 
-  const validateFormData = () => {
-    const validationErrors = {};
-    if (!formData) return validationErrors;
-
-    formConfig[modalType].forEach((field) => {
-      const value = formData[field.name];
-
-      if (field.required && !value) {
-        validationErrors[field.name] = `${field.title} là bắt buộc.`;
-      }
-
-      if (field.name === "email" && value) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-          validationErrors[field.name] = `${field.title} không hợp lệ.`;
-        }
-      }
-
-      if (field.type === "number") {
-        const numericValue = Number(value); // Chuyển đổi thành số
-        if (isNaN(numericValue)) {
-          validationErrors[field.name] = `${field.title} phải là số hợp lệ.`;
-        }
-      }
-
-      if (field.type === "text" && field.maxLength && value) {
-        if (value.length > field.maxLength) {
-          validationErrors[
-            field.name
-          ] = `${field.title} không được dài hơn ${field.maxLength} ký tự.`;
-        }
-      }
-      if (field.type === "date") {
-        const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-        if (!dateRegex.test(value)) {
-          validationErrors[
-            field.name
-          ] = `${field.title} không đúng định dạng (YYYY-MM-DD).`;
-        } else {
-          // Kiểm tra tính hợp lệ của ngày tháng
-          const date = new Date(value);
-          const isValidDate = !isNaN(date.getTime());
-          if (!isValidDate) {
-            validationErrors[field.name] = `${field.title} không hợp lệ.`;
-          }
-        }
-      }
-    });
-
-    return validationErrors;
-  };
-
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value } = e.target;
+  
+ 
+    if (name === "gender" || name === "hoanThanh") {
+      const genderValue = value === "Nam" ? true : false;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: genderValue,
+      }));
+      return;
+    } 
+    // Nếu là các trường như 'skill', 'certification'
+    else if (name === "skill" || name === "certification") {
+      const arrayValue = value.split(",").map((item) => item.trim());
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: arrayValue,
+      }));
+      return;
+    }
+  
+    // Cập nhật giá trị cho các trường khác
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value, // Đảm bảo giá trị được lưu vào formData đúng cách
     }));
   };
-
+  
   const handleSubmit = async () => {
-    const validationErrors = validateFormData();
+    const validationErrors = validateFormData(formData, formConfig, modalType);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     const actionPayload = { modalType, formData };
-    await dispatch(addItem(actionPayload));
+    dispatch(addItem(actionPayload));
     dispatch(fetchUsers());
     dispatch(fetchJobs());
     dispatch(fetchJobTypes());
@@ -166,21 +131,22 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
           </div>
         ) : (
           <select
-            name={field.name}
-            value={formData[field.name] || ""}
-            onChange={handleInputChange}
-            className={`w-full px-3 py-2 border ${
-              errors[field.name] ? "border-red-500" : "border-gray-300"
-            } rounded-md`}
-          >
-            <option value="">Chọn {field.title}</option>
-            {field.options &&
-              field.options.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-          </select>
+          name={field.name}
+          
+          onChange={handleInputChange}
+          className={`w-full px-3 py-2 border ${
+            errors[field.name] ? "border-red-500" : "border-gray-300"
+          } rounded-md`}
+        >
+          <option value="">Chọn {field.title}</option>
+          {field.options &&
+            field.options.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+        </select>
+        
         )}
       </td>
     ));
@@ -224,6 +190,8 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
               ? "người dùng"
               : modalType === "job"
               ? "công việc"
+              : modalType === "jobType"
+              ? "loại công việc"
               : "dịch vụ"}
           </button>
           <CloseButton onClick={closeModal}>Đóng Modal</CloseButton>
@@ -232,5 +200,36 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
     </ModalOverlay>
   );
 };
+
+export const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
+   if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+        <h2 className="text-lg font-bold mb-4">Xác nhận xóa</h2>
+        <p className="text-gray-600 mb-6">
+          Bạn có chắc chắn muốn xóa nhân viên này? Hành động này không thể hoàn tác.
+        </p>
+        <div className="flex justify-end space-x-4">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none"
+            onClick={onClose}
+          >
+            Hủy
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+            onClick={onConfirm}
+          >
+            Xóa
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 
 export default Modal;

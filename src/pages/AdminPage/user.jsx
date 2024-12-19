@@ -1,185 +1,149 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers } from "../../redux/adminSlice";
-import formConfig from "./formData/formConfig.json";
+import { fetchUsers, deleteItemAsync } from "../../redux/adminSlice";
+import { DeleteModal } from "./Modal/Modal"; // Import modal component
 
 export default function ShowTable() {
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.adminSlice.users.list);
+  const users = useSelector((state) => state.adminSlice.users.list); // Updated state reference
   const [activeTab, setActiveTab] = useState("personal");
-  const [currentRange, setCurrentRange] = useState([0, 10]);
-  const [editingRowId, setEditingRowId] = useState(null);
-  const [editValues, setEditValues] = useState({});
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [deleteId, setDeleteId] = useState(null); // ID to delete
 
-  if (users.length === 0) {
-    dispatch(fetchUsers());
-  }
+  const itemsPerPage = 10; // Number of items to display per page
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  useEffect(() => {
+    if (users.length === 0) {
+      dispatch(fetchUsers());
+    }
+  }, [dispatch, users.length]);
 
   const getFilteredData = () => {
-    return users.slice(currentRange[0], currentRange[1]);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return users.slice(startIndex, startIndex + itemsPerPage);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
-      console.log(`Xóa người dùng có ID: ${id}`);
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setIsModalOpen(true); // Open modal
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      dispatch(deleteItemAsync({ modalType: "users", id: deleteId }));
+      console.log(`Đã xóa người dùng có ID: ${deleteId}`);
     }
-  };
-
-  const handleEdit = (user) => {
-    setEditingRowId(user.id);
-    setEditValues({ ...user }); // Lưu dữ liệu ban đầu để chỉnh sửa
-  };
-
-  const handleSave = () => {
-    console.log("Lưu dữ liệu đã chỉnh sửa:", editValues);
-    setEditingRowId(null); // Thoát chế độ chỉnh sửa
-  };
-
-  const handleCancel = () => {
-    setEditingRowId(null); // Hủy chỉnh sửa
-  };
-
-  const handleChange = (e, field) => {
-    setEditValues({ ...editValues, [field]: e.target.value });
+    setIsModalOpen(false);
   };
 
   const renderTabContent = () => {
     const filteredData = getFilteredData();
+    if (filteredData.length === 0) {
+      return (
+        <tr>
+          <td colSpan={activeTab === "personal" ? 8 : 4} className="text-center py-3">
+            Không có dữ liệu
+          </td>
+        </tr>
+      );
+    }
     return filteredData.map((user) => (
       <tr className="hover:bg-gray-100" key={user.id}>
-        {editingRowId === user.id ? (
+        <td className="py-3 px-6">{user.name}</td>
+        {activeTab === "personal" ? (
           <>
-            <td className="py-3 px-6">
-              <input
-                type="text"
-                className="border rounded px-2 py-1 w-full"
-                value={editValues.name || ""}
-                onChange={(e) => handleChange(e, "name")}
-              />
-            </td>
-            {activeTab === "personal" ? (
-              <>
-                <td className="py-3 px-6">{user.id}</td>
-                <td className="py-3 px-6">
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.email || ""}
-                    onChange={(e) => handleChange(e, "email")}
-                  />
-                </td>
-                <td className="py-3 px-6">
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.password || ""}
-                    onChange={(e) => handleChange(e, "password")}
-                  />
-                </td>
-                <td className="py-3 px-6">
-                  <input
-                    type="date"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.birthday || ""}
-                    onChange={(e) => handleChange(e, "birthday")}
-                  />
-                </td>
-                <td className="py-3 px-6">
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.phone || ""}
-                    onChange={(e) => handleChange(e, "phone")}
-                  />
-                </td>
-                <td className="py-3 px-6">
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.gender || ""}
-                    onChange={(e) => handleChange(e, "gender")}
-                  />
-                </td>
-              </>
-            ) : (
-              <>
-                <td className="py-3 px-6">
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editValues.role || ""}
-                    onChange={(e) => handleChange(e, "role")}
-                  />
-                </td>
-                <td className="py-3 px-6">{/* Các cột khác */}</td>
-              </>
-            )}
-            <td className="py-3 px-6 flex gap-2">
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                onClick={handleSave}
-              >
-                Lưu
-              </button>
-              <button
-                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
-                onClick={handleCancel}
-              >
-                Hủy
-              </button>
-            </td>
+            <td className="py-3 px-6">{user.id}</td>
+            <td className="py-3 px-6">{user.email}</td>
+            <td className="py-3 px-6">{user.password}</td>
+            <td className="py-3 px-6">{user.birthday}</td>
+            <td className="py-3 px-6">{user.phone}</td>
+            <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
           </>
         ) : (
           <>
-            <td className="py-3 px-6">{user.name}</td>
-            {activeTab === "personal" ? (
-              <>
-                <td className="py-3 px-6">{user.id}</td>
-                <td className="py-3 px-6">{user.email}</td>
-                <td className="py-3 px-6">{user.password}</td>
-                <td className="py-3 px-6">{user.birthday}</td>
-                <td className="py-3 px-6">{user.phone}</td>
-                <td className="py-3 px-6">{user.gender}</td>
-              </>
-            ) : (
-              <>
-                <td className="py-3 px-6">{user.role}</td>
-                <td className="py-3 px-6">{user.skill}</td>
-              </>
-            )}
-            <td className="py-3 px-6 flex gap-2">
-              <button
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-                onClick={() => handleEdit(user)}
-              >
-                Sửa
-              </button>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDelete(user.id)}
-              >
-                Xóa
-              </button>
-            </td>
+            <td className="py-3 px-6">{user.role}</td>
+            <td className="py-3 px-6">{user.skill}</td>
           </>
         )}
+        <td className="py-3 px-6 flex gap-2">
+          <button
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+          >
+            Sửa
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+            onClick={() => handleDeleteClick(user.id)}
+          >
+            Xóa
+          </button>
+        </td>
       </tr>
     ));
   };
 
   return (
     <div className="overflow-x-auto">
-      <div className="my-4 flex justify-center">{/* Render nút phân trang */}</div>
+      <DeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmDelete}
+      />
+      <div className="my-4 flex justify-center gap-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Trang trước
+        </button>
+        <span className="px-4 py-2">
+          Trang {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Trang tiếp theo
+        </button>
+      </div>
       <div className="flex bg-blue-800 text-white">
-        <button className={`flex-1 py-3`} onClick={() => setActiveTab("personal")}>
+        <button
+          className={`flex-1 py-3 ${activeTab === "personal" ? "bg-blue-600" : ""}`}
+          onClick={() => setActiveTab("personal")}
+        >
           Thông tin cá nhân
         </button>
-        <button className={`flex-1 py-3`} onClick={() => setActiveTab("job")}>
+        <button
+          className={`flex-1 py-3 ${activeTab === "job" ? "bg-blue-600" : ""}`}
+          onClick={() => setActiveTab("job")}
+        >
           Công việc
         </button>
       </div>
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead>{/* Render tiêu đề bảng */}</thead>
+        <thead>
+          <tr>
+            <th className="py-3 px-6">Tên</th>
+            {activeTab === "personal" ? (
+              <>
+                <th className="py-3 px-6">ID</th>
+                <th className="py-3 px-6">Email</th>
+                <th className="py-3 px-6">Mật khẩu</th>
+                <th className="py-3 px-6">Ngày sinh</th>
+                <th className="py-3 px-6">SĐT</th>
+                <th className="py-3 px-6">Giới tính</th>
+              </>
+            ) : (
+              <>
+                <th className="py-3 px-6">Chức vụ</th>
+                <th className="py-3 px-6">Kỹ năng</th>
+              </>
+            )}
+            <th className="py-3 px-6">Hành động</th>
+          </tr>
+        </thead>
         <tbody>{renderTabContent()}</tbody>
       </table>
     </div>

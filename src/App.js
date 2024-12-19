@@ -59,8 +59,19 @@ function App() {
               />
             }
           />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/:subPage" element={<AdminPage />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute isAdminRoute={true} content={<AdminPage />} />
+            }
+          />
+          <Route
+            path="/admin/:subPage"
+            element={
+              <PrivateRoute isAdminRoute={true} content={<AdminPage />} />
+            }
+          />
+        
         </Routes>
       </BrowserRouter>
     </div>
