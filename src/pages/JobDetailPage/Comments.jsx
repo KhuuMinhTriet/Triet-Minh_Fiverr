@@ -45,9 +45,8 @@ export default function Comments() {
           >
             <div className="flex items-center gap-4 border-b border-b-gray-300 pb-4">
               <img
-                src={comment.avatar}
-                className="w-16 h-16"
-                style={{ borderRadius: "50%" }}
+                src={comment.avatar|| "https://via.placeholder.com/40"}
+                className="rounded-full max-w-16"
                 alt=""
               />
               <div>

@@ -24,7 +24,9 @@ export let fiverrService = {
   layBinhLuanTheoCongViec: (id) => {
     return http.get(`/api/binh-luan/lay-binh-luan-theo-cong-viec/${id}`);
   },
-
+  layUser: () => {
+    return http.get(`/api/users`)
+  },
   layUserTheoID: (id) => {
     return http.get(`/api/users/${id}`);
   },
@@ -32,6 +34,43 @@ export let fiverrService = {
   layDanhSachDaThue: () => {
     return http.get("/api/thue-cong-viec/lay-danh-sach-da-thue");
   },
+  layCongViec: () => {
+    return http.get("/api/cong-viec")
+  },
+  layLoaiCongViec: () => {
+    return http.get(`/api/loai-cong-viec`);
+  },
+  LayLoaiDichVu: () => {
+    return http.get('/api/thue-cong-viec')
+  },
+  themnguoidung: (data) => {
+    return http.post('api/users', data)
+  },
+  themcongviec: (data) => {
+    return http.post('api/cong-viec', data)
+  },
+  themloaiwork: (data) => {
+    return http.post('api/chi-tiet-loai-cong-viec', data)
+  },
+  themdichvu: (data) => {
+    return http.post('api/thue-cong-viec', data)
+  },
+  capNhatNguoiDung: (id, data) => {
+    return http.put(`/api/users/${id}`, data);
+  },
+  
+  capNhatCongViec: (id, data) => {
+    return http.put(`/api/cong-viec/${id}`, data);
+  },
+  
+  capNhatLoaiCongViec: (id, data) => {
+    return http.put(`/api/chi-tiet-loai-cong-viec/${id}`, data);
+  },
+  
+  capNhatDichVu: (id, data) => {
+    return http.put(`/api/thue-cong-viec/${id}`, data);
+  },
+  
 
   xoaCongViecDaThue: (id) => {
     return http.delete(`/api/thue-cong-viec/${id}`);

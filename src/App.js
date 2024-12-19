@@ -10,7 +10,7 @@ import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
 import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
 import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-
+import AdminPage from './pages/AdminPage/admin';
 function App() {
   return (
     <div>
@@ -59,7 +59,8 @@ function App() {
               />
             }
           />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/:subPage" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </div>
