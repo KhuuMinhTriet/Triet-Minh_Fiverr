@@ -59,16 +59,8 @@ function App() {
               />
             }
           />
-          <Route
-            path="/admin"
-            element={
-              <Layout
-                enableScroll={false}
-                content={<PrivateRoute content={<AdminPage />} />}
-              />
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/:subPage" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </div>

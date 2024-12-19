@@ -1,0 +1,52 @@
+{"users": [
+      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng"},
+      { "name": "id", "placeholder": "Nhập mã người dùng", "type": "text", "title": "Mã người dùng" },
+      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
+      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
+      { "name": "birthday", "type": "date", "title": "Ngày sinh" },
+      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
+      { "name": "avatar", "type": "date", "title": "Ảnh đại diện" },
+      { "name": "gender", "type": "select", "options": ["Nam", "Nữ", "Khác"], "title": "Giới tính" },
+      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng"},
+      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
+      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" },
+      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" },
+      { "name": "bookingJob", "placeholder": "Nhập hành nghề", "type": "text", "title": "Hành nghề" }
+    ],
+    "user": [
+      { "name": "id", "placeholder": "Nhập mã người dùng", "type": "number", "title": "Mã người dùng" },
+      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "text", "title": "Tên người dùng" },
+      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
+      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
+      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
+      { "name": "birthday", "type": "date", "title": "Ngày sinh" },
+      { "name": "gender", "type": "select", "options": ["Nam", "Nữ", "Khác"], "title": "Giới tính" },
+      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
+      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" },
+      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" }
+    ],
+    "job": [
+      { "name": "id", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" },
+      { "name": "tenCongViec", "placeholder": "Nhập tên công việc", "type": "text", "title": "Tên công việc" },
+      { "name": "danhGia", "placeholder": "Đánh giá công việc", "type": "number", "title": "Đánh giá công việc" },
+      { "name": "giaTien", "placeholder": "Nhập giá tiền", "type": "number", "title": "Giá tiền" },
+      { "name": "nguoiTao", "placeholder": "Nhập người tạo", "type": "number", "title": "Người tạo" },
+      { "name": "hinhAnh", "placeholder": "Nhập hình ảnh", "type": "text", "title": "Hình ảnh" },
+      { "name": "moTa", "placeholder": "Nhập mô tả", "type": "text", "title": "Mô tả" },
+      { "name": "maChiTietLoaiCongViec", "placeholder": "Nhập mã chi tiết", "type": "number", "title": "Mã chi tiết" },
+      { "name": "moTaNgan", "placeholder": "Mô tả ngắn", "type": "text", "title": "Mô tả ngắn" },
+      { "name": "saoCongViec", "placeholder": "Nhập sao công việc", "type": "number", "title": "Sao công việc" }
+    ],
+    "jobType": [
+      { "name": "id", "placeholder": "Nhập mã loại công việc", "type": "number", "title": "Loại công việc" },
+      { "name": "tenChiTiet", "placeholder": "Nhập tên chi tiết", "type": "text", "title": "Tên chi tiết" }
+    ],
+    "service": [
+      { "name": "id", "placeholder": "Nhập mã dịch vụ", "type": "number", "title": "Mã dịch vụ" },
+      { "name": "maCongViec", "placeholder": "Nhập mã công việc", "type": "text", "title": "Mã công việc" },
+      { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "text", "title": "Mã người thuê" },
+      { "name": "ngayThue", "type": "date", "title": "Ngày thuê" },
+      { "name": "hoanThanh", "type": "select", "options": ["Hoàn thành", "Chưa hoàn thành"], "title": "Trạng thái" }
+    ]
+  }
+  
