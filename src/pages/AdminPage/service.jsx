@@ -45,23 +45,23 @@ export default function Service() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+  
     setEditedData((prevData) => {
-      if (name === "maCongViec" || name === "maNguoiThue") {
+      if (name === "hoanThanh") {
         return {
           ...prevData,
-          gender: Number(value),
+          hoanThanh: value === "true" // Cập nhật đúng giá trị boolean
         };
-      }
-      if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
+      } else if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
         return {
           ...prevData,
           [name]: value,
         };
       }
-      return prevData; 
+      return prevData;
     });
   };
+  
 
   const handleSaveClick = async () => {
     if (editingId) {
@@ -83,6 +83,19 @@ export default function Service() {
     }
     return filteredData.map((service) => (
       <tr className="hover:bg-gray-100" key={service.id}>
+         <td className="py-3 px-6">
+          {editingId === service.id ? (
+            <input
+              type="text"
+              name="maCongViec"
+              value={editedData.id || ""}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded"
+            />
+          ) : (
+            service.id
+          )}
+        </td>
         <td className="py-3 px-6">
           {editingId === service.id ? (
             <input
@@ -125,14 +138,14 @@ export default function Service() {
         <td className="py-3 px-6">
           {editingId === service.id ? (
             <select
-              name="hoanThanh"
-              value={editedData.hoanThanh || ""}
-              onChange={handleChange}
-              className="border px-2 py-1 rounded"
-            >
-              <option value={true}>Đã hoàn thành</option>
-              <option value={false}>Chưa hoàn thành</option>
-            </select>
+            name="hoanThanh"
+            value={editedData.hoanThanh || false} 
+            onChange={handleChange}
+            className="border px-2 py-1 rounded"
+          >
+            <option value={true}>Đã hoàn thành</option>
+            <option value={false}>Chưa hoàn thành</option>
+          </select>
           ) : (
             service.hoanThanh ? "Đã hoàn thành" : "Chưa hoàn thành"
           )}

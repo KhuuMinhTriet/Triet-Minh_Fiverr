@@ -253,23 +253,7 @@ export default function User() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={confirmDelete}
       />
-      <div className="my-4 flex justify-center gap-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Trang trước
-        </button>
-        <span className="px-4 py-2">
-          Trang {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Trang tiếp theo
-        </button>
-      </div>
+      
       <div className="flex bg-blue-800 text-white">
         <button
           className={`flex-1 py-3 ${activeTab === "personal" ? "bg-blue-600" : ""}`}
@@ -308,6 +292,58 @@ export default function User() {
         </thead>
         <tbody>{renderTabContent()}</tbody>
       </table>
+      <div className="my-4 flex justify-center gap-4">
+  {/* First Page Button */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    className="px-4 py-2 bg-gray-300 rounded"
+  >
+    {"First Page <<"}
+  </button>
+
+  {/* Prev Button */}
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    className="px-4 py-2 bg-gray-300 rounded"
+  >
+    {"<< Prev"}
+  </button>
+
+  {/* Render page numbers dynamically */}
+  {Array.from(
+    { length: Math.min(10, totalPages - (Math.floor((currentPage - 1) / 10) * 10)) },
+    (_, index) => {
+      const pageNumber = Math.floor((currentPage - 1) / 10) * 10 + (index + 1);
+      return (
+        pageNumber <= totalPages && (
+          <button
+            key={pageNumber}
+            onClick={() => setCurrentPage(pageNumber)}
+            className={`px-4 py-2 ${currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+          >
+            {pageNumber}
+          </button>
+        )
+      );
+    }
+  )}
+
+  <button
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    className="px-4 py-2 bg-gray-300 rounded"
+  >
+    {"Next >>"}
+  </button>
+
+
+  <button
+    onClick={() => setCurrentPage(totalPages)}
+    className="px-4 py-2 bg-gray-300 rounded"
+  >
+    {"Last page>>"}
+  </button>
+</div>
+
     </div>
   );
 }

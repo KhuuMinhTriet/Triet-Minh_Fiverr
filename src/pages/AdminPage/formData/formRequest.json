@@ -29,16 +29,10 @@
     ],
     "service": [
       { "name": "id", "placeholder": "Nhập mã dịch vụ", "type": "number", "title": "Mã dịch vụ" },
-      { "name": "maCongViec", "placeholder": "Nhập mã công việc", "type": "text", "title": "Mã công việc" },
-      { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "text", "title": "Mã người thuê" },
+      { "name": "maCongViec", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" },
+      { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "number", "title": "Mã người thuê" },
       { "name": "ngayThue", "type": "date", "title": "Ngày thuê" },
       { "name": "hoanThanh", "type": "select", "options": ["Hoàn thành", "Chưa hoàn thành"], "title": "Trạng thái" }
-    ],
-    "objectManage": [
-      { "user": ["id", "name", "email", "password", "phone", "birthday", "avatar", "gender", "role", "skill", "certification", "bookingJob"] },
-      { "job": ["id", "tenCongViec", "danhGia", "giaTien", "nguoiTao", "moTa", "maChiTietLoaiCongViec", "moTaNgan", "saoCongViec"] },
-      { "jobType": ["id", "tenChiTiet"] },
-      { "service": ["id", "maCongViec", "maNguoiThue", "ngayThue", "hoanThanh"] }
     ]
   }
   

@@ -65,8 +65,6 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ modalType
       default:
         throw new Error("Modal type không hợp lệ");
     }
-
-    console.log(`${modalType} đã thêm thành công:`, response.data);
     return response.data;
   } catch (error) {
     console.error('Lỗi khi thêm:', formData);
@@ -141,6 +139,10 @@ const adminSlice = createSlice({
   name: "data",
   initialState: {
     currentPage: 'admin',
+    pagination: {
+      currentPage: 1,  
+      totalPages: 1,   
+    },
     users: { list: [], loading: false, error: null },
     jobs: { list: [], loading: false, error: null },
     jobTypes: { list: [], loading: false, error: null },
@@ -161,6 +163,9 @@ const adminSlice = createSlice({
     closeModal: (state) => {
       state.modal.isVisible = false;
       state.modal.type = null; 
+    },
+    setTotalPages: (state, action) => {
+      state.pagination.totalPages = action.payload;
     },
     updateItem: (state, action) => {
       const { type, id, data } = action.payload;
@@ -195,20 +200,24 @@ const adminSlice = createSlice({
     resources.forEach(({ name, thunk }) => {
       builder
         .addCase(thunk.pending, (state) => handleResourceState(state, name, "pending"))
-        .addCase(thunk.fulfilled, (state, action) => handleResourceState(state, name, "fulfilled", action))
+        .addCase(thunk.fulfilled, (state, action) => {
+          handleResourceState(state, name, "fulfilled", action);
+          const totalPages = action.payload.totalPages;
+          state.pagination.totalPages = totalPages;
+        })
         .addCase(thunk.rejected, (state, action) => handleResourceState(state, name, "rejected", action));
     });
   
-    // Thêm xử lý cho updateItem
+    
     builder
     .addCase(updateItem.pending, (state) => {
-      state.loading = true; // Đánh dấu đang tải
+      state.loading = true; 
     })
     builder.addCase(updateItem.fulfilled, (state, action) => {
       const { modalType, id, data } = action.payload;
       const resourceState = state[modalType];
     
-      // Tìm đối tượng trong danh sách và thay thế đối tượng cũ bằng dữ liệu đã cập nhật
+      
       const index = resourceState.list.findIndex(item => item.id === id);
       if (index !== -1) {
         resourceState.list[index] = { ...resourceState.list[index], ...data };
@@ -217,8 +226,8 @@ const adminSlice = createSlice({
       resourceState.error = null;
     })
     .addCase(updateItem.rejected, (state, action) => {
-      state.loading = false; // Kết thúc trạng thái loading
-      state.error = action.error.message; // Lấy thông báo lỗi
+      state.loading = false; 
+      state.error = action.error.message;
       });
       
   },

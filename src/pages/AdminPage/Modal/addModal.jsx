@@ -1,216 +1,311 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import formRequest from "../formData/formRequest.json";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Swal from "sweetalert2";
+import { fetchUsers, fetchJobs, fetchJobTypes, fetchServices, addItem } from "../../../redux/adminSlice";
 import validateFormData from "./validateInput";
-import {
-  fetchUsers,
-  fetchJobs,
-  fetchJobTypes,
-  fetchServices,
-  addItem,
-} from "../../../redux/adminSlice";
+import formRequest from "../formData/formRequest.json";
+import styled from "styled-components";
 
-// Styled-components
+const Modal = ({ isVisible, closeModal, modalType }) => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    if (modalType && formRequest[modalType]) {
+      const initialData = formRequest[modalType].reduce((acc, field) => {
+        acc[field.name] = field.name === "skill" || field.name === "certification" ? [] : "";
+        return acc;
+      }, {});
+      setFormData(initialData);
+    }
+  }, [modalType]);
+
+  const validationSchema = Yup.object(
+    formRequest[modalType]?.reduce((acc, field) => {
+      if (field.required) {
+        acc[field.name] = Yup.string().required(`${field.title} là bắt buộc`);
+      } else {
+        acc[field.name] = Yup.string();
+      }
+      return acc;
+    }, {})
+  );
+  const formik = useFormik({
+    initialValues: formData,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      const validationErrors = validateFormData(values, formRequest, modalType);
+  
+      // If there are validation errors, set them and prevent submission
+      if (Object.keys(validationErrors).length > 0) {
+        formik.setErrors(validationErrors);
+        return; // Prevent form submission if there are errors
+      }
+  
+      const processedValues = { ...values };
+  
+      // Process skills and certifications into arrays
+      if (processedValues.skill) {
+        processedValues.skill = processedValues.skill.split(",").map((item) => item.trim());
+      }
+  
+      if (processedValues.certification) {
+        processedValues.certification = processedValues.certification.split(",").map((item) => item.trim());
+      }
+  
+      // Convert number fields
+      const numericFields = ["nguoiTao", "saoCongViec", "giaTien", "danhGia"];
+      numericFields.forEach((field) => {
+        if (processedValues[field]) {
+          processedValues[field] = parseFloat(processedValues[field]);
+        }
+      });
+  
+      const actionPayload = { modalType, formData: processedValues };
+      dispatch(addItem(actionPayload));
+      dispatch(fetchUsers());
+      dispatch(fetchJobs());
+      dispatch(fetchJobTypes());
+      dispatch(fetchServices());
+  
+      closeModal();
+  
+      Swal.fire({
+        title: `${modalType === "user" ? "người dùng" : modalType === "job" ? "công việc" : modalType === "jobType" ? "loại công việc" : "dịch vụ"} đã được thêm`,
+        text: `Thông tin ${modalType === "user" ? "người dùng" : modalType === "job" ? "công việc" : modalType === "jobType" ? "loại công việc" : "dịch vụ"} đã được thêm thành công.`,
+        icon: "success",
+        confirmButtonText: "OK",
+        customClass: {
+          popup: "bg-white shadow-lg rounded-lg",
+          title: "text-xl font-semibold text-gray-700",
+          confirmButton: "bg-blue-500 text-white px-6 py-2 rounded-md",
+        },
+      });
+    },
+  });
+  
+  const renderFields = () => {
+    return formRequest[modalType].map((field) => (
+      <InputFieldContainer key={field.name}>
+        <Label htmlFor={field.name}>{field.title}</Label>
+        {field.type === "select" ? (
+          <Select
+            name={field.name}
+            id={field.name}
+            onChange={(e) => {
+              const selectedOption = e.target.options[e.target.selectedIndex];
+              const selectedValue = selectedOption.getAttribute("data-value") === "true"; 
+              formik.setFieldValue(field.name, selectedValue); 
+            }}
+            onBlur={formik.handleBlur}
+          >
+            <Option value="">Chọn {field.title}</Option>
+            {field.options &&
+              field.options.map((option, index) => (
+                <Option key={index} value={option} data-value={index === 0 ? "true" : "false"}>
+                  {option}
+                </Option>
+              ))}
+          </Select>
+        ) : (
+          <Input
+            type={field.type}
+            name={field.name}
+            id={field.name}
+            value={formik.values[field.name] || ""}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isError={formik.touched[field.name] && formik.errors[field.name]}
+            placeholder={field.placeholder}
+          />
+        )}
+        {formik.touched[field.name] && formik.errors[field.name] && (
+          <ErrorMessage>{formik.errors[field.name]}</ErrorMessage>
+        )}
+      </InputFieldContainer>
+    ));
+  };
+  
+  return isVisible ? (
+    <ModalOverlay>
+      <ModalContainer>
+        <ModalHeader>
+        <h2>{modalType === "user" && "Thêm người dùng"}</h2>
+          <h2>{modalType === "job" && "Thêm công việc"}</h2>
+          <h2>{modalType === "service" && "Thêm dịch vụ"}</h2>
+          <h2>{modalType === "jobType" && "Thêm loại công việc"}</h2>
+          <CloseButton onClick={closeModal}>X</CloseButton>
+        </ModalHeader>
+
+        <form onSubmit={formik.handleSubmit}>
+          <ModalBody>
+            <FormGrid>{renderFields()}</FormGrid>
+
+            <FormValidation>
+              {Object.keys(formik.errors).length > 0 && (
+                <ErrorSummary>
+                  <ul>
+                    {Object.keys(formik.errors).map((key) => (
+                      <li key={key}>{formik.errors[key]}</li>
+                    ))}
+                  </ul>
+                </ErrorSummary>
+              )}
+            </FormValidation>
+          </ModalBody>
+
+          <ModalFooter>
+            <CancelButton type="button" onClick={closeModal}>Hủy</CancelButton>
+            <SubmitButton type="submit" disabled={formik.isSubmitting}>
+  {modalType === "user" && "Thêm người dùng"}
+  {modalType === "job" && "Thêm công việc"}
+  {modalType === "service" && "Thêm dịch vụ"}
+  {modalType === "jobType" && "Thêm loại công việc"}
+</SubmitButton>
+
+          </ModalFooter>
+        </form>
+      </ModalContainer>
+    </ModalOverlay>
+  ) : null;
+};
+
+export default Modal;
+
+
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  pointer-events: ${(props) => (props.isVisible ? "auto" : "none")};
-  transition: opacity 0.3s ease;
 `;
 
-const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
-  max-width: 90%;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  transform: ${(props) => (props.isVisible ? "scale(1)" : "scale(0.8)")};
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  transition: transform 0.3s ease, opacity 0.3s ease;
+const ModalContainer = styled.div`
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 600px;
+  max-width: 100%;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const CloseButton = styled.button`
-  background: crimson;
-  color: white;
+  background: none;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  font-size: 1.25rem;
   cursor: pointer;
-  margin-top: 20px;
-  &:hover {
-    background: darkred;
+`;
+
+const ModalBody = styled.div`
+  margin-top: 1rem;
+`;
+
+const ModalFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+`;
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
 `;
 
-const Modal = ({ isVisible, closeModal, modalType }) => {
-  const dispatch = useDispatch();
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState({});
+const InputFieldContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-  useEffect(() => {
- 
-    if (modalType && formRequest[modalType]) {
-      const initialData = formRequest[modalType].reduce((acc, field) => acc, {});
-      setFormData(initialData);
-    }
-  }, [modalType]);
+const Label = styled.label`
+  font-size: 0.875rem;
+  color: #333;
+`;
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-  
-    if (name === "danhGia" || name === "giaTien" || name === "nguoiTao" || name === "saoCongViec" || name === "maChiTietLoaiCongViec"|| name === "maCongViec" || name === "maNguoiThue") {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: Number(value),
-      }));
-      return;
-    } 
-    if (name === "gender" || name === "hoanThanh") {
-      const genderValue = value === "Nam" ? true : false;
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: genderValue,
-      }));
-      return;
-    } 
-    else if (name === "skill" || name === "certification") {
-      const arrayValue = value.split(",").map((item) => item.trim());
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: arrayValue,
-      }));
-      return;
-    }
-  
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value, 
-    }));
-  };
-  
-  const handleSubmit = async () => {
-    const validationErrors = validateFormData(formData, formRequest, modalType);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  border: 1px solid ${(props) => (props.isError ? "red" : "#ccc")};
+  border-radius: 4px;
+`;
 
-    const actionPayload = { modalType, formData };
-    dispatch(addItem(actionPayload));
-    dispatch(fetchUsers());
-    dispatch(fetchJobs());
-    dispatch(fetchJobTypes());
-    dispatch(fetchServices());
-    closeModal();
-  };
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  border: 1px solid ${(props) => (props.isError ? "red" : "#ccc")};
+  border-radius: 4px;
+`;
 
-  const renderFields = (fields) => {
-    return fields.map((field) => (
-      <td key={field.name} className="py-3 px-6">
-        {field.type !== "select" ? (
-          <div>
-            <input
-              type={field.type}
-              name={field.name}
-              value={formData[field.name] || ""}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border ${
-                errors[field.name] ? "border-red-500" : "border-gray-300"
-              } rounded-md`}
-              placeholder={field.placeholder}
-            />
-            {errors[field.name] && (
-              <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
-            )}
-          </div>
-        ) : (
-          <select
-          name={field.name}
-          
-          onChange={handleInputChange}
-          className={`w-full px-3 py-2 border ${
-            errors[field.name] ? "border-red-500" : "border-gray-300"
-          } rounded-md`}
-        >
-          <option value="">Chọn {field.title}</option>
-          {field.options &&
-            field.options.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
-              </option>
-            ))}
-        </select>
-        
-        )}
-      </td>
-    ));
-  };
+const Option = styled.option`
+  padding: 0.75rem;
+`;
 
-  return (
-    <ModalOverlay isVisible={isVisible} onClick={closeModal}>
-      <ModalContent isVisible={isVisible} onClick={(e) => e.stopPropagation()}>
-        <h2>{modalType === "user" && "Thêm người dùng"}</h2>
-        <h2>{modalType === "job" && "Thêm công việc"}</h2>
-        <h2>{modalType === "service" && "Thêm dịch vụ"}</h2>
-        <h2>{modalType === "jobType" && "Thêm loại công việc"}</h2>
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 0.875rem;
+`;
 
-        {modalType && (
-          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-gray-200">
-              <tr>
-                {formRequest[modalType].map((field) => (
-                  <th
-                    key={field.name}
-                    className="py-3 px-6 text-left text-gray-600 font-bold"
-                  >
-                    {field.title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>{renderFields(formRequest[modalType])}</tr>
-            </tbody>
-          </table>
-        )}
+const FormValidation = styled.div`
+  margin-top: 1rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 4px;
+`;
 
-<div className="flex justify-end gap-4">
+const ErrorSummary = styled.div`
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
 
-  <button
-    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
-    onClick={handleSubmit}
-  >
-    Thêm{" "}
-    {modalType === "user"
-      ? "người dùng"
-      : modalType === "job"
-      ? "công việc"
-      : modalType === "jobType"
-      ? "loại công việc"
-      : "dịch vụ"}
-  </button>
+  li {
+    color: red;
+    font-size: 0.875rem;
+  }
+`;
 
+const CancelButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  &:hover {
+    opacity: 0.9;
+  }
+`;
 
-  <button
-    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700 focus:outline-none"
-    onClick={closeModal}
-  >
-    Đóng
-  </button>
-</div>
-
-      </ModalContent>
-    </ModalOverlay>
-  );
-};
-
-export default Modal;
+const SubmitButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #45a049;
+  }
+`;

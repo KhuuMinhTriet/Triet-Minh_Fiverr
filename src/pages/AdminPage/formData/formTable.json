@@ -5,7 +5,7 @@
     { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
     { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
     { "name": "birthday", "type": "date", "title": "Ngày sinh" },
-    { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
+    { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "number", "title": "Số điện thoại" },
     { "name": "avatar", "type": "date", "title": "Ảnh đại diện" },
     { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính" },
     { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
