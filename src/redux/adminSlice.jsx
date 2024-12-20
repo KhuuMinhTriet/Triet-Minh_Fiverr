@@ -108,17 +108,17 @@ export const updateItem = createAsyncThunk(
       try {
         let response;
         switch (modalType) {
-          case "user":
-            response = await fiverrService.layUserTheoID(id).delete();
+          case "users":
+            response = await fiverrService.xoaNguoidung(id);
             break;
           case "job":
-            response = await fiverrService.layCongViecChiTiet(id).delete();
+            response = await fiverrService.xoaCongViecDaThue(id);
             break;
           case "jobType":
-            response = await fiverrService.capNhatLoaiCongViec(id).delete();
+            response = await fiverrService.xoaLoaiCongViecDaThue(id);
             break;
           case "service":
-            response = await fiverrService.capNhatDichVu(id).delete();
+            response = await fiverrService.xoaDichVuDaThue(id);
             break;
           default:
             throw new Error("Modal type không hợp lệ");
@@ -148,12 +148,12 @@ const adminSlice = createSlice({
     setPage: (state, action) => {
       state.currentPage = action.payload;
     },
-    reducers: {
-        deleteItem: (state, action) => {
-          const { type, id } = action.payload;
-          state[type].list = state[type].list.filter((item) => item.id !== id);
-        },
-      },
+
+    deleteItem: (state, action) => {
+      const { type, id } = action.payload;
+      state[type].list = state[type].list.filter((item) => item.id !== id);
+    },
+
       
     resetState: (state) => {
       // Reset tất cả các resource

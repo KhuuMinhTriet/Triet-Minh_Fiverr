@@ -7,7 +7,7 @@ import User from './user';
 import Job from './job';
 import JobType from './jobType';
 import Service from './service';
-import Modal from './Modal/Modal'; 
+import Modal from './Modal/addModal'; 
 
 const Admin = () => {
   const dispatch = useDispatch();

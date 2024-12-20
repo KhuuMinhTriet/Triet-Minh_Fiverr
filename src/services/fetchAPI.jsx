@@ -70,12 +70,26 @@ export let fiverrService = {
   capNhatDichVu: (id, data) => {
     return http.put(`/api/thue-cong-viec/${id}`, data);
   },
-  
-
-  xoaCongViecDaThue: (id) => {
-    return http.delete(`/api/thue-cong-viec/${id}`);
+  xoaNguoidung: (id) => {
+    return http.delete(`/api/users?id=${id}`)
+      .then(response => {
+        console.log("Xóa thành công:", response.data);
+        return response.data;
+      })
+      .catch(error => {
+        console.error("Lỗi khi xóa user:", error.response);
+        throw error;
+      });
   },
-
+  xoaCongViecDaThue: (id) => {
+    return http.delete(`/api/cong-viec?id=${id}`);
+  },
+  xoaLoaiCongViecDaThue: (id) => {
+    return http.delete(`/api/thue-cong-viec?id=${id}`);
+  },
+  xoaDichVuDaThue: (id) => {
+    return http.delete(`/api/thue-cong-viec?id=${id}`);
+  },
   laySkill: () => {
     return http.get("/api/skill");
   },

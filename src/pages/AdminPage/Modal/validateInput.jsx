@@ -1,10 +1,10 @@
 // validateInput.js
-const validateFormData = (formData, formConfig, modalType) => {
+const validateFormData = (formData, formTable, modalType) => {
     const validationErrors = {};
   
     if (!formData) return validationErrors;
   
-    formConfig[modalType].forEach((field) => {
+    formTable[modalType].forEach((field) => {
       const value = formData[field.name];
   
       if (field.required && !value) {

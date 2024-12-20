@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, deleteItemAsync } from "../../redux/adminSlice";
-import { DeleteModal } from "./Modal/Modal"; // Import modal component
+import { fetchUsers, deleteItemAsync, updateItem } from "../../redux/adminSlice";
+import DeleteModal from "./Modal/deleteModal"; 
 
-export default function ShowTable() {
+export default function User() {
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.adminSlice.users.list); // Updated state reference
+  const users = useSelector((state) => state.adminSlice.users.list);
   const [activeTab, setActiveTab] = useState("personal");
-  const [currentPage, setCurrentPage] = useState(1); // Current page
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-  const [deleteId, setDeleteId] = useState(null); // ID to delete
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [editingId, setEditingId] = useState(null); 
+  const [editedData, setEditedData] = useState({}); 
 
-  const itemsPerPage = 10; // Number of items to display per page
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(users.length / itemsPerPage);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function ShowTable() {
 
   const handleDeleteClick = (id) => {
     setDeleteId(id);
-    setIsModalOpen(true); // Open modal
+    setIsModalOpen(true);
   };
 
   const confirmDelete = () => {
@@ -38,6 +40,35 @@ export default function ShowTable() {
     setIsModalOpen(false);
   };
 
+  const handleEditClick = (user) => {
+    setEditingId(user.id); 
+    setEditedData(user); 
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "gender"){
+      const genderValue = value === "Nam" ? true : false;
+      setEditedData({
+        ...editedData,
+        [name] : genderValue
+      });
+      return;
+    }
+    setEditedData({
+      ...editedData,
+      [name]: name === "gender" ? value === "true" : value,
+    });
+  };
+  
+
+  const handleSaveClick = () => {
+    if (editingId) {
+      dispatch(updateItem({ modalType: "users", id: editingId, formData: editedData }));
+      setEditingId(null); 
+      console.log(`Đã lưu thay đổi cho người dùng ID: ${JSON.stringify(editedData)}`);
+    }
+  };
   const renderTabContent = () => {
     const filteredData = getFilteredData();
     if (filteredData.length === 0) {
@@ -54,36 +85,144 @@ export default function ShowTable() {
         <td className="py-3 px-6">{user.name}</td>
         {activeTab === "personal" ? (
           <>
-            <td className="py-3 px-6">{user.id}</td>
-            <td className="py-3 px-6">{user.email}</td>
-            <td className="py-3 px-6">{user.password}</td>
-            <td className="py-3 px-6">{user.birthday}</td>
-            <td className="py-3 px-6">{user.phone}</td>
-            <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
+            {editingId === user.id ? (
+              <>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="id"
+                    value={editedData.id || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="email"
+                    name="email"
+                    value={editedData.email || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="password"
+                    value={editedData.password || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={editedData.birthday || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="phone"
+                    value={editedData.phone || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <select
+                    name="gender"
+                    value={editedData.gender || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  >
+                    <option value="true">Nam</option>
+                    <option value="false">Nữ</option>
+                  </select>
+                </td>
+              </>
+            ) : (
+              <>
+                <td className="py-3 px-6">{user.id}</td>
+                <td className="py-3 px-6">{user.email}</td>
+                <td className="py-3 px-6">{user.password}</td>
+                <td className="py-3 px-6">{user.birthday}</td>
+                <td className="py-3 px-6">{user.phone}</td>
+                <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
+              </>
+            )}
           </>
-        ) : (
+        ) : activeTab === "job" ? (
           <>
-            <td className="py-3 px-6">{user.role}</td>
-            <td className="py-3 px-6">{user.skill}</td>
+            {editingId === user.id ? (
+              <>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="role"
+                    value={editedData.role || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="skill"
+                    value={editedData.skill || ""}
+                    onChange={handleChange}
+                    className="px-2 py-1 border"
+                  />
+                </td>
+              </>
+            ) : (
+              <>
+                <td className="py-3 px-6">{user.role}</td>
+                <td className="py-3 px-6">{user.skill}</td>
+              </>
+            )}
           </>
-        )}
+        ) : null}
         <td className="py-3 px-6 flex gap-2">
-          <button
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-          >
-            Sửa
-          </button>
-          <button
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-            onClick={() => handleDeleteClick(user.id)}
-          >
-            Xóa
-          </button>
+          {editingId === user.id ? (
+            <>
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                onClick={handleSaveClick}
+              >
+                Lưu
+              </button>
+              <button
+                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                onClick={() => setEditingId(null)}
+              >
+                Hủy
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                onClick={() => handleEditClick(user)}
+              >
+                Sửa
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                onClick={() => handleDeleteClick(user.id)}
+              >
+                Xóa
+              </button>
+            </>
+          )}
         </td>
       </tr>
     ));
   };
-
+  
   return (
     <div className="overflow-x-auto">
       <DeleteModal

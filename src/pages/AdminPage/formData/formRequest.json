@@ -1,5 +1,6 @@
-{"users": [
-      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng"},
+{
+    "users": [
+      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng" },
       { "name": "id", "placeholder": "Nhập mã người dùng", "type": "text", "title": "Mã người dùng" },
       { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
       { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
@@ -7,7 +8,6 @@
       { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
       { "name": "avatar", "type": "date", "title": "Ảnh đại diện" },
       { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính" },
-      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng"},
       { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
       { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" },
       { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" },
@@ -47,6 +47,12 @@
       { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "text", "title": "Mã người thuê" },
       { "name": "ngayThue", "type": "date", "title": "Ngày thuê" },
       { "name": "hoanThanh", "type": "select", "options": ["Hoàn thành", "Chưa hoàn thành"], "title": "Trạng thái" }
+    ],
+    "objectManage": [
+      { "user": ["id", "name", "email", "password", "phone", "birthday", "avatar", "gender", "role", "skill", "certification", "bookingJob"] },
+      { "job": ["id", "tenCongViec", "danhGia", "giaTien", "nguoiTao", "moTa", "maChiTietLoaiCongViec", "moTaNgan", "saoCongViec"] },
+      { "jobType": ["id", "tenChiTiet"] },
+      { "service": ["id", "maCongViec", "maNguoiThue", "ngayThue", "hoanThanh"] }
     ]
   }
   
