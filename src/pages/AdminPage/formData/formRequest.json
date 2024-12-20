@@ -1,18 +1,4 @@
 {
-    "users": [
-      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "number", "title": "Tên người dùng" },
-      { "name": "id", "placeholder": "Nhập mã người dùng", "type": "text", "title": "Mã người dùng" },
-      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
-      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
-      { "name": "birthday", "type": "date", "title": "Ngày sinh" },
-      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
-      { "name": "avatar", "type": "date", "title": "Ảnh đại diện" },
-      { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính" },
-      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
-      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" },
-      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" },
-      { "name": "bookingJob", "placeholder": "Nhập hành nghề", "type": "text", "title": "Hành nghề" }
-    ],
     "user": [
       { "name": "id", "placeholder": "Nhập mã người dùng", "type": "number", "title": "Mã người dùng" },
       { "name": "name", "placeholder": "Nhập tên người dùng", "type": "text", "title": "Tên người dùng" },
@@ -39,7 +25,7 @@
     ],
     "jobType": [
       { "name": "id", "placeholder": "Nhập mã loại công việc", "type": "number", "title": "Loại công việc" },
-      { "name": "tenChiTiet", "placeholder": "Nhập tên chi tiết", "type": "text", "title": "Tên chi tiết" }
+      { "name": "tenLoaiCongViec", "placeholder": "Nhập tên loại công việc", "type": "text", "title": "Tên loại công việc" }
     ],
     "service": [
       { "name": "id", "placeholder": "Nhập mã dịch vụ", "type": "number", "title": "Mã dịch vụ" },

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Template/Layout";
 import HomePage from "./pages/HomePage/HomePage";
@@ -9,8 +9,8 @@ import JobTypePage from "./pages/JobTypePage/JobTypePage";
 import JobDetailPage from "./pages/JobDetailPage/JobDetailPage";
 import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
 import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import AdminPage from './pages/AdminPage/admin';
+
 function App() {
   return (
     <div>
@@ -52,26 +52,17 @@ function App() {
           />
           <Route
             path="/user/:id"
-            element={
-              <Layout
-                enableScroll={false}
-                content={<PrivateRoute content={<UserAccountPage />} />}
-              />
-            }
+            element={<Layout enableScroll={false} content={<UserAccountPage />} />}
           />
+          {/* Xóa bỏ Layout cho AdminPage */}
           <Route
             path="/admin"
-            element={
-              <PrivateRoute isAdminRoute={true} content={<AdminPage />} />
-            }
+            element={<AdminPage />}
           />
           <Route
             path="/admin/:subPage"
-            element={
-              <PrivateRoute isAdminRoute={true} content={<AdminPage />} />
-            }
+            element={<AdminPage />}
           />
-        
         </Routes>
       </BrowserRouter>
     </div>

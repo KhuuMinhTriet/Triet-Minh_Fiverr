@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchJobs, updateItem } from "../../redux/adminSlice"; // Import Redux actions
+import { fetchJobs, updateItem, deleteItemAsync } from "../../redux/adminSlice"; // Import Redux actions
+import DeleteModal from "./Modal/deleteModal";
 import formTable from "./formData/formTable.json";
 
 export default function Job() {
   const dispatch = useDispatch();
   const { list: table, loading, error } = useSelector((state) => state.adminSlice.jobs);
-
+  const [deleteId, setDeleteId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRange, setCurrentRange] = useState([0, 10]);
-  const [activeTab, setActiveTab] = useState(1); // State to track active tab
-  const [editingRow, setEditingRow] = useState(null); // Track the currently edited row
-  const [editedData, setEditedData] = useState({}); // Store the edited data
+  const [activeTab, setActiveTab] = useState(1); 
+  const [editingRow, setEditingRow] = useState(null); 
+  const [editedData, setEditedData] = useState({}); 
 
   useEffect(() => {
     dispatch(fetchJobs());
@@ -19,24 +21,30 @@ export default function Job() {
   const getFilteredData = () => table.slice(currentRange[0], currentRange[1]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa công việc này?")) {
-      // Your delete logic here
-    }
+    setDeleteId(id); 
+    setIsModalOpen(true); 
   };
 
+  const handleConfirmDelete = () => {
+    dispatch(deleteItemAsync({ modalType: "jobs", id: deleteId }));
+ 
+    setIsModalOpen(false);
+  };
+
+
   const handleEdit = (job) => {
-    setEditingRow(job.id); // Set the current row as editable
-    setEditedData(job); // Pre-fill the form with the current row's data
+    setEditingRow(job.id); 
+    setEditedData(job);
   };
 
   const handleCancelEdit = () => {
-    setEditingRow(null); // Exit edit mode
-    setEditedData({}); // Clear edited data
+    setEditingRow(null);
+    setEditedData({}); 
   };
 
   const handleSaveEdit = (id) => {
-    dispatch(updateItem({ id, ...editedData })); // Dispatch the update action
-    setEditingRow(null); // Exit edit mode
+    dispatch(updateItem({ modalType: "jobs", id: id, formData: editedData }))
+    setEditingRow(null); 
   };
 
   const handleInputChange = (field, value) => {
@@ -47,13 +55,11 @@ export default function Job() {
   };
 
   const renderTableHeaders = () => {
-    const fields = formTable.job;
-
-    // Phân chia cột theo tab
+    const fields = formTable.jobs;
     const tabFields =
       activeTab === 1
         ? fields.slice(0, fields.findIndex((field) => field.name === "hinhAnh") + 1)
-        : fields.slice(fields.findIndex((field) => field.name === "moTa"));
+        : fields.slice(fields.findIndex((field) => field.name === "maChiTietLoaiCongViec"));
 
     return (
       <tr>
@@ -69,13 +75,11 @@ export default function Job() {
 
   const renderTableContent = () => {
     const filteredData = getFilteredData();
-    const fields = formTable.job;
-
-    // Phân chia cột theo tab
+    const fields = formTable.jobs;
     const tabFields =
       activeTab === 1
         ? fields.slice(0, fields.findIndex((field) => field.name === "hinhAnh") + 1)
-        : fields.slice(fields.findIndex((field) => field.name === "moTa"));
+        : fields.slice(fields.findIndex((field) => field.name === "maChiTietLoaiCongViec"));
 
     return filteredData.map((job, index) => (
       <tr className="hover:bg-gray-100" key={index}>
@@ -83,7 +87,6 @@ export default function Job() {
           <td key={field.name} className="py-3 px-6">
             {editingRow === job.id ? (
               field.name === "hinhAnh" ? (
-                // Chế độ chỉnh sửa: Cho phép nhập URL ảnh mới
                 <input
                   type="text"
                   value={editedData[field.name] || ""}
@@ -100,7 +103,6 @@ export default function Job() {
                 />
               )
             ) : field.name === "hinhAnh" ? (
-              // Hiển thị ảnh khi không ở chế độ chỉnh sửa
               <img
                 src={job[field.name]}
                 alt="Hình ảnh công việc"
@@ -154,8 +156,8 @@ export default function Job() {
     const total = table.length;
     const ranges = [];
 
-    for (let i = 0; i < total; i += 10) {
-      ranges.push([i, i + 10]);
+    for (let i = 0; i < total; i += 5) {
+      ranges.push([i, i + 5]);
     }
 
     return ranges.map((range, index) => (
@@ -189,7 +191,7 @@ export default function Job() {
               } rounded`}
               onClick={() => setActiveTab(1)}
             >
-              Tab 1: Mã công việc - Hình ảnh
+              Công việc
             </button>
             <button
               className={`px-4 py-2 mx-2 ${
@@ -197,18 +199,27 @@ export default function Job() {
               } rounded`}
               onClick={() => setActiveTab(2)}
             >
-              Tab 2: Mô tả - Hết
+              Chi tiết công việc
             </button>
           </div>
-
-          {/* Phân trang */}
-          <div className="my-4 flex justify-center">{renderPagination()}</div>
 
           {/* Bảng dữ liệu */}
           <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
             <thead className="bg-gray-200">{renderTableHeaders()}</thead>
             <tbody>{renderTableContent()}</tbody>
           </table>
+
+          {/* Phân trang */}
+          <div className="my-4 flex justify-center">{renderPagination()}</div>
+
+          {/* Modal xác nhận xóa */}
+          {isModalOpen && (
+            <DeleteModal
+              onConfirm={handleConfirmDelete}
+              onClose={() => setIsModalOpen(false)}
+              isOpen={isModalOpen}
+            />
+          )}
         </>
       )}
     </div>

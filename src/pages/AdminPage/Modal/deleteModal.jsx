@@ -1,10 +1,7 @@
 
 
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import formTable from "../formData/formTable.json";
-import validateFormData from "./validateInput";
-import { deleteItemAsync } from "../../../redux/adminSlice";
+import React from "react";
+
 
 export const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
     if (!isOpen) return null;

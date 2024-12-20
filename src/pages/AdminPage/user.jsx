@@ -47,28 +47,41 @@ export default function User() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "gender"){
-      const genderValue = value === "Nam" ? true : false;
-      setEditedData({
-        ...editedData,
-        [name] : genderValue
-      });
-      return;
-    }
-    setEditedData({
-      ...editedData,
-      [name]: name === "gender" ? value === "true" : value,
+
+    setEditedData((prevData) => {
+      if (name === "gender") {
+        const genderValue = value === "true"; 
+        return {
+          ...prevData,
+          gender: genderValue,
+        };
+      }
+      if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+      return prevData; 
     });
   };
-  
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     if (editingId) {
-      dispatch(updateItem({ modalType: "users", id: editingId, formData: editedData }));
-      setEditingId(null); 
-      console.log(`Đã lưu thay đổi cho người dùng ID: ${JSON.stringify(editedData)}`);
+      const { password, avatar, bookingJob, ...dataWithoutPasswordAndImage } = editedData;
+  
+      await dispatch(
+        updateItem({ modalType: "users", id: editingId, formData: dataWithoutPasswordAndImage })
+      );
+  
+      setEditingId(null);
+  
+      dispatch(fetchUsers());
+  
+      console.log(`Đã lưu thay đổi cho người dùng ID: ${JSON.stringify(dataWithoutPasswordAndImage)}`);
     }
   };
+
   const renderTabContent = () => {
     const filteredData = getFilteredData();
     if (filteredData.length === 0) {
@@ -82,7 +95,19 @@ export default function User() {
     }
     return filteredData.map((user) => (
       <tr className="hover:bg-gray-100" key={user.id}>
-        <td className="py-3 px-6">{user.name}</td>
+        <td className="py-3 px-6">
+          {editingId === user.id ? (
+            <input
+              type="text"
+              name="name"
+              value={editedData.name || ""}
+              onChange={handleChange}
+              className="px-2 py-1 border"
+            />
+          ) : (
+            user.name
+          )}
+        </td>
         {activeTab === "personal" ? (
           <>
             {editingId === user.id ? (
@@ -109,8 +134,6 @@ export default function User() {
                   <input
                     type="text"
                     name="password"
-                    value={editedData.password || ""}
-                    onChange={handleChange}
                     className="px-2 py-1 border"
                   />
                 </td>
@@ -135,7 +158,7 @@ export default function User() {
                 <td className="py-3 px-6">
                   <select
                     name="gender"
-                    value={editedData.gender || ""}
+                    value={editedData.gender ? "true" : "false"}
                     onChange={handleChange}
                     className="px-2 py-1 border"
                   >
@@ -222,7 +245,7 @@ export default function User() {
       </tr>
     ));
   };
-  
+
   return (
     <div className="overflow-x-auto">
       <DeleteModal

@@ -50,7 +50,7 @@ export let fiverrService = {
     return http.post('api/cong-viec', data)
   },
   themloaiwork: (data) => {
-    return http.post('api/chi-tiet-loai-cong-viec', data)
+    return http.post('api/loai-cong-viec', data)
   },
   themdichvu: (data) => {
     return http.post('api/thue-cong-viec', data)
@@ -64,7 +64,7 @@ export let fiverrService = {
   },
   
   capNhatLoaiCongViec: (id, data) => {
-    return http.put(`/api/chi-tiet-loai-cong-viec/${id}`, data);
+    return http.put(`/api/loai-cong-viec/${id}`, data);
   },
   
   capNhatDichVu: (id, data) => {
@@ -82,13 +82,13 @@ export let fiverrService = {
       });
   },
   xoaCongViecDaThue: (id) => {
-    return http.delete(`/api/cong-viec?id=${id}`);
+    return http.delete(`/api/cong-viec/${id}`);
   },
   xoaLoaiCongViecDaThue: (id) => {
-    return http.delete(`/api/thue-cong-viec?id=${id}`);
+    return http.delete(`/api/loai-cong-viec/${id}`);
   },
   xoaDichVuDaThue: (id) => {
-    return http.delete(`/api/thue-cong-viec?id=${id}`);
+    return http.delete(`/api/thue-cong-viec/${id}`);
   },
   laySkill: () => {
     return http.get("/api/skill");

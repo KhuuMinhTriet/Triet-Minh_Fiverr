@@ -72,37 +72,39 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ modalType
     console.error('Lỗi khi thêm:', formData);
     throw error;
   }
-});
-export const updateItem = createAsyncThunk(
-    "adminSlice/updateItem",
-    async ({ modalType, id, formData }) => {
-      try {
-        let response;
-        switch (modalType) {
-          case "user":
-            response = await fiverrService.capNhatNguoiDung(id, formData);
-            break;
-          case "job":
-            response = await fiverrService.capNhatCongViec(id, formData);
-            break;
-          case "jobType":
-            response = await fiverrService.capNhatLoaiCongViec(id, formData);
-            break;
-          case "service":
-            response = await fiverrService.capNhatDichVu(id, formData);
-            break;
-          default:
-            throw new Error("Modal type không hợp lệ");
-        }
-  
-        console.log(`${modalType} đã cập nhật thành công:`, response.data);
-        return { modalType, id, data: response.data };
-      } catch (error) {
-        console.error("Lỗi khi cập nhật:", error);
-        throw error;
+})
+;export const updateItem = createAsyncThunk(
+  "adminSlice/updateItem",
+  async ({ modalType, id, formData }, { dispatch }) => {
+    try {
+      let response;
+      switch (modalType) {
+        case "users":
+          response = await fiverrService.capNhatNguoiDung(id, formData);
+          break;
+        case "jobs":
+          response = await fiverrService.capNhatCongViec(id, formData);
+          break;
+        case "jobTypes":
+          response = await fiverrService.capNhatLoaiCongViec(id, formData);
+          break;
+        case "services":
+          response = await fiverrService.capNhatDichVu(id, formData);
+          break;
+        default:
+          throw new Error("Modal type không hợp lệ");
       }
+
+      console.log(`${modalType} đã cập nhật thành công:`, response.data);
+
+      return { modalType, id, data: response.data };
+    } catch (error) {
+      console.error("Lỗi khi cập nhật:", error);
+      throw error;
     }
-  );export const deleteItemAsync = createAsyncThunk(
+  }
+);
+export const deleteItemAsync = createAsyncThunk(
     "adminSlice/deleteItemAsync",
     async ({ modalType, id }, { dispatch }) => {
       try {
@@ -111,13 +113,13 @@ export const updateItem = createAsyncThunk(
           case "users":
             response = await fiverrService.xoaNguoidung(id);
             break;
-          case "job":
+          case "jobs":
             response = await fiverrService.xoaCongViecDaThue(id);
             break;
-          case "jobType":
+          case "jobTypes":
             response = await fiverrService.xoaLoaiCongViecDaThue(id);
             break;
-          case "service":
+          case "services":
             response = await fiverrService.xoaDichVuDaThue(id);
             break;
           default:
@@ -143,17 +145,36 @@ const adminSlice = createSlice({
     jobs: { list: [], loading: false, error: null },
     jobTypes: { list: [], loading: false, error: null },
     services: { list: [], loading: false, error: null },
+    modal: {
+      isVisible: false, 
+      type: null,      
+    }
   },
   reducers: {
     setPage: (state, action) => {
       state.currentPage = action.payload;
     },
-
-    deleteItem: (state, action) => {
-      const { type, id } = action.payload;
-      state[type].list = state[type].list.filter((item) => item.id !== id);
+    openModal: (state, action) => {
+      state.modal.isVisible = true;
+      state.modal.type = action.payload; 
     },
-
+    closeModal: (state) => {
+      state.modal.isVisible = false;
+      state.modal.type = null; 
+    },
+    updateItem: (state, action) => {
+      const { type, id, data } = action.payload;
+      const resourceState = state[type];
+      
+      resourceState.list = resourceState.list.map((item) =>
+        item.id === id ? { ...item, ...data } : item
+      );
+    },
+      deleteItem: (state, action) => {
+        const { type, id } = action.payload;
+        state[type].list = state[type].list.filter((item) => item.id !== id);
+      },
+  
       
     resetState: (state) => {
       // Reset tất cả các resource
@@ -180,29 +201,29 @@ const adminSlice = createSlice({
   
     // Thêm xử lý cho updateItem
     builder
-      .addCase(updateItem.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(updateItem.fulfilled, (state, action) => {
-        const { modalType, id, data } = action.payload;
-        const resourceState = state[modalType];
-  
-        // Cập nhật item trong danh sách
-        const index = resourceState.list.findIndex((item) => item.id === id);
-        if (index !== -1) {
-          resourceState.list[index] = { ...resourceState.list[index], ...data };
-        }
-  
-        resourceState.loading = false;
-      })
-      .addCase(updateItem.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+    .addCase(updateItem.pending, (state) => {
+      state.loading = true; // Đánh dấu đang tải
+    })
+    builder.addCase(updateItem.fulfilled, (state, action) => {
+      const { modalType, id, data } = action.payload;
+      const resourceState = state[modalType];
+    
+      // Tìm đối tượng trong danh sách và thay thế đối tượng cũ bằng dữ liệu đã cập nhật
+      const index = resourceState.list.findIndex(item => item.id === id);
+      if (index !== -1) {
+        resourceState.list[index] = { ...resourceState.list[index], ...data };
+      }
+      resourceState.loading = false;
+      resourceState.error = null;
+    })
+    .addCase(updateItem.rejected, (state, action) => {
+      state.loading = false; // Kết thúc trạng thái loading
+      state.error = action.error.message; // Lấy thông báo lỗi
       });
       
   },
   
 });
 
-export const { deleteItem, setPage, resetState } = adminSlice.actions;
+export const { deleteItem, setPage, resetState, openModal, closeModal} = adminSlice.actions;
 export default adminSlice.reducer;

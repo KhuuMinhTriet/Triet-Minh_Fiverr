@@ -9,7 +9,6 @@ import {
   fetchJobTypes,
   fetchServices,
   addItem,
-  deleteItemAsync
 } from "../../../redux/adminSlice";
 
 // Styled-components
@@ -68,7 +67,13 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
   
- 
+    if (name === "danhGia" || name === "giaTien" || name === "nguoiTao" || name === "saoCongViec" || name === "maChiTietLoaiCongViec"|| name === "maCongViec" || name === "maNguoiThue") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: Number(value),
+      }));
+      return;
+    } 
     if (name === "gender" || name === "hoanThanh") {
       const genderValue = value === "Nam" ? true : false;
       setFormData((prevData) => ({
@@ -77,7 +82,6 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
       }));
       return;
     } 
-    // Nếu là các trường như 'skill', 'certification'
     else if (name === "skill" || name === "certification") {
       const arrayValue = value.split(",").map((item) => item.trim());
       setFormData((prevData) => ({
@@ -87,10 +91,9 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
       return;
     }
   
-    // Cập nhật giá trị cho các trường khác
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value, // Đảm bảo giá trị được lưu vào formData đúng cách
+      [name]: value, 
     }));
   };
   
@@ -180,22 +183,31 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
           </table>
         )}
 
-        <div className="flex justify-end">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
-            onClick={handleSubmit}
-          >
-            Thêm{" "}
-            {modalType === "user"
-              ? "người dùng"
-              : modalType === "job"
-              ? "công việc"
-              : modalType === "jobType"
-              ? "loại công việc"
-              : "dịch vụ"}
-          </button>
-          <CloseButton onClick={closeModal}>Đóng Modal</CloseButton>
-        </div>
+<div className="flex justify-end gap-4">
+
+  <button
+    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
+    onClick={handleSubmit}
+  >
+    Thêm{" "}
+    {modalType === "user"
+      ? "người dùng"
+      : modalType === "job"
+      ? "công việc"
+      : modalType === "jobType"
+      ? "loại công việc"
+      : "dịch vụ"}
+  </button>
+
+
+  <button
+    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700 focus:outline-none"
+    onClick={closeModal}
+  >
+    Đóng
+  </button>
+</div>
+
       </ModalContent>
     </ModalOverlay>
   );
