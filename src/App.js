@@ -10,16 +10,18 @@ import JobFindByNamePage from "./pages/JobFindByNamePage/JobFindByNamePage";
 import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
 import AdminPage from './pages/AdminPage/admin/admin';
 import Layout from "./Template/Layout";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import NavigatePage from './pages/NavigatePage/navigatePage';
 
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<NavigatePage />} />
           <Route
-            path="/"
-            element={<Layout enableScroll={true} content={<HomePage />} />}
+            path="/home"
+            element={<Layout enableScroll={true} content={<HomePage />} />} 
           />
           <Route
             path="/job-type/:id"
@@ -27,21 +29,15 @@ function App() {
           />
           <Route
             path="/job-by-categories/:id"
-            element={
-              <Layout enableScroll={false} content={<JobByCategoriesPage />} />
-            }
+            element={<Layout enableScroll={false} content={<JobByCategoriesPage />} />}
           />
           <Route
             path="/job-by-name/:id"
-            element={
-              <Layout enableScroll={false} content={<JobFindByNamePage />} />
-            }
+            element={<Layout enableScroll={false} content={<JobFindByNamePage />} />}
           />
           <Route
             path="/job-detail/:id"
-            element={
-              <Layout enableScroll={false} content={<JobDetailPage />} />
-            }
+            element={<Layout enableScroll={false} content={<JobDetailPage />} />}
           />
           <Route
             path="/login"
@@ -51,27 +47,23 @@ function App() {
             path="/register"
             element={<Layout enableScroll={false} content={<SignUpPage />} />}
           />
+          
+          {/* Protected routes */}
           <Route
             path="/user/:id"
-            element={
-              <Layout
-                enableScroll={false}
-                content={<PrivateRoute component={UserAccountPage} />}
-              />
-            }
+            element={<PrivateRoute component={<Layout enableScroll={false} content={<UserAccountPage />} />} />}
           />
-        
-          {/* Bảo vệ trang Admin bằng AdminPrivateRoute */}
+       <Route path="/admin" element={<AdminPage />} />
+<Route path="/admin/:subPage" element={<AdminPage />} />
+
+
           <Route
-            path="/admin"
-            element={<PrivateRoute component={AdminPage} />}
-          />
-          <Route
-            path="/admin/:subPage"
-            element={<PrivateRoute component={AdminPage} />}
+            path="/navigate"
+            element={<Layout enableScroll={false} content={<NavigatePage />} />}
           />
           
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* Default route */}
+          <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
     </div>

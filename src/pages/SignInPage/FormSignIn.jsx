@@ -16,7 +16,7 @@ const FormLogin = () => {
       .then((result) => {
         let dataJson = JSON.stringify(result);
         localStorage.setItem("USER_LOGIN", dataJson);
-        navigate("/");
+        navigate("/home");
       })
       .catch((err) => {
         Swal.fire("Wrong email or password!", "", "error");
