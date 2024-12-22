@@ -1,77 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchServices, addItem, updateItem, deleteItemAsync } from "../../redux/adminSlice";
+import { fetchData} from "../../redux/adminSlice";
+import Pagination from './method/pagination'
 import DeleteModal from "./Modal/deleteModal";
+import {
+  getFilteredData,
+  handleDelete,
+  confirmDelete,
+  handleEdit,
+  handleSave,
+  handleInputChange,
+} from './method/method';
 
 export default function Service() {
   const dispatch = useDispatch();
-  const services = useSelector((state) => state.adminSlice.services.list);
-  const [activeTab, setActiveTab] = useState("service");  // Manage tabs if needed
-  const [currentPage, setCurrentPage] = useState(1);
+  
+  const { list: services, loading } = useSelector((state) => state.adminSlice);
+  const {pageSize, isSearch, pageIndex } = useSelector(state => state.adminSlice.pagination);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(services.length / itemsPerPage);
 
   useEffect(() => {
-    if (services.length === 0) {
-      dispatch(fetchServices());
-    }
-  }, [dispatch, services.length]);
+    
+    dispatch(fetchData("services", pageIndex, pageSize));
+  }, [dispatch, pageIndex, pageSize]);
 
-  const getFilteredData = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return services.slice(startIndex, startIndex + itemsPerPage);
-  };
-
-  const handleDeleteClick = (id) => {
-    setDeleteId(id);
-    setIsModalOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (deleteId) {
-      dispatch(deleteItemAsync({ modalType: "services", id: deleteId }));
-    }
-    setIsModalOpen(false);
-  };
-
-  const handleEditClick = (service) => {
-    setEditingId(service.id);
-    setEditedData(service);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-  
-    setEditedData((prevData) => {
-      if (name === "hoanThanh") {
-        return {
-          ...prevData,
-          hoanThanh: value === "true" // Cập nhật đúng giá trị boolean
-        };
-      } else if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
-        return {
-          ...prevData,
-          [name]: value,
-        };
-      }
-      return prevData;
-    });
-  };
-  
-
-  const handleSaveClick = async () => {
-    if (editingId) {
-      await dispatch(updateItem({ modalType: "services", id: editingId, formData: editedData }));
-      setEditingId(null);
-      dispatch(fetchServices());
-    }
-  };
   const renderTabContent = () => {
-    const filteredData = getFilteredData();
+    const filteredData = getFilteredData(services, [], isSearch, pageIndex, pageSize);
+
     if (filteredData.length === 0) {
       return (
         <tr>
@@ -81,15 +40,16 @@ export default function Service() {
         </tr>
       );
     }
-    return filteredData.map((service) => (
+
+    return filteredData?.map((service) => (
       <tr className="hover:bg-gray-100" key={service.id}>
-         <td className="py-3 px-6">
+        <td className="py-3 px-6">
           {editingId === service.id ? (
             <input
               type="text"
-              name="maCongViec"
+              name="id"
               value={editedData.id || ""}
-              onChange={handleChange}
+              onChange={(e) => handleInputChange(e, setEditedData)}
               className="border px-2 py-1 rounded"
             />
           ) : (
@@ -102,7 +62,7 @@ export default function Service() {
               type="text"
               name="maCongViec"
               value={editedData.maCongViec || ""}
-              onChange={handleChange}
+              onChange={(e) => handleInputChange(e, setEditedData)}
               className="border px-2 py-1 rounded"
             />
           ) : (
@@ -115,7 +75,7 @@ export default function Service() {
               type="text"
               name="maNguoiThue"
               value={editedData.maNguoiThue || ""}
-              onChange={handleChange}
+              onChange={(e) => handleInputChange(e, setEditedData)}
               className="border px-2 py-1 rounded"
             />
           ) : (
@@ -128,7 +88,7 @@ export default function Service() {
               type="date"
               name="ngayThue"
               value={editedData.ngayThue || ""}
-              onChange={handleChange}
+              onChange={(e) => handleInputChange(e, setEditedData)}
               className="border px-2 py-1 rounded"
             />
           ) : (
@@ -138,14 +98,14 @@ export default function Service() {
         <td className="py-3 px-6">
           {editingId === service.id ? (
             <select
-            name="hoanThanh"
-            value={editedData.hoanThanh || false} 
-            onChange={handleChange}
-            className="border px-2 py-1 rounded"
-          >
-            <option value={true}>Đã hoàn thành</option>
-            <option value={false}>Chưa hoàn thành</option>
-          </select>
+              name="hoanThanh"
+              value={editedData.hoanThanh || false}
+              onChange={(e) => handleInputChange(e, setEditedData)}
+              className="border px-2 py-1 rounded"
+            >
+              <option value={true}>Đã hoàn thành</option>
+              <option value={false}>Chưa hoàn thành</option>
+            </select>
           ) : (
             service.hoanThanh ? "Đã hoàn thành" : "Chưa hoàn thành"
           )}
@@ -155,7 +115,7 @@ export default function Service() {
             <>
               <button
                 className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                onClick={handleSaveClick}
+                onClick={() => handleSave("services", editedData, editingId, dispatch, setEditingId)}
               >
                 Lưu
               </button>
@@ -170,13 +130,13 @@ export default function Service() {
             <>
               <button
                 className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-                onClick={() => handleEditClick(service)}
+                onClick={() => handleEdit(service, setEditingId, setEditedData)}
               >
                 Sửa
               </button>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDeleteClick(service.id)}
+                onClick={() => handleDelete(service.id, dispatch, setDeleteId, setIsModalOpen)}
               >
                 Xóa
               </button>
@@ -186,31 +146,14 @@ export default function Service() {
       </tr>
     ));
   };
-  
+
   return (
     <div className="overflow-x-auto">
       <DeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={confirmDelete}
+        onConfirm={() => confirmDelete(deleteId, dispatch, setIsModalOpen)}
       />
-      <div className="my-4 flex justify-center gap-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Trang trước
-        </button>
-        <span className="px-4 py-2">
-          Trang {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Trang tiếp theo
-        </button>
-      </div>
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr>
@@ -224,6 +167,7 @@ export default function Service() {
         </thead>
         <tbody>{renderTabContent()}</tbody>
       </table>
+      <Pagination/>
     </div>
   );
 }

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import Swal from "sweetalert2";
-import { fetchUsers, fetchJobs, fetchJobTypes, fetchServices, addItem } from "../../../redux/adminSlice";
+import { fetchData, addItem, closeModal, openModal } from "../../../redux/adminSlice";
+
 import validateFormData from "./validateInput";
 import formRequest from "../formData/formRequest.json";
 import styled from "styled-components";
 
-const Modal = ({ isVisible, closeModal, modalType }) => {
+const Modal = () => {
   const dispatch = useDispatch();
+  const { isVisible, modalType } = useSelector((state) => state.adminSlice);  
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
@@ -22,56 +23,44 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
     }
   }, [modalType]);
 
-  const validationSchema = Yup.object(
-    formRequest[modalType]?.reduce((acc, field) => {
-      if (field.required) {
-        acc[field.name] = Yup.string().required(`${field.title} là bắt buộc`);
-      } else {
-        acc[field.name] = Yup.string();
-      }
-      return acc;
-    }, {})
-  );
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
     onSubmit: async (values) => {
       const validationErrors = validateFormData(values, formRequest, modalType);
-  
-      // If there are validation errors, set them and prevent submission
+
       if (Object.keys(validationErrors).length > 0) {
         formik.setErrors(validationErrors);
-        return; // Prevent form submission if there are errors
+        return;
       }
-  
+
       const processedValues = { ...values };
-  
-      // Process skills and certifications into arrays
+
       if (processedValues.skill) {
         processedValues.skill = processedValues.skill.split(",").map((item) => item.trim());
       }
-  
+
       if (processedValues.certification) {
         processedValues.certification = processedValues.certification.split(",").map((item) => item.trim());
       }
-  
-      // Convert number fields
+
       const numericFields = ["nguoiTao", "saoCongViec", "giaTien", "danhGia"];
       numericFields.forEach((field) => {
         if (processedValues[field]) {
           processedValues[field] = parseFloat(processedValues[field]);
         }
       });
-  
-      const actionPayload = { modalType, formData: processedValues };
+
+      const actionPayload = {resourceType: modalType, formData: processedValues };
       dispatch(addItem(actionPayload));
-      dispatch(fetchUsers());
-      dispatch(fetchJobs());
-      dispatch(fetchJobTypes());
-      dispatch(fetchServices());
-  
-      closeModal();
-  
+      dispatch(fetchData('users'));
+      dispatch(fetchData('jobs'));
+      dispatch(fetchData('jobTypes'));
+      dispatch(fetchData('services'));
+
+      // Close modal after submission
+      dispatch(closeModal());
+
       Swal.fire({
         title: `${modalType === "user" ? "người dùng" : modalType === "job" ? "công việc" : modalType === "jobType" ? "loại công việc" : "dịch vụ"} đã được thêm`,
         text: `Thông tin ${modalType === "user" ? "người dùng" : modalType === "job" ? "công việc" : modalType === "jobType" ? "loại công việc" : "dịch vụ"} đã được thêm thành công.`,
@@ -85,9 +74,9 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
       });
     },
   });
-  
+
   const renderFields = () => {
-    return formRequest[modalType].map((field) => (
+    return formRequest[modalType]?.map((field) => (
       <InputFieldContainer key={field.name}>
         <Label htmlFor={field.name}>{field.title}</Label>
         {field.type === "select" ? (
@@ -96,8 +85,8 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
             id={field.name}
             onChange={(e) => {
               const selectedOption = e.target.options[e.target.selectedIndex];
-              const selectedValue = selectedOption.getAttribute("data-value") === "true"; 
-              formik.setFieldValue(field.name, selectedValue); 
+              const selectedValue = selectedOption.getAttribute("data-value") === "true";
+              formik.setFieldValue(field.name, selectedValue);
             }}
             onBlur={formik.handleBlur}
           >
@@ -127,16 +116,16 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
       </InputFieldContainer>
     ));
   };
-  
+
   return isVisible ? (
     <ModalOverlay>
       <ModalContainer>
         <ModalHeader>
-        <h2>{modalType === "user" && "Thêm người dùng"}</h2>
+          <h2>{modalType === "user" && "Thêm người dùng"}</h2>
           <h2>{modalType === "job" && "Thêm công việc"}</h2>
           <h2>{modalType === "service" && "Thêm dịch vụ"}</h2>
           <h2>{modalType === "jobType" && "Thêm loại công việc"}</h2>
-          <CloseButton onClick={closeModal}>X</CloseButton>
+          <CloseButton onClick={() => dispatch(closeModal())}>X</CloseButton>
         </ModalHeader>
 
         <form onSubmit={formik.handleSubmit}>
@@ -157,14 +146,15 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton type="button" onClick={closeModal}>Hủy</CancelButton>
+            <CancelButton type="button" onClick={() => dispatch(closeModal())}>
+              Hủy
+            </CancelButton>
             <SubmitButton type="submit" disabled={formik.isSubmitting}>
-  {modalType === "user" && "Thêm người dùng"}
-  {modalType === "job" && "Thêm công việc"}
-  {modalType === "service" && "Thêm dịch vụ"}
-  {modalType === "jobType" && "Thêm loại công việc"}
-</SubmitButton>
-
+              {modalType === "user" && "Thêm người dùng"}
+              {modalType === "job" && "Thêm công việc"}
+              {modalType === "service" && "Thêm dịch vụ"}
+              {modalType === "jobType" && "Thêm loại công việc"}
+            </SubmitButton>
           </ModalFooter>
         </form>
       </ModalContainer>
@@ -173,6 +163,7 @@ const Modal = ({ isVisible, closeModal, modalType }) => {
 };
 
 export default Modal;
+
 
 
 

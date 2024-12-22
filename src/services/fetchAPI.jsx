@@ -93,4 +93,16 @@ export let fiverrService = {
   laySkill: () => {
     return http.get("/api/skill");
   },
+  searchUserOnPage: (pageIndex, pageSize) => {
+    return http.get(`api/users/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=2`)
+  },
+  searchJob: (pageIndex, pageSize) => {
+    return http.get(`api/cong-viec/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=2`)
+  },
+  searchTypeJob: (pageIndex, pageSize) => {
+    return http.get(`api/loai-cong-viec/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=2`)
+  },
+  searchService: (pageIndex, pageSize) => {
+    return http.get(`api/thue-cong-viec/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=2`)
+  },
 };

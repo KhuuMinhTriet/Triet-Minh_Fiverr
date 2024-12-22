@@ -1,90 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, deleteItemAsync, updateItem } from "../../redux/adminSlice";
+import { fetchData, setComponent } from "../../redux/adminSlice";
+
 import DeleteModal from "./Modal/deleteModal"; 
+import Pagination from "./method/pagination";
+import { 
+  getFilteredData, 
+  handleDelete, 
+  confirmDelete, 
+  handleEdit, 
+  handleSave, 
+  handleInputChange,
+} from './method/method';
 
 export default function User() {
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.adminSlice.users.list);
+  const {list: users, loading, error} = useSelector((state) => state.adminSlice);
+  const { list: searchResults } = useSelector(state => state.adminSlice.searchResults);
+  const { pageIndex, pageSize, isSearch } = useSelector(state => state.adminSlice.pagination);
+  const activeComponent = useSelector(state => state.activeComponent)
   const [activeTab, setActiveTab] = useState("personal");
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [editingId, setEditingId] = useState(null); 
-  const [editedData, setEditedData] = useState({}); 
-
-  const itemsPerPage = 10;
+  const [editingId, setEditingId] = useState(null);
+  const [editedData, setEditedData] = useState({});
+  const [currentPage, setCurrentPage] = useState(pageIndex || 1); 
+  const itemsPerPage = isSearch ? pageSize : 10;
   const totalPages = Math.ceil(users.length / itemsPerPage);
-
+  const validTotalPages = totalPages > 0 ? totalPages : 1;
   useEffect(() => {
-    if (users.length === 0) {
-      dispatch(fetchUsers());
-    }
-  }, [dispatch, users.length]);
-
-  const getFilteredData = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return users.slice(startIndex, startIndex + itemsPerPage);
-  };
-
-  const handleDeleteClick = (id) => {
-    setDeleteId(id);
-    setIsModalOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (deleteId) {
-      dispatch(deleteItemAsync({ modalType: "users", id: deleteId }));
-      console.log(`Đã xóa người dùng có ID: ${deleteId}`);
-    }
-    setIsModalOpen(false);
-  };
-
-  const handleEditClick = (user) => {
-    setEditingId(user.id); 
-    setEditedData(user); 
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setEditedData((prevData) => {
-      if (name === "gender") {
-        const genderValue = value === "true"; 
-        return {
-          ...prevData,
-          gender: genderValue,
-        };
-      }
-      if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
-        return {
-          ...prevData,
-          [name]: value,
-        };
-      }
-      return prevData; 
-    });
-  };
-
-  const handleSaveClick = async () => {
-    if (editingId) {
-      const { password, avatar, bookingJob, ...dataWithoutPasswordAndImage } = editedData;
+      
+      dispatch(fetchData("users", currentPage, pageSize));
+    }, [dispatch, currentPage, pageSize]);
   
-      await dispatch(
-        updateItem({ modalType: "users", id: editingId, formData: dataWithoutPasswordAndImage })
-      );
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   
-      setEditingId(null);
-  
-      dispatch(fetchUsers());
-  
-      console.log(`Đã lưu thay đổi cho người dùng ID: ${JSON.stringify(dataWithoutPasswordAndImage)}`);
-    }
+
+  const handleDeleteClick = (id) => handleDelete(id, setDeleteId, setIsModalOpen);
+
+  const confirmDeleteHandler = () => confirmDelete(deleteId, dispatch, setIsModalOpen);
+
+  const handleEditClick = (user) => handleEdit(user, setEditingId, setEditedData);
+
+  const handleSaveClick = () => handleSave('users', editedData, editingId, dispatch, setEditingId);
+
+  const handleChange = (e) => handleInputChange(e, setEditedData);
+
+  // Change current page data
+  const handlePageChange = ({ selected }) => {
+    const pageNumber = selected + 1;
+    setCurrentPage(pageNumber); 
   };
 
   const renderTabContent = () => {
-    const filteredData = getFilteredData();
-    if (filteredData.length === 0) {
+    const filteredData = getFilteredData(users, searchResults, isSearch, currentPage, itemsPerPage);
+    if (!isSearch && filteredData.length === 0) {
       return (
         <tr>
           <td colSpan={activeTab === "personal" ? 8 : 4} className="text-center py-3">
@@ -93,7 +72,7 @@ export default function User() {
         </tr>
       );
     }
-    return filteredData.map((user) => (
+    return filteredData?.map((user) => (
       <tr className="hover:bg-gray-100" key={user.id}>
         <td className="py-3 px-6">
           {editingId === user.id ? (
@@ -251,7 +230,7 @@ export default function User() {
       <DeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={confirmDelete}
+        onConfirm={confirmDeleteHandler}
       />
       
       <div className="flex bg-blue-800 text-white">
@@ -292,58 +271,9 @@ export default function User() {
         </thead>
         <tbody>{renderTabContent()}</tbody>
       </table>
-      <div className="my-4 flex justify-center gap-4">
-  {/* First Page Button */}
-  <button
-    onClick={() => setCurrentPage(1)}
-    className="px-4 py-2 bg-gray-300 rounded"
-  >
-    {"First Page <<"}
-  </button>
 
-  {/* Prev Button */}
-  <button
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    className="px-4 py-2 bg-gray-300 rounded"
-  >
-    {"<< Prev"}
-  </button>
-
-  {/* Render page numbers dynamically */}
-  {Array.from(
-    { length: Math.min(10, totalPages - (Math.floor((currentPage - 1) / 10) * 10)) },
-    (_, index) => {
-      const pageNumber = Math.floor((currentPage - 1) / 10) * 10 + (index + 1);
-      return (
-        pageNumber <= totalPages && (
-          <button
-            key={pageNumber}
-            onClick={() => setCurrentPage(pageNumber)}
-            className={`px-4 py-2 ${currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-gray-300"}`}
-          >
-            {pageNumber}
-          </button>
-        )
-      );
-    }
-  )}
-
-  <button
-    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-    className="px-4 py-2 bg-gray-300 rounded"
-  >
-    {"Next >>"}
-  </button>
-
-
-  <button
-    onClick={() => setCurrentPage(totalPages)}
-    className="px-4 py-2 bg-gray-300 rounded"
-  >
-    {"Last page>>"}
-  </button>
-</div>
-
+      {/* Pagination */}
+      <Pagination/>
     </div>
   );
 }

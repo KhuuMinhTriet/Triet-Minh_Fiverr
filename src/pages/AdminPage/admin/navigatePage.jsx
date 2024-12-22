@@ -1,13 +1,19 @@
 // NavigatePage.js
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { resetSearchResults } from '../../../redux/adminSlice'; // Import action
 import User from '../user';
 import Job from '../job';
 import JobType from '../jobType';
 import Service from '../service';
 
 const NavigatePage = () => {
-  const currentPage = useSelector(state => state.adminSlice.currentPage);
+  const dispatch = useDispatch();
+  const currentPage = useSelector((state) => state.adminSlice.currentPage);
+
+  useEffect(() => {
+    dispatch(resetSearchResults());
+  }, [currentPage, dispatch]);
 
   const renderPage = () => {
     switch (currentPage) {

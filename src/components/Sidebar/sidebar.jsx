@@ -1,10 +1,9 @@
-// Sidebar.js
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setPage } from '../../redux/adminSlice';
+import { setPage, openModal } from '../../redux/adminSlice';
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal }) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentPage = useSelector(state => state.adminSlice.currentPage);
@@ -19,6 +18,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Helper to determine active page
+  const isActivePage = (pageName) => currentPage === `/admin/${pageName}`;
+
+  // Function to handle modal opening
+  const handleOpenModal = (modalType) => {
+    dispatch(openModal(modalType)); // Dispatch openModal with the modal type
+  };
+
   return (
     <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-blue-800 text-white flex flex-col transition-all duration-300 overflow-hidden`}>
       <button className="text-2xl p-4 focus:outline-none hover:bg-blue-700" onClick={toggleDashBoard}>
@@ -27,9 +34,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
       {sidebarOpen && (
         <nav className="flex-1">
           <ul className="space-y-2">
+            {/* Quản lý người dùng */}
             <li>
               <div
-                className="p-4 flex justify-between items-center hover:bg-blue-700 cursor-pointer"
+                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyNguoiDung') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
                 onClick={() => toggleMenu('users', 'QuanLyNguoiDung')}
               >
                 Quản lý người dùng
@@ -39,7 +47,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => openModal('user')}
+                    onClick={() => handleOpenModal('user')} // Open 'user' modal
                   >
                     Thêm người dùng
                   </li>
@@ -47,10 +55,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
               )}
             </li>
 
-            {/* Menu Quản lý công việc */}
+            {/* Quản lý công việc */}
             <li>
               <div
-                className="p-4 flex justify-between items-center hover:bg-blue-700 cursor-pointer"
+                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyCongViec') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
                 onClick={() => toggleMenu('jobs', 'QuanLyCongViec')}
               >
                 Quản lý công việc
@@ -60,7 +68,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => openModal('job')}
+                    onClick={() => handleOpenModal('job')} // Open 'job' modal
                   >
                     Thêm công việc
                   </li>
@@ -68,20 +76,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
               )}
             </li>
 
-            {/* Menu Quản lý loại công việc */}
+            {/* Quản lý loại công việc */}
             <li>
               <div
-                className="p-4 flex justify-between items-center hover:bg-blue-700 cursor-pointer"
-                onClick={() => toggleMenu("jobTypes", 'QuanLyLoaiCongViec')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyLoaiCongViec') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
+                onClick={() => toggleMenu('jobTypes', 'QuanLyLoaiCongViec')}
               >
                 Quản lý loại công việc
-                <span>{openMenu === "jobTypes" ? "▲" : "▼"}</span>
+                <span>{openMenu === 'jobTypes' ? '▲' : '▼'}</span>
               </div>
-              {openMenu === "jobTypes" && (
+              {openMenu === 'jobTypes' && (
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => openModal('jobType')}
+                    onClick={() => handleOpenModal('jobType')} // Open 'jobType' modal
                   >
                     Thêm loại công việc
                   </li>
@@ -89,20 +97,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu, openModal
               )}
             </li>
 
-            {/* Menu Quản lý dịch vụ */}
+            {/* Quản lý dịch vụ */}
             <li>
               <div
-                className="p-4 flex justify-between items-center hover:bg-blue-700 cursor-pointer"
-                onClick={() => toggleMenu("services", 'QuanLyDichVu')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyDichVu') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
+                onClick={() => toggleMenu('services', 'QuanLyDichVu')}
               >
                 Quản lý dịch vụ
-                <span>{openMenu === "services" ? "▲" : "▼"}</span>
+                <span>{openMenu === 'services' ? '▲' : '▼'}</span>
               </div>
-              {openMenu === "services" && (
+              {openMenu === 'services' && (
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => openModal('service')}
+                    onClick={() => handleOpenModal('service')} // Open 'service' modal
                   >
                     Thêm dịch vụ
                   </li>

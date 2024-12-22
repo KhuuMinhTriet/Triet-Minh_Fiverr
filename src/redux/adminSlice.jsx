@@ -3,56 +3,66 @@ import { fiverrService } from '../services/fetchAPI';
 
 // Hàm xử lý trạng thái của các resources
 const handleResourceState = (state, resource, status, action) => {
-  const resourceState = state[resource]; 
-
   switch (status) {
     case "pending":
-      resourceState.loading = true;
+      state.loading = true;
       break;
     case "fulfilled":
-      resourceState.list = action.payload;
-      resourceState.loading = false;
-      resourceState.error = null;
+      state.list = action.payload;
+      state.loading = false;
+      state.error = null;
       break;
     case "rejected":
-      resourceState.loading = false;
-      resourceState.error = action.error.message;
+      state.loading = false;
+      state.error = action.error.message;
       break;
     default:
       break;
   }
 };
-
+export const fetchPaginatedData = createAsyncThunk(
+  "adminSlice/fetchPaginatedData",
+  async ({ resourceType, pageIndex, pageSize }) => {
+    const response = await fiverrService.fetchPaginated(resourceType, pageIndex, pageSize);
+    return {
+      resourceType,
+      data: response?.data.content || [],
+      total: response?.data.totalCount || 0,
+    };
+  }
+);
 // Các async actions để fetch dữ liệu từ server
-export const fetchJobs = createAsyncThunk("data/fetchJobs", async () => {
-  const response = await fiverrService.layCongViec();
-  return response?.data.content || [];
-});
-
-export const fetchUsers = createAsyncThunk("data/fetchUsers", async () => {
-  const response = await fiverrService.layUser();
-  return response?.data.content || [];
-});
-
-export const fetchJobTypes = createAsyncThunk("data/fetchJobTypes", async () => {
-  const response = await fiverrService.layLoaiCongViec();
-  return response?.data.content || [];
-});
-
-export const fetchServices = createAsyncThunk("data/fetchServices", async () => {
-  const response = await fiverrService.LayLoaiDichVu();
+export const fetchData = createAsyncThunk("data/fetchData", async (resourceType) => {
+  let response;
+  
+  switch (resourceType) {
+    case 'jobs':
+      response = await fiverrService.layCongViec();
+      break;
+    case 'users':
+      response = await fiverrService.layUser();
+      break;
+    case 'jobTypes':
+      response = await fiverrService.layLoaiCongViec();
+      break;
+    case 'services':
+      response = await fiverrService.LayLoaiDichVu();
+      break;
+    default:
+      throw new Error("Resource type not supported");
+  }
+  
   return response?.data.content || [];
 });
 
 // Thêm item (người dùng, công việc, loại công việc, dịch vụ)
-export const addItem = createAsyncThunk('adminSlice/addItem', async ({ modalType, formData }) => {
+export const addItem = createAsyncThunk('adminSlice/addItem', async ({ resourceType, formData }) => {
   try {
     let response;
-    switch (modalType) {
+    switch (resourceType) {
       case 'user':
         response = await fiverrService.themnguoidung(formData);
         break;
-     
       case 'job':
         response = await fiverrService.themcongviec(formData);
         break;
@@ -63,14 +73,15 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ modalType
         response = await fiverrService.themdichvu(formData);
         break;
       default:
-        throw new Error("Modal type không hợp lệ");
+        throw new Error("Resource type không hợp lệ");
     }
-    return response.data;
+    return response?.data.content || [];
   } catch (error) {
     console.error('Lỗi khi thêm:', formData);
     throw error;
   }
-})
+});
+
 ;export const updateItem = createAsyncThunk(
   "adminSlice/updateItem",
   async ({ modalType, id, formData }, { dispatch }) => {
@@ -134,105 +145,138 @@ export const deleteItemAsync = createAsyncThunk(
     }
   );
   
+
+export const searchUserOnPage = createAsyncThunk("data/searchUserOnPage", async ({pageIndex, pageSize}) => {
+  const response = await fiverrService.searchUserOnPage(pageIndex, pageSize);
+
+  return response?.data.content || [];
+});
+
+export const searchJob = createAsyncThunk("data/searchJob", async ({pageIndex, pageSize}) => {
+  const response = await fiverrService.searchJob(pageIndex, pageSize);
+
+  return response?.data.content || [];
+});
+export const searchTypeJob = createAsyncThunk("data/searchTypeJob", async ({pageIndex, pageSize}) => {
+  const response = await fiverrService.searchTypeJob(pageIndex, pageSize);
+
+  return response?.data.content || [];
+});
+export const searchService = createAsyncThunk("data/searchService", async ({pageIndex, pageSize}) => {
+  const response = await fiverrService.searchService(pageIndex, pageSize);
+
+  return response?.data.content || [];
+});
 // Redux slice
 const adminSlice = createSlice({
   name: "data",
   initialState: {
+    isVisible: false,
+    modalType: null,
     currentPage: 'admin',
     pagination: {
-      currentPage: 1,  
-      totalPages: 1,   
+      currentPage: 1,
+      totalPages: 1,
+      pageIndex: 1,
+      pageSize: 10,
+      isSearch: false,
     },
-    users: { list: [], loading: false, error: null },
-    jobs: { list: [], loading: false, error: null },
-    jobTypes: { list: [], loading: false, error: null },
-    services: { list: [], loading: false, error: null },
-    modal: {
-      isVisible: false, 
-      type: null,      
-    }
+    list: [],
+    originalData: [],
+    loading: false,
+    error: null,
+    resourceType: '',  
+    searchResults: { list: [], originalData: [], loading: false, error: null },
+    activeComponent: null, 
   },
   reducers: {
     setPage: (state, action) => {
       state.currentPage = action.payload;
+  
+    },
+    setResults: (state, action) => {
+      state.pagination.pageIndex = action.payload.pageIndex || state.pagination.pageIndex;
+      state.pagination.pageSize = action.payload.pageSize || state.pagination.pageSize;
+      state.pagination.isSearch = action.payload.isSearch ?? state.pagination.isSearch;
+      state.searchResults.list = action.payload;
+      state.list = action.payload;
+    },
+    setSearchResults: (state, action) => {
+      const newPageSize = action.payload.pageSize;
+      state.pagination.pageSize = newPageSize;
+      state.pagination.pageIndex = action.payload.pageIndex; 
+    
+     
+      state.pagination.currentPage = state.pagination.pageIndex;
+    
+
+      const totalItems = state.originalData.length;
+      const totalPages = Math.ceil(totalItems / state.pagination.pageSize);
+      state.pagination.totalPages = totalPages;
+    
+      const startIndex = (state.pagination.pageIndex - 1) * state.pagination.pageSize;
+      const endIndex = startIndex + state.pagination.pageSize;
+    
+
+      state.list = state.originalData.slice(startIndex, endIndex);
+    },
+    resetSearchResults: (state) => {
+      state.searchResults.list = [];  
+      state.pagination.isSearch = false;
+      state.list = [...state.originalData];  
     },
     openModal: (state, action) => {
-      state.modal.isVisible = true;
-      state.modal.type = action.payload; 
+      state.isVisible = true;
+      state.modalType = action.payload;
     },
     closeModal: (state) => {
-      state.modal.isVisible = false;
-      state.modal.type = null; 
+      state.isVisible = false;
+      state.modalType = null;
     },
     setTotalPages: (state, action) => {
       state.pagination.totalPages = action.payload;
     },
     updateItem: (state, action) => {
-      const { type, id, data } = action.payload;
-      const resourceState = state[type];
-      
-      resourceState.list = resourceState.list.map((item) =>
-        item.id === id ? { ...item, ...data } : item
-      );
+      const { id, data } = action.payload;
+      const index = state.list.findIndex(item => item.id === id);
+      if (index !== -1) {
+        state.list[index] = { ...state.list[index], ...data };
+      }
     },
-      deleteItem: (state, action) => {
-        const { type, id } = action.payload;
-        state[type].list = state[type].list.filter((item) => item.id !== id);
-      },
-  
-      
-    resetState: (state) => {
-      // Reset tất cả các resource
-      state.users = { list: [], loading: false, error: null };
-      state.jobs = { list: [], loading: false, error: null };
-      state.jobTypes = { list: [], loading: false, error: null };
-      state.services = { list: [], loading: false, error: null };
+    deleteItem: (state, action) => {
+      const { id } = action.payload;
+      state.list = state.list.filter((item) => item.id !== id);
     },
+    //chuyển đổi nội dung table các component
+    setComponent: (state, action) => {
+      const { currentPage } = action.payload;
+      state.activeComponent = currentPage;
+      state.pagination.currentPage = currentPage;
+      const startIndex = (currentPage - 1) * state.pagination.pageSize;
+      const endIndex = startIndex + state.pagination.pageSize;
+      state.list = state.originalData.slice(startIndex, endIndex);
+    }
   },
   extraReducers: (builder) => {
-    const resources = [
-      { name: "jobs", thunk: fetchJobs },
-      { name: "users", thunk: fetchUsers },
-      { name: "jobTypes", thunk: fetchJobTypes },
-      { name: "services", thunk: fetchServices },
-    ];
-  
-    resources.forEach(({ name, thunk }) => {
-      builder
-        .addCase(thunk.pending, (state) => handleResourceState(state, name, "pending"))
-        .addCase(thunk.fulfilled, (state, action) => {
-          handleResourceState(state, name, "fulfilled", action);
-          const totalPages = action.payload.totalPages;
-          state.pagination.totalPages = totalPages;
-        })
-        .addCase(thunk.rejected, (state, action) => handleResourceState(state, name, "rejected", action));
-    });
-  
-    
     builder
-    .addCase(updateItem.pending, (state) => {
-      state.loading = true; 
-    })
-    builder.addCase(updateItem.fulfilled, (state, action) => {
-      const { modalType, id, data } = action.payload;
-      const resourceState = state[modalType];
-    
-      
-      const index = resourceState.list.findIndex(item => item.id === id);
-      if (index !== -1) {
-        resourceState.list[index] = { ...resourceState.list[index], ...data };
-      }
-      resourceState.loading = false;
-      resourceState.error = null;
-    })
-    .addCase(updateItem.rejected, (state, action) => {
-      state.loading = false; 
-      state.error = action.error.message;
+      .addCase(fetchData.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchData.fulfilled, (state, action) => {
+        handleResourceState(state, action.meta.arg, 'fulfilled', action);
+        state.originalData = action.payload;
+        const totalPages = Math.ceil(action.payload.length / state.pagination.pageSize);
+        state.pagination.totalPages = totalPages;
+
+        state.list = action.payload.slice(0, state.pagination.pageSize);
+  state.loading = false;
+      })
+      .addCase(fetchData.rejected, (state, action) => {
+        handleResourceState(state, action.meta.arg, 'rejected', action);
+        state.error = true;
       });
-      
   },
-  
 });
 
-export const { deleteItem, setPage, resetState, openModal, closeModal} = adminSlice.actions;
+export const { setSearchResults, resetSearchResults, deleteItem, setPage, setResults, openModal, closeModal, setComponent } = adminSlice.actions;
 export default adminSlice.reducer;
