@@ -96,46 +96,61 @@ const NavigatePage = () => {
 
       {/* Admin Login Modal */}
       <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle>Đăng nhập Quản trị viên</DialogTitle>
-        <DialogContent>
-          <Formik
-            initialValues={{ username: '', password: '' }}
-            onSubmit={handleSubmitAdminLogin}
-          >
-            {({ values, handleChange }) => (
-              <Form>
-                <TextField
-                  label="Tên đăng nhập"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  name="username"
-                  value={values.username}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Mật khẩu"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  type="password"
-                  name="password"
-                  value={values.password}
-                  onChange={handleChange}
-                />
-                <DialogActions>
-                  <Button onClick={handleCloseModal} color="primary">
-                    Hủy
-                  </Button>
-                  <Button type="submit" color="primary">
-                    Đăng nhập
-                  </Button>
-                </DialogActions>
-              </Form>
-            )}
-          </Formik>
-        </DialogContent>
-      </Dialog>
+  <DialogTitle>Đăng nhập Quản trị viên</DialogTitle>
+  <DialogContent>
+    <Formik
+      initialValues={{ username: '', password: '' }}
+      validate={(values) => {
+        const errors = {};
+        if (!values.username) {
+          errors.username = 'Tên đăng nhập không được để trống.';
+        }
+        if (!values.password) {
+          errors.password = 'Mật khẩu không được để trống.';
+        }
+        return errors;
+      }}
+      onSubmit={handleSubmitAdminLogin}
+    >
+      {({ values, handleChange, errors, touched }) => (
+        <Form>
+          <TextField
+            label="Tên đăng nhập"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="username"
+            value={values.username}
+            onChange={handleChange}
+            error={touched.username && Boolean(errors.username)}
+            helperText={touched.username && errors.username}
+          />
+          <TextField
+            label="Mật khẩu"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            type="password"
+            name="password"
+            value={values.password}
+            onChange={handleChange}
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password}
+          />
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              Hủy
+            </Button>
+            <Button type="submit" color="primary">
+              Đăng nhập
+            </Button>
+          </DialogActions>
+        </Form>
+      )}
+    </Formik>
+  </DialogContent>
+</Dialog>
+
     </div>
   );
 };

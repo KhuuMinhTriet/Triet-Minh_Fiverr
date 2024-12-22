@@ -96,20 +96,26 @@ export default function Service() {
           )}
         </td>
         <td className="py-3 px-6">
-          {editingId === service.id ? (
-            <select
-              name="hoanThanh"
-              value={editedData.hoanThanh || false}
-              onChange={(e) => handleInputChange(e, setEditedData)}
-              className="border px-2 py-1 rounded"
-            >
-              <option value={true}>Đã hoàn thành</option>
-              <option value={false}>Chưa hoàn thành</option>
-            </select>
-          ) : (
-            service.hoanThanh ? "Đã hoàn thành" : "Chưa hoàn thành"
-          )}
-        </td>
+  {editingId === service.id ? (
+    <select
+      name="hoanThanh"
+      value={editedData.hoanThanh}
+      onChange={(e) => 
+        setEditedData((prevData) => ({
+          ...prevData,
+          hoanThanh: e.target.value === "true", 
+        }))
+      }
+      className="border px-2 py-1 rounded"
+    >
+      <option value="true">Đã hoàn thành</option>
+      <option value="false">Chưa hoàn thành</option>
+    </select>
+  ) : (
+    service.hoanThanh ? "Đã hoàn thành" : "Chưa hoàn thành"
+  )}
+</td>
+
         <td className="py-3 px-6 flex gap-2">
           {editingId === service.id ? (
             <>

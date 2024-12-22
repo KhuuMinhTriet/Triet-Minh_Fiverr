@@ -6,7 +6,7 @@ const AdminHeader = () => {
   const dispatch = useDispatch();
 
   const handleOpenModal = () => {
-    dispatch(openModal('user')); // Pass "user" as the modal type
+    dispatch(openModal('admin')); 
   };
 
   return (

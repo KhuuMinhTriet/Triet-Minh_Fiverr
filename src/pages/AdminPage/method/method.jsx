@@ -58,6 +58,23 @@ export const handleInputChange = (e, setEditedData) => {
         gender: genderValue,
       };
     }
+    if (name === "skill" || name === "certification") {
+     
+      const arrayValue = value.split(",").map((item) => item.trim());
+      return {
+        ...prevData,
+        [name]: arrayValue,
+      };
+    }
+    
+    if (name === "maCongViec" || name === 'maNguoiThue') {
+  
+      return {
+        ...prevData,
+        [name]: Number(value),
+      };
+    }
+   
     if (name !== "password" && name !== "avatar" && name !== "bookingJob") {
       return {
         ...prevData,

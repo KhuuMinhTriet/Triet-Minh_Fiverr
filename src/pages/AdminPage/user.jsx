@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData, setComponent } from "../../redux/adminSlice";
+import { fetchData } from "../../redux/adminSlice";
 
 import DeleteModal from "./Modal/deleteModal"; 
 import Pagination from "./method/pagination";
@@ -81,7 +81,7 @@ export default function User() {
               name="name"
               value={editedData.name || ""}
               onChange={handleChange}
-              className="px-2 py-1 border"
+              className="text-sm px-2 py-1 border"
             />
           ) : (
             user.name
@@ -97,7 +97,7 @@ export default function User() {
                     name="id"
                     value={editedData.id || ""}
                     onChange={handleChange}
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   />
                 </td>
                 <td className="py-3 px-6">
@@ -106,14 +106,14 @@ export default function User() {
                     name="email"
                     value={editedData.email || ""}
                     onChange={handleChange}
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   />
                 </td>
-                <td className="py-3 px-6">
+                <td className="text-sm py-3 px-6">
                   <input
                     type="text"
                     name="password"
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   />
                 </td>
                 <td className="py-3 px-6">
@@ -122,7 +122,7 @@ export default function User() {
                     name="birthday"
                     value={editedData.birthday || ""}
                     onChange={handleChange}
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   />
                 </td>
                 <td className="py-3 px-6">
@@ -131,7 +131,7 @@ export default function User() {
                     name="phone"
                     value={editedData.phone || ""}
                     onChange={handleChange}
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   />
                 </td>
                 <td className="py-3 px-6">
@@ -139,7 +139,7 @@ export default function User() {
                     name="gender"
                     value={editedData.gender ? "true" : "false"}
                     onChange={handleChange}
-                    className="px-2 py-1 border"
+                    className="text-sm px-2 py-1 border"
                   >
                     <option value="true">Nam</option>
                     <option value="false">Nữ</option>

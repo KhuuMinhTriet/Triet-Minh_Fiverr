@@ -63,6 +63,9 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ resourceT
       case 'user':
         response = await fiverrService.themnguoidung(formData);
         break;
+        case 'admin':
+          response = await fiverrService.themnguoidung(formData);
+          break;
       case 'job':
         response = await fiverrService.themcongviec(formData);
         break;

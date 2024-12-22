@@ -1,38 +1,50 @@
 {
     "user": [
-      { "name": "id", "placeholder": "Nhập mã người dùng", "type": "number", "title": "Mã người dùng" },
-      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "text", "title": "Tên người dùng" },
-      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" },
-      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" },
-      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" },
-      { "name": "birthday", "type": "date", "title": "Ngày sinh" },
-      { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính" },
-      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" },
-      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" },
-      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" }
+      { "name": "id", "placeholder": "Nhập mã người dùng", "type": "number", "title": "Mã người dùng", "valid" : "id" },
+      { "name": "name", "placeholder": "Nhập tên người dùng", "type": "text", "title": "Tên người dùng", "valid" : "name"  },
+      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email" , "valid" : "email" },
+      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu" , "valid" : "id" },
+      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại" , "valid" : "id" },
+      { "name": "birthday", "type": "date", "title": "Ngày sinh" , "valid" : "date" },
+      { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính" , "valid" : "id" },
+      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" , "valid" : "id" },
+      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng" , "valid" : "id" },
+      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ" , "valid" : "id" }
     ],
     "job": [
-      { "name": "id", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" },
-      { "name": "tenCongViec", "placeholder": "Nhập tên công việc", "type": "text", "title": "Tên công việc" },
-      { "name": "danhGia", "placeholder": "Đánh giá công việc", "type": "number", "title": "Đánh giá công việc" },
-      { "name": "giaTien", "placeholder": "Nhập giá tiền", "type": "number", "title": "Giá tiền" },
-      { "name": "nguoiTao", "placeholder": "Nhập người tạo", "type": "number", "title": "Người tạo" },
-      { "name": "hinhAnh", "placeholder": "Nhập hình ảnh", "type": "text", "title": "Hình ảnh" },
-      { "name": "moTa", "placeholder": "Nhập mô tả", "type": "text", "title": "Mô tả" },
-      { "name": "maChiTietLoaiCongViec", "placeholder": "Nhập mã chi tiết", "type": "number", "title": "Mã chi tiết" },
-      { "name": "moTaNgan", "placeholder": "Mô tả ngắn", "type": "text", "title": "Mô tả ngắn" },
-      { "name": "saoCongViec", "placeholder": "Nhập sao công việc", "type": "number", "title": "Sao công việc" }
+      { "name": "id", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" , "valid" : "id" },
+      { "name": "tenCongViec", "placeholder": "Nhập tên công việc", "type": "text", "title": "Tên công việc" , "valid" : "id" },
+      { "name": "danhGia", "placeholder": "Đánh giá công việc", "type": "number", "title": "Đánh giá công việc", "valid" : "id"  },
+      { "name": "giaTien", "placeholder": "Nhập giá tiền", "type": "number", "title": "Giá tiền" , "valid" : "id" },
+      { "name": "nguoiTao", "placeholder": "Nhập người tạo", "type": "number", "title": "Người tạo" , "valid" : "id" },
+      { "name": "hinhAnh", "placeholder": "Nhập hình ảnh", "type": "text", "title": "Hình ảnh" , "valid" : "id" },
+      { "name": "moTa", "placeholder": "Nhập mô tả", "type": "text", "title": "Mô tả" , "valid" : "id" },
+      { "name": "maChiTietLoaiCongViec", "placeholder": "Nhập mã chi tiết", "type": "number", "title": "Mã chi tiết" , "valid" : "id" },
+      { "name": "moTaNgan", "placeholder": "Mô tả ngắn", "type": "text", "title": "Mô tả ngắn" , "valid" : "id" },
+      { "name": "saoCongViec", "placeholder": "Nhập sao công việc", "type": "number", "title": "Sao công việc" , "valid" : "id" }
     ],
     "jobType": [
-      { "name": "id", "placeholder": "Nhập mã loại công việc", "type": "number", "title": "Loại công việc" },
-      { "name": "tenLoaiCongViec", "placeholder": "Nhập tên loại công việc", "type": "text", "title": "Tên loại công việc" }
+      { "name": "id", "placeholder": "Nhập mã loại công việc", "type": "number", "title": "Loại công việc" , "valid" : "id" },
+      { "name": "tenLoaiCongViec", "placeholder": "Nhập tên loại công việc", "type": "text", "title": "Tên loại công việc", "valid" : "id"  }
     ],
     "service": [
-      { "name": "id", "placeholder": "Nhập mã dịch vụ", "type": "number", "title": "Mã dịch vụ" },
-      { "name": "maCongViec", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" },
-      { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "number", "title": "Mã người thuê" },
-      { "name": "ngayThue", "type": "date", "title": "Ngày thuê" },
-      { "name": "hoanThanh", "type": "select", "options": ["Hoàn thành", "Chưa hoàn thành"], "title": "Trạng thái" }
+      { "name": "id", "placeholder": "Nhập mã dịch vụ", "type": "number", "title": "Mã dịch vụ", "valid" : "id"  },
+      { "name": "maCongViec", "placeholder": "Nhập mã công việc", "type": "number", "title": "Mã công việc" , "valid" : "id" },
+      { "name": "maNguoiThue", "placeholder": "Nhập mã người thuê", "type": "number", "title": "Mã người thuê", "valid" : "id"  },
+      { "name": "ngayThue", "type": "date", "title": "Ngày thuê", "valid" : "date" },
+      { "name": "hoanThanh", "type": "select", "options": ["Hoàn thành", "Chưa hoàn thành"], "title": "Trạng thái" , "valid" : "id" }
+    ],
+    "admin": [
+      { "name": "id", "placeholder": "Nhập mã quản trị viên", "type": "number", "title": "Mã quản trị viên" , "valid" : "id" },
+      { "name": "name", "placeholder": "Nhập tên Nhập mã quản trị viên", "type": "text", "title": "Tên quản trị viên" , "valid" : "name" },
+      { "name": "email", "placeholder": "Nhập địa chỉ email", "type": "email", "title": "Địa chỉ email", "valid" : "email"  },
+      { "name": "password", "placeholder": "Nhập mật khẩu", "type": "password", "title": "Mật khẩu", "valid" : "id"  },
+      { "name": "phone", "placeholder": "Nhập số điện thoại", "type": "text", "title": "Số điện thoại", "valid" : "id"  },
+      { "name": "birthday", "type": "date", "title": "Ngày sinh" },
+      { "name": "gender", "type": "select", "options": ["Nam", "Nữ"], "title": "Giới tính", "valid" : "id"  },
+      { "name": "role", "placeholder": "Nhập chức vụ", "type": "text", "title": "Chức vụ" , "valid" : "id" },
+      { "name": "skill", "placeholder": "Nhập kỹ năng", "type": "text", "title": "Kỹ năng", "valid" : "id"  },
+      { "name": "certification", "placeholder": "Nhập chứng chỉ", "type": "text", "title": "Chứng chỉ", "valid" : "id"  }
     ]
   }
   
