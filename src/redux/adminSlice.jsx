@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fiverrService } from '../services/fetchAPI';
-
+import formTable from '../pages/AdminPage/formData/formTable.json'
 // Hàm xử lý trạng thái của các resources
 const handleResourceState = (state, resource, status, action) => {
   switch (status) {
@@ -31,6 +31,29 @@ export const fetchPaginatedData = createAsyncThunk(
     };
   }
 );
+export const fetchDetail = createAsyncThunk("data/fetchDetail", async (resourceType, id) => {
+  let response;
+  
+  switch (resourceType) {
+    case 'jobs':
+      response = await fiverrService.layCongViecChitiet();
+      break;
+    case 'users':
+      response = await fiverrService.layUserTheoID();
+      break;
+    case 'jobTypes':
+      response = await fiverrService.layLoaiCongViecChiTiet();
+      break;
+    case 'services':
+      response = await fiverrService.LayLoaiDichVuChitiet();
+      break;
+    default:
+      throw new Error("Resource type not supported");
+  }
+  
+  return response?.data.content || [];
+});
+
 // Các async actions để fetch dữ liệu từ server
 export const fetchData = createAsyncThunk("data/fetchData", async (resourceType) => {
   let response;
@@ -174,6 +197,9 @@ export const searchService = createAsyncThunk("data/searchService", async ({page
 const adminSlice = createSlice({
   name: "data",
   initialState: {
+    activeTable: "users", // Bảng mặc định ban đầu
+    tableData: formTable.users, // Dữ liệu ban đầu cho bảng "users"
+    searchQuery: '',
     isVisible: false,
     modalType: null,
     currentPage: 'admin',
@@ -196,6 +222,17 @@ const adminSlice = createSlice({
     setPage: (state, action) => {
       state.currentPage = action.payload;
   
+    },
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
+    setActiveTable: (state, action) => {
+      const tableName = action.payload;
+      state.activeTable = tableName;
+      state.tableData = formTable[tableName] || [];
+      const startIndex = (state.pagination.currentPage - 1) * state.pagination.pageSize;
+      const endIndex = startIndex + state.pagination.pageSize;
+      state.list = state.originalData
     },
     setResults: (state, action) => {
       state.pagination.pageIndex = action.payload.pageIndex || state.pagination.pageIndex;
@@ -224,6 +261,7 @@ const adminSlice = createSlice({
       state.list = state.originalData.slice(startIndex, endIndex);
     },
     resetSearchResults: (state) => {
+      state.searchQuery = ''; 
       state.searchResults.list = [];  
       state.pagination.isSearch = false;
       state.list = [...state.originalData];  
@@ -277,9 +315,23 @@ const adminSlice = createSlice({
       .addCase(fetchData.rejected, (state, action) => {
         handleResourceState(state, action.meta.arg, 'rejected', action);
         state.error = true;
+      })
+      builder
+      .addCase(fetchDetail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDetail.fulfilled, (state, action) => {
+        const { data } = action.payload;
+        state.searchResults.list = data;
+        state.loading = false;
+      })
+      .addCase(fetchDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = "Error fetching search results";
       });
+      ;
   },
 });
 
-export const { setSearchResults, resetSearchResults, deleteItem, setPage, setResults, openModal, closeModal, setComponent } = adminSlice.actions;
+export const {setSearchQuery, setSearchResults, setActiveTable, resetSearchResults, deleteItem, setPage, setResults, openModal, closeModal, setComponent } = adminSlice.actions;
 export default adminSlice.reducer;

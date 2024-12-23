@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData } from "../../redux/adminSlice";
-
+import { fetchData, setActiveTable } from "../../redux/adminSlice";
 import DeleteModal from "./Modal/deleteModal"; 
 import Pagination from "./method/pagination";
+import UserTable from '../../components/Admin/table'
 import { 
   getFilteredData, 
   handleDelete, 
@@ -60,13 +60,12 @@ export default function User() {
     const pageNumber = selected + 1;
     setCurrentPage(pageNumber); 
   };
-
   const renderTabContent = () => {
     const filteredData = getFilteredData(users, searchResults, isSearch, currentPage, itemsPerPage);
     if (!isSearch && filteredData.length === 0) {
       return (
         <tr>
-          <td colSpan={activeTab === "personal" ? 8 : 4} className="text-center py-3">
+          <td colSpan={activeTab === "personal" ? 9 : 5} className="text-center py-3">
             Không có dữ liệu
           </td>
         </tr>
@@ -74,6 +73,7 @@ export default function User() {
     }
     return filteredData?.map((user) => (
       <tr className="hover:bg-gray-100" key={user.id}>
+        
         <td className="py-3 px-6">
           {editingId === user.id ? (
             <input
@@ -145,6 +145,7 @@ export default function User() {
                     <option value="false">Nữ</option>
                   </select>
                 </td>
+              
               </>
             ) : (
               <>
@@ -154,6 +155,13 @@ export default function User() {
                 <td className="py-3 px-6">{user.birthday}</td>
                 <td className="py-3 px-6">{user.phone}</td>
                 <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
+                <td className="py-3 px-6">
+          <img
+            src={user.avatar || "default-avatar-url.jpg"}  // Add default avatar if not available
+            alt="Avatar"
+            className="w-10 h-10 rounded-full object-cover"
+          />
+        </td>
               </>
             )}
           </>
@@ -224,7 +232,7 @@ export default function User() {
       </tr>
     ));
   };
-
+  
   return (
     <div className="overflow-x-auto">
       <DeleteModal
@@ -259,6 +267,7 @@ export default function User() {
                 <th className="py-3 px-6">Ngày sinh</th>
                 <th className="py-3 px-6">SĐT</th>
                 <th className="py-3 px-6">Giới tính</th>
+                <th className="py-3 px-6">Ảnh đại diện</th> 
               </>
             ) : (
               <>

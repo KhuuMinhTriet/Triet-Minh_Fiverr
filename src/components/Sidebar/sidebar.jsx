@@ -6,29 +6,42 @@ import { setPage, openModal } from '../../redux/adminSlice';
 const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentPage = useSelector(state => state.adminSlice.currentPage);
+  const currentPage = useSelector((state) => state.adminSlice.currentPage);
 
-  const toggleMenu = (menuName, page) => {
+  // Toggle the menu (expand/collapse) without navigation
+  const toggleMenu = (menuName) => {
     setOpenMenu(openMenu === menuName ? null : menuName);
+  };
+
+  // Handle navigation only for specific items (e.g., "Danh sách người dùng")
+  const navigateToPage = (page) => {
     navigate(`/admin/${page}`);
     dispatch(setPage(`/admin/${page}`));
   };
 
+  // Toggle sidebar visibility
   const toggleDashBoard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Helper to determine active page
+  // Check if the current page is active
   const isActivePage = (pageName) => currentPage === `/admin/${pageName}`;
 
-  // Function to handle modal opening
+  // Open modal for adding new entities
   const handleOpenModal = (modalType) => {
-    dispatch(openModal(modalType)); // Dispatch openModal with the modal type
+    dispatch(openModal(modalType));
   };
 
   return (
-    <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-blue-800 text-white flex flex-col transition-all duration-300 overflow-hidden`}>
-      <button className="text-2xl p-4 focus:outline-none hover:bg-blue-700" onClick={toggleDashBoard}>
+    <div
+      className={`${
+        sidebarOpen ? 'w-64' : 'w-16'
+      } bg-blue-800 text-white flex flex-col transition-all duration-300 overflow-hidden`}
+    >
+      <button
+        className="text-2xl p-4 focus:outline-none hover:bg-blue-700"
+        onClick={toggleDashBoard}
+      >
         ☰
       </button>
       {sidebarOpen && (
@@ -37,20 +50,29 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
             {/* Quản lý người dùng */}
             <li>
               <div
-                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyNguoiDung') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
-                onClick={() => toggleMenu('users', 'QuanLyNguoiDung')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${
+                  openMenu === 'users' ? 'bg-blue-700' : 'hover:bg-blue-700'
+                }`}
+                onClick={() => toggleMenu('users')}
               >
                 Quản lý người dùng
                 <span>{openMenu === 'users' ? '▲' : '▼'}</span>
               </div>
               {openMenu === 'users' && (
                 <ul className="pl-6 space-y-2">
+                   <li
+                    className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
+                    onClick={() => navigateToPage('QuanLyNguoiDung')}
+                  >
+                    Danh sách người dùng
+                  </li>
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => handleOpenModal('user')} // Open 'user' modal
+                    onClick={() => handleOpenModal('user')}
                   >
                     Thêm người dùng
                   </li>
+                 
                 </ul>
               )}
             </li>
@@ -58,8 +80,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
             {/* Quản lý công việc */}
             <li>
               <div
-                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyCongViec') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
-                onClick={() => toggleMenu('jobs', 'QuanLyCongViec')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${
+                  openMenu === 'jobs' ? 'bg-blue-700' : 'hover:bg-blue-700'
+                }`}
+                onClick={() => toggleMenu('jobs')}
               >
                 Quản lý công việc
                 <span>{openMenu === 'jobs' ? '▲' : '▼'}</span>
@@ -68,10 +92,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => handleOpenModal('job')} // Open 'job' modal
+                    onClick={() => navigateToPage('QuanLyCongViec')}
+                  >
+                    Danh sách công việc
+                  </li>
+                  <li
+                    className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
+                    onClick={() => handleOpenModal('job')}
                   >
                     Thêm công việc
                   </li>
+                  
                 </ul>
               )}
             </li>
@@ -79,8 +110,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
             {/* Quản lý loại công việc */}
             <li>
               <div
-                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyLoaiCongViec') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
-                onClick={() => toggleMenu('jobTypes', 'QuanLyLoaiCongViec')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${
+                  openMenu === 'jobTypes' ? 'bg-blue-700' : 'hover:bg-blue-700'
+                }`}
+                onClick={() => toggleMenu('jobTypes')}
               >
                 Quản lý loại công việc
                 <span>{openMenu === 'jobTypes' ? '▲' : '▼'}</span>
@@ -89,7 +122,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => handleOpenModal('jobType')} // Open 'jobType' modal
+                    onClick={() => navigateToPage('QuanLyLoaiCongViec')}
+                  >
+                    Danh sách loại công việc
+                  </li>
+                  <li
+                    className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
+                    onClick={() => handleOpenModal('jobType')}
                   >
                     Thêm loại công việc
                   </li>
@@ -100,8 +139,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
             {/* Quản lý dịch vụ */}
             <li>
               <div
-                className={`p-4 flex justify-between items-center cursor-pointer ${isActivePage('QuanLyDichVu') ? 'bg-blue-700' : 'hover:bg-blue-700'}`}
-                onClick={() => toggleMenu('services', 'QuanLyDichVu')}
+                className={`p-4 flex justify-between items-center cursor-pointer ${
+                  openMenu === 'services' ? 'bg-blue-700' : 'hover:bg-blue-700'
+                }`}
+                onClick={() => toggleMenu('services')}
               >
                 Quản lý dịch vụ
                 <span>{openMenu === 'services' ? '▲' : '▼'}</span>
@@ -110,7 +151,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, openMenu, setOpenMenu }) => {
                 <ul className="pl-6 space-y-2">
                   <li
                     className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
-                    onClick={() => handleOpenModal('service')} // Open 'service' modal
+                    onClick={() => navigateToPage('QuanLyDichVu')}
+                  >
+                    Danh sách công việc
+                  </li>
+                  <li
+                    className="hover:bg-blue-700 p-2 rounded-md cursor-pointer"
+                    onClick={() => handleOpenModal('service')}
                   >
                     Thêm dịch vụ
                   </li>

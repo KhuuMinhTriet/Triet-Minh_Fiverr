@@ -37,11 +37,20 @@ export let fiverrService = {
   layCongViec: () => {
     return http.get("/api/cong-viec")
   },
+  layCongViecChitiet: (id) => {
+    return http.get(`/api/cong-viec/${id}`)
+  },
   layLoaiCongViec: () => {
     return http.get(`/api/loai-cong-viec`);
   },
+  layLoaiCongViecChiTiet: (id) => {
+    return http.get(`/api/loai-cong-viec/${id}`);
+  },
   LayLoaiDichVu: () => {
     return http.get('/api/thue-cong-viec')
+  },
+  LayLoaiDichVuChitiet: (id) => {
+    return http.get(`/api/thue-cong-viec/${id}`)
   },
   themnguoidung: (data) => {
     return http.post('api/users', data)

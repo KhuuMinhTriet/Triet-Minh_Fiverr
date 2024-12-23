@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from "sweetalert2";
 import { Button, AppBar, Toolbar, Typography, Container, Grid2, Box, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import { Formik, Form, Field } from 'formik'; 
 import backgroundImage from '../../OIP.jpg';
@@ -10,9 +10,21 @@ import {handleLogin} from "../SignInPage/SigninRequest";
 
 
 const NavigatePage = () => {
-  const [openModal, setOpenModal] = useState(false);  
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const dispatch = useDispatch()
+  const location = useLocation(); // Get current location (URL)
+  
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    // Nếu URL không phải là homepage hoặc admin, tránh chuyển hướng
+    if (!location.pathname.includes('admin') && !location.pathname.includes('home')) {
+      setIsRedirecting(true); // Thiết lập trạng thái để không chuyển hướng
+    }
+  }, [location]);
+  const [openModal, setOpenModal] = useState(false);  
+ 
+
   const onFinishNew = async (values) => {
       try {
         await handleLogin(values, dispatch, navigate);
