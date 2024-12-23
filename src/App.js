@@ -62,8 +62,16 @@ function App() {
             }
           />
         
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/:subPage" element={<AdminPage />} />
+        <Route
+  path="/admin"
+  element={<AdminPage />}
+/>
+
+<Route
+  path="/admin:subpage"
+  element={<AdminPage />}
+/>
+
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

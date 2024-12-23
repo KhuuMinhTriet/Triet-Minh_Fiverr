@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
+import Swal from "sweetalert2";
 import { Button, AppBar, Toolbar, Typography, Container, Grid2, Box, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 import { Formik, Form, Field } from 'formik'; 
 import backgroundImage from '../../OIP.jpg';
-import Swal from "sweetalert2";
-import { useDispatch } from 'react-redux'; 
+import {handleLogin} from "../SignInPage/SigninRequest";
+
 
 const NavigatePage = () => {
   const [openModal, setOpenModal] = useState(false);  
   const navigate = useNavigate(); 
-  const dispatch = useDispatch(); 
-
+  const dispatch = useDispatch()
+  const onFinishNew = async (values) => {
+      try {
+        await handleLogin(values, dispatch, navigate);
+      } catch (err) {
+        console.error("Login failed:", err);
+      }
+    };
   const handleUserLogin = () => {
     navigate('/home'); 
   };
@@ -25,15 +33,7 @@ const NavigatePage = () => {
   };
 
   const handleSubmitAdminLogin = (values) => {
-    const { username, password } = values;
-
-    if (username === 'admin' && password === 'admin') {
-
-      Swal.fire('Welcome Admin!', '', 'success');
-      navigate('/admin'); // Chuyển hướng đến trang admin
-    } else {
-      Swal.fire('Invalid username or password!', '', 'error');
-    }
+    onFinishNew(values)
 
     setOpenModal(false); 
   };
@@ -62,7 +62,7 @@ const NavigatePage = () => {
       <Container maxWidth="sm" sx={{ textAlign: 'center', color: 'white', zIndex: 2 }}>
         <Box sx={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', padding: '30px', borderRadius: '8px' }}>
           <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold', fontSize: '2rem' }}>
-            Bạn là
+            Đăng nhập với tư cách: 
           </Typography>
           <Grid2 container spacing={2} justifyContent="center">
             {/* Nút đăng nhập người dùng */}
@@ -96,61 +96,60 @@ const NavigatePage = () => {
 
       {/* Admin Login Modal */}
       <Dialog open={openModal} onClose={handleCloseModal}>
-  <DialogTitle>Đăng nhập Quản trị viên</DialogTitle>
-  <DialogContent>
-    <Formik
-      initialValues={{ username: '', password: '' }}
-      validate={(values) => {
-        const errors = {};
-        if (!values.username) {
-          errors.username = 'Tên đăng nhập không được để trống.';
-        }
-        if (!values.password) {
-          errors.password = 'Mật khẩu không được để trống.';
-        }
-        return errors;
-      }}
-      onSubmit={handleSubmitAdminLogin}
-    >
-      {({ values, handleChange, errors, touched }) => (
-        <Form>
-          <TextField
-            label="Tên đăng nhập"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            name="username"
-            value={values.username}
-            onChange={handleChange}
-            error={touched.username && Boolean(errors.username)}
-            helperText={touched.username && errors.username}
-          />
-          <TextField
-            label="Mật khẩu"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="password"
-            name="password"
-            value={values.password}
-            onChange={handleChange}
-            error={touched.password && Boolean(errors.password)}
-            helperText={touched.password && errors.password}
-          />
-          <DialogActions>
-            <Button onClick={handleCloseModal} color="primary">
-              Hủy
-            </Button>
-            <Button type="submit" color="primary">
-              Đăng nhập
-            </Button>
-          </DialogActions>
-        </Form>
-      )}
-    </Formik>
-  </DialogContent>
-</Dialog>
-
+        <DialogTitle>Đăng nhập Quản trị viên</DialogTitle>
+        <DialogContent>
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validate={(values) => {
+              const errors = {};
+              if (!values.email) {
+                errors.email = 'Tên đăng nhập không được để trống.';
+              }
+              if (!values.password) {
+                errors.password = 'Mật khẩu không được để trống.';
+              }
+              return errors;
+            }}
+            onSubmit={(values) => handleSubmitAdminLogin(values)}
+          >
+            {({ values, handleChange, errors, touched }) => (
+              <Form>
+                <TextField
+                  label="Tên đăng nhập"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+                <TextField
+                  label="Mật khẩu"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  type="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+                <DialogActions>
+                  <Button onClick={handleCloseModal} color="primary">
+                    Hủy
+                  </Button>
+                  <Button type="submit" color="primary">
+                    Đăng nhập
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

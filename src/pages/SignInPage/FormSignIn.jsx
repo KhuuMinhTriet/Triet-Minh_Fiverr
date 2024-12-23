@@ -1,26 +1,19 @@
 import React from "react";
 import { Form, Input } from "antd";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate  } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginActionService } from "../../redux/userSlice";
-import Swal from "sweetalert2";
+import { handleLogin } from "./SigninRequest" // Import hàm xử lý đăng nhập
 
 const FormLogin = () => {
-  let navigate = useNavigate();
-  //hook dùng để gọi action từ redux / đưa dữ liệu lên store
-  let dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const onFinishNew = (values) => {
-    dispatch(loginActionService(values))
-      .unwrap()
-      .then((result) => {
-        let dataJson = JSON.stringify(result);
-        localStorage.setItem("USER_LOGIN", dataJson);
-        navigate("/home");
-      })
-      .catch((err) => {
-        Swal.fire("Wrong email or password!", "", "error");
-      });
+  const onFinishNew = async (values) => {
+    try {
+      await handleLogin(values, dispatch, navigate);
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -104,4 +97,5 @@ const FormLogin = () => {
     </Form>
   );
 };
+
 export default FormLogin;

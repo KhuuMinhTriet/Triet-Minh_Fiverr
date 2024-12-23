@@ -145,7 +145,7 @@ const Admin = () => {
       </div>
 
       {/* Modal Component */}
-      <Modal isVisible={modal} closeModal={closeModal} modalType={modalType} />
+      <Modal />
     </div>
   );
 };

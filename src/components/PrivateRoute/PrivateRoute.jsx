@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux";
 import { Navigate, useParams } from "react-router-dom";
+import handleLogin from '../../pages/SignInPage/SigninRequest';
 
-export default function PrivateRoute({ content, isAdminRoute }) {
+export default function PrivateRoute({ content }) {
   const user = useSelector((state) => state.userSlice.dataLogin); // Lấy thông tin người dùng từ Redux
   const params = useParams();
 
@@ -10,13 +11,8 @@ export default function PrivateRoute({ content, isAdminRoute }) {
     return <Navigate to="/" />;
   }
 
-  // Kiểm tra nếu không phải là admin và là route yêu cầu quyền admin
-  if (isAdminRoute && user.user.role !== 'admin') {
-    return <Navigate to="/admin" />;  // Chuyển hướng về trang chủ nếu không phải là admin
-  }
-
   // Kiểm tra nếu là trang người dùng, đảm bảo người dùng chỉ có thể truy cập trang của chính họ
-  if (!isAdminRoute && params.id !== user.user.id.toString()) {
+  if (params.id !== user.user.id.toString()) {
     return <Navigate to="/home" />;  // Chuyển hướng về trang chủ nếu người dùng không phải là trang của mình
   }
 
