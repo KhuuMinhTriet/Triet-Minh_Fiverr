@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData} from "../../redux/adminSlice";
+import { fetchData, openModalDelete} from "../../redux/adminSlice";
 import Pagination from './method/pagination'
 import DeleteModal from "./Modal/deleteModal";
 import {
@@ -17,7 +17,7 @@ export default function Service() {
   
   const { list: services, loading } = useSelector((state) => state.adminSlice);
   const {pageSize, isSearch, pageIndex } = useSelector(state => state.adminSlice.pagination);
-
+ const [deleteTarget, setDeleteTarget] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -142,7 +142,7 @@ export default function Service() {
               </button>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDelete(service.id, dispatch, setDeleteId, setIsModalOpen)}
+                onClick={() => dispatch(openModalDelete(service.id))}
               >
                 Xóa
               </button>

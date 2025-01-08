@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData, updateItem, deleteItemAsync, searchJob } from "../../redux/adminSlice";
+import { fetchData, openModalDelete} from "../../redux/adminSlice";
 
 import DeleteModal from "./Modal/deleteModal";
 import formTable from "./formData/formTable.json";
@@ -38,15 +38,6 @@ export default function Job() {
     return getFilteredData(jobs, searchResults, isSearch, currentPage, itemsPerPage);
   };
 
-  // Handle the delete action
-  const handleDeleteClick = (id) => {
-    handleDelete(id, dispatch, setDeleteId, setIsModalOpen);
-  };
-
-  // Confirm delete
-  const handleConfirmDelete = () => {
-    confirmDelete(deleteId, dispatch, setIsModalOpen);
-  };
 
   // Handle edit action
   const handleEditClick = (job) => {
@@ -63,7 +54,6 @@ export default function Job() {
     handleInputChange({ target: { name: field, value } }, setEditedData);
   };
 
-  const totalPages = Math.ceil(jobs.length / itemsPerPage);
 
   const renderTableHeaders = () => {
     const fields = formTable.jobs;
@@ -140,7 +130,7 @@ export default function Job() {
               </button>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDeleteClick(job.id)}
+                onClick={() => dispatch(openModalDelete(job.id))}
               >
                 Xóa
               </button>
@@ -178,17 +168,8 @@ export default function Job() {
             <tbody>{renderTableContent()}</tbody>
           </table>
           <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
           />
-          {isModalOpen && (
-            <DeleteModal
-              onConfirm={handleConfirmDelete}
-              onClose={() => setIsModalOpen(false)}
-              isOpen={isModalOpen}
-            />
-          )}
+          <DeleteModal/>
         </>
       )}
     </div>

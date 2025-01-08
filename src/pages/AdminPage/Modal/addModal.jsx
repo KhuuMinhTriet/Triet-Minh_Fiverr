@@ -68,34 +68,7 @@ const Modal = () => {
       .required("Dữ liệu không được để trống"),
      
   });
-// Hàm kiểm tra tính hợp lệ cho từng trường
-const checkFieldValidity = (formRequest, validationSchema) => {
-  const invalidFields = [];
 
-  Object.keys(formRequest).forEach(category => {
-    formRequest[category].forEach(field => {
-      const fieldName = field.valid;
-      if (validationSchema.fields[fieldName]) {
-        // Kiểm tra nếu trường hợp lệ
-        const fieldValidation = validationSchema.fields[fieldName];
-        try {
-          fieldValidation.validateSync("test value");
-        } catch (error) {
-          invalidFields.push({ fieldName, error: error.message });
-        }
-      } else {
-        // Nếu trường không có trong schema
-        invalidFields.push({ fieldName, error: "Không có validation trong schema" });
-      }
-    });
-  });
-
-  return invalidFields;
-};
-
-// Gọi hàm để kiểm tra
-const invalidFields = checkFieldValidity(formRequest, validationSchema);
-console.log(invalidFields);
   // Formik
   const formik = useFormik({
     initialValues: formData,

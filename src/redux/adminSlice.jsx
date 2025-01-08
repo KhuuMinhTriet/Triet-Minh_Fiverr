@@ -108,7 +108,7 @@ export const addItem = createAsyncThunk('adminSlice/addItem', async ({ resourceT
   }
 });
 
-;export const updateItem = createAsyncThunk(
+export const updateItem = createAsyncThunk(
   "adminSlice/updateItem",
   async ({ modalType, id, formData }, { dispatch }) => {
     try {
@@ -199,8 +199,10 @@ const adminSlice = createSlice({
   initialState: {
     activeTable: "users", // Bảng mặc định ban đầu
     tableData: formTable.users, // Dữ liệu ban đầu cho bảng "users"
-    searchQuery: '',
     isVisible: false,
+    deleteModal:false,
+    logoutModal: false,
+    updateModal: false,
     modalType: null,
     currentPage: 'admin',
     pagination: {
@@ -210,6 +212,7 @@ const adminSlice = createSlice({
       pageSize: 10,
       isSearch: false,
     },
+    id: 0,
     list: [],
     originalData: [],
     loading: false,
@@ -221,26 +224,15 @@ const adminSlice = createSlice({
   reducers: {
     setPage: (state, action) => {
       state.currentPage = action.payload;
-  
-    },
-    setSearchQuery: (state, action) => {
-      state.searchQuery = action.payload;
     },
     setActiveTable: (state, action) => {
       const tableName = action.payload;
       state.activeTable = tableName;
       state.tableData = formTable[tableName] || [];
-      const startIndex = (state.pagination.currentPage - 1) * state.pagination.pageSize;
-      const endIndex = startIndex + state.pagination.pageSize;
+   
       state.list = state.originalData
     },
-    setResults: (state, action) => {
-      state.pagination.pageIndex = action.payload.pageIndex || state.pagination.pageIndex;
-      state.pagination.pageSize = action.payload.pageSize || state.pagination.pageSize;
-      state.pagination.isSearch = action.payload.isSearch ?? state.pagination.isSearch;
-      state.searchResults.list = action.payload;
-      state.list = action.payload;
-    },
+
     setSearchResults: (state, action) => {
       const newPageSize = action.payload.pageSize;
       state.pagination.pageSize = newPageSize;
@@ -261,7 +253,6 @@ const adminSlice = createSlice({
       state.list = state.originalData.slice(startIndex, endIndex);
     },
     resetSearchResults: (state) => {
-      state.searchQuery = ''; 
       state.searchResults.list = [];  
       state.pagination.isSearch = false;
       state.list = [...state.originalData];  
@@ -274,9 +265,31 @@ const adminSlice = createSlice({
       state.isVisible = false;
       state.modalType = null;
     },
+    openModalDelete: (state, action) => {
+      state.deleteModal = true
+      state.id = action.payload
+    },
+    openLogoutModal: (state) =>{
+      state.logoutModal = true
+    },
+    closeModalDelete: (state) => {
+      state.deleteModal = false;
+      state.id = 0
+    },
+    openUpdateModal: (state) =>{
+      state.updateModal = true
+    },
+    closeUpdateModal: (state) => {
+      state.updateModal = false;
+      state.id = 0
+    },
+    closeLogoutModal: (state) =>{
+      state.logoutModal = false
+    },
     setTotalPages: (state, action) => {
       state.pagination.totalPages = action.payload;
     },
+   
     updateItem: (state, action) => {
       const { id, data } = action.payload;
       const index = state.list.findIndex(item => item.id === id);
@@ -333,5 +346,5 @@ const adminSlice = createSlice({
   },
 });
 
-export const {setSearchQuery, setSearchResults, setActiveTable, resetSearchResults, deleteItem, setPage, setResults, openModal, closeModal, setComponent } = adminSlice.actions;
+export const {setSearchResults, openLogoutModal, closeLogoutModal, openUpdateModal, closeUpdateModal, openModalDelete, closeModalDelete, setDeleteId, setActiveTable, resetSearchResults, deleteItem, setPage, openModal, closeModal, setComponent } = adminSlice.actions;
 export default adminSlice.reducer;

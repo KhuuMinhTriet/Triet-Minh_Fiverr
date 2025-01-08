@@ -11,11 +11,7 @@ import UserAccountPage from "./pages/UserAccountPage/UserAccountPage";
 import AdminPage from './pages/AdminPage/admin/admin';
 import Layout from "./Template/Layout";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import NavigatePage from './pages/NavigatePage/navigatePage';
-import User from './pages/AdminPage/user';
-import Job from './pages/AdminPage/job';
-import JobType from './pages/AdminPage/jobType';
-import Service from './pages/AdminPage/service';
+import NavigatePage from './pages/NavigatePage/navigatePage'
 
 function App() {
   return (
@@ -84,19 +80,19 @@ function App() {
           {/* Route phụ cho các trang con của Admin */}
           <Route
             path="/admin/QuanLyNguoiDung"
-            element={<PrivateRoute component={User} roleRequired="ADMIN" />}
+            element={<PrivateRoute component={AdminPage} roleRequired="ADMIN" />}
           />
           <Route
             path="/admin/QuanLyCongViec"
-            element={<PrivateRoute component={Job} roleRequired="ADMIN" />}
+            element={<PrivateRoute component={AdminPage} roleRequired="ADMIN" />}
           />
           <Route
             path="/admin/QuanLyLoaiCongViec"
-            element={<PrivateRoute component={JobType} roleRequired="ADMIN" />}
+            element={<PrivateRoute component={AdminPage} roleRequired="ADMIN" />}
           />
           <Route
             path="/admin/QuanLyDichVu"
-            element={<PrivateRoute component={Service} roleRequired="ADMIN" />}
+            element={<PrivateRoute component={AdminPage} roleRequired="ADMIN" />}
           />
           
           {/* Route mặc định cho NavigatePage */}

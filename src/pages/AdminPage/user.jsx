@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData, setActiveTable } from "../../redux/adminSlice";
+import { fetchData, setDeleteId, openModalDelete } from "../../redux/adminSlice";
 import DeleteModal from "./Modal/deleteModal"; 
 import Pagination from "./method/pagination";
-import UserTable from '../../components/Admin/table'
 import { 
   getFilteredData, 
   handleDelete, 
@@ -18,16 +17,12 @@ export default function User() {
   const {list: users, loading, error} = useSelector((state) => state.adminSlice);
   const { list: searchResults } = useSelector(state => state.adminSlice.searchResults);
   const { pageIndex, pageSize, isSearch } = useSelector(state => state.adminSlice.pagination);
-  const activeComponent = useSelector(state => state.activeComponent)
   const [activeTab, setActiveTab] = useState("personal");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
+  const Id = useSelector(state => state.adminSlice.id)
   const [editingId, setEditingId] = useState(null);
   const [editedData, setEditedData] = useState({});
   const [currentPage, setCurrentPage] = useState(pageIndex || 1); 
   const itemsPerPage = isSearch ? pageSize : 10;
-  const totalPages = Math.ceil(users.length / itemsPerPage);
-  const validTotalPages = totalPages > 0 ? totalPages : 1;
   useEffect(() => {
       
       dispatch(fetchData("users", currentPage, pageSize));
@@ -45,9 +40,12 @@ export default function User() {
 
   
 
-  const handleDeleteClick = (id) => handleDelete(id, setDeleteId, setIsModalOpen);
+  const handleDeleteClick = (id) => {
+  
+    dispatch(openModalDelete(id));
+    console.log(Id)
+  };
 
-  const confirmDeleteHandler = () => confirmDelete(deleteId, dispatch, setIsModalOpen);
 
   const handleEditClick = (user) => handleEdit(user, setEditingId, setEditedData);
 
@@ -55,11 +53,7 @@ export default function User() {
 
   const handleChange = (e) => handleInputChange(e, setEditedData);
 
-  // Change current page data
-  const handlePageChange = ({ selected }) => {
-    const pageNumber = selected + 1;
-    setCurrentPage(pageNumber); 
-  };
+
   const renderTabContent = () => {
     const filteredData = getFilteredData(users, searchResults, isSearch, currentPage, itemsPerPage);
     if (!isSearch && filteredData.length === 0) {
@@ -109,6 +103,7 @@ export default function User() {
                     className="text-sm px-2 py-1 border"
                   />
                 </td>
+                
                 <td className="text-sm py-3 px-6">
                   <input
                     type="text"
@@ -145,6 +140,15 @@ export default function User() {
                     <option value="false">Nữ</option>
                   </select>
                 </td>
+                <td className="py-3 px-6">
+                  <input
+                    type="text"
+                    name="id"
+                    value={editedData.avatar || ""}
+                    onChange={handleChange}
+                    className="text-sm px-2 py-1 border"
+                  />
+                </td>
               
               </>
             ) : (
@@ -157,7 +161,7 @@ export default function User() {
                 <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
                 <td className="py-3 px-6">
           <img
-            src={user.avatar || "default-avatar-url.jpg"}  // Add default avatar if not available
+            src={user.avatar || "default-avatar-url.jpg"}
             alt="Avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
@@ -222,7 +226,7 @@ export default function User() {
               </button>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDeleteClick(user.id)}
+                onClick={() => {dispatch(openModalDelete(user.id))}}
               >
                 Xóa
               </button>
@@ -236,9 +240,7 @@ export default function User() {
   return (
     <div className="overflow-x-auto">
       <DeleteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={confirmDeleteHandler}
+       
       />
       
       <div className="flex bg-blue-800 text-white">

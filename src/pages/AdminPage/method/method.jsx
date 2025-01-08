@@ -10,18 +10,15 @@ export const getFilteredData = (users, searchResults, isSearch, currentPage, ite
   };
 
 // Hàm xử lý logic xóa người dùng
-export const handleDelete = (id, setDeleteId, setIsModalOpen) => {
-  setDeleteId(id);
-  setIsModalOpen(true);
+export const handleDelete = async(id, dispatch) => {
+
 };
 
 // Hàm xác nhận xóa người dùng
-export const confirmDelete = async (deleteId, dispatch, setIsModalOpen) => {
+export const confirmDelete = async (modalType, deleteId, dispatch) => {
   if (deleteId) {
-    await dispatch(deleteItemAsync({ modalType: "users", id: deleteId }));
-    console.log(`Đã xóa người dùng có ID: ${deleteId}`);
+    await dispatch(deleteItemAsync({ modalType: modalType, id: deleteId }));
   }
-  setIsModalOpen(false);
 };
 
 // Hàm xử lý việc chỉnh sửa người dùng
@@ -42,7 +39,7 @@ export const handleSave = async (object, editedData, editingId, dispatch, setEdi
     setEditingId(null);
     dispatch(fetchData(object));
 
-    console.log(`Đã lưu thay đổi cho người dùng ID: ${JSON.stringify(dataWithoutPasswordAndImage)}`);
+    
   }
 };
 

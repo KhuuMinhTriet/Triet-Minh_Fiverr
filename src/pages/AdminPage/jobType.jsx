@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchData } from "../../redux/adminSlice";
+import { fetchData, openModalDelete } from "../../redux/adminSlice";
 import DeleteModal from "./Modal/deleteModal";
 import Pagination from "./method/pagination";
 import {
@@ -84,7 +84,7 @@ export default function JobType() {
           )}
           <button
             className="bg-red-500 text-white px-2 py-1 rounded ml-2"
-            onClick={() => handleDeleteClick(job.id)}
+            onClick={() => dispatch(openModalDelete(job.id))}
           >
             Xóa
           </button>
