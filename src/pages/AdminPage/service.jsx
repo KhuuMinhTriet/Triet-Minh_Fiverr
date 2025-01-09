@@ -1,11 +1,11 @@
 import React, {useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 import { fetchData, openModalDelete} from "../../redux/adminSlice";
 import Pagination from './method/pagination'
 import DeleteModal from "./Modal/deleteModal";
 import {
   getFilteredData,
-  handleDelete,
   confirmDelete,
   handleEdit,
   handleSave,
@@ -17,19 +17,38 @@ export default function Service() {
   
   const { list: services, loading } = useSelector((state) => state.adminSlice);
   const {pageSize, isSearch, pageIndex } = useSelector(state => state.adminSlice.pagination);
- const [deleteTarget, setDeleteTarget] = useState(null);
+const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editedData, setEditedData] = useState({});
-
+  const handleSaveClick = () => {
+    handleSave("services", editedData, editingId, dispatch, setEditingId).then(() => {
+     
+            Swal.fire({
+              icon: 'success',
+              title: 'Cập nhật thành công!',
+              text: 'Ảnh đại diện đã được cập nhật.',
+              confirmButtonText: 'OK',
+            });
+          })
+          .catch((error) => {
+    
+            Swal.fire({
+              icon: 'error',
+              title: 'Cập nhật thất bại!',
+              text: error.message || 'Đã xảy ra lỗi khi cập nhật.',
+              confirmButtonText: 'Thử lại',
+            });
+          });
+  }
   useEffect(() => {
     
     dispatch(fetchData("services", pageIndex, pageSize));
   }, [dispatch, pageIndex, pageSize]);
 
   const renderTabContent = () => {
-    const filteredData = getFilteredData(services, [], isSearch, pageIndex, pageSize);
+    const filteredData = isItemSearch ? searchItem : getFilteredData(services, [], isSearch, pageIndex, pageSize);
 
     if (filteredData.length === 0) {
       return (
@@ -121,7 +140,7 @@ export default function Service() {
             <>
               <button
                 className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                onClick={() => handleSave("services", editedData, editingId, dispatch, setEditingId)}
+                onClick={handleSaveClick}
               >
                 Lưu
               </button>

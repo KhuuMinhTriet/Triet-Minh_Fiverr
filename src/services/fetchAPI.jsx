@@ -82,7 +82,6 @@ export let fiverrService = {
   xoaNguoidung: (id) => {
     return http.delete(`/api/users?id=${id}`)
       .then(response => {
-        console.log("Xóa thành công:", response.data);
         return response.data;
       })
       .catch(error => {
@@ -114,4 +113,17 @@ export let fiverrService = {
   searchService: (pageIndex, pageSize) => {
     return http.get(`api/thue-cong-viec/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=2`)
   },
-};
+  CapNhatAvatar : async (file) => {
+      const formData = new FormData();
+      formData.append('formFile', file); 
+      try {
+       await http.post('/api/users/upload-avatar', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data', 
+          },
+        });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+  }
+}
+}

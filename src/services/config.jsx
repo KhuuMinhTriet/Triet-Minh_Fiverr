@@ -10,5 +10,6 @@ export let http = axios.create({
   headers: {
     TokenCybersoft: token,
     Token: JSON.parse(localStorage.getItem("USER_LOGIN"))?.token,
-  },
+  }
 });
+

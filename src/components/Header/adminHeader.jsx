@@ -10,10 +10,6 @@ const AdminHeader = () => {
     dispatch(openModal('admin'));
   };
 
-  const adminData = {
-    name: 'Admin Name', 
-    image: 'https://via.placeholder.com/150', 
-  };
 
   return (
     <div className="flex justify-between items-center mb-6">
@@ -39,7 +35,7 @@ const AdminHeader = () => {
       </button>
 
       {/* LoginState Component */}
-      <LoginState adminName={adminData.name} adminImage={adminData.image} />
+      <LoginState />
     </div>
   );
 };

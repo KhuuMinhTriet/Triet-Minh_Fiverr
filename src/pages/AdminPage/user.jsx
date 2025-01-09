@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchData, setDeleteId, openModalDelete } from "../../redux/adminSlice";
+import Swal from 'sweetalert2';
+import { fetchData, openModalDelete } from "../../redux/adminSlice";
 import DeleteModal from "./Modal/deleteModal"; 
 import Pagination from "./method/pagination";
 import { 
-  getFilteredData, 
-  handleDelete, 
-  confirmDelete, 
+  getFilteredData,  
   handleEdit, 
   handleSave, 
   handleInputChange,
@@ -17,10 +16,12 @@ export default function User() {
   const {list: users, loading, error} = useSelector((state) => state.adminSlice);
   const { list: searchResults } = useSelector(state => state.adminSlice.searchResults);
   const { pageIndex, pageSize, isSearch } = useSelector(state => state.adminSlice.pagination);
+  const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
   const [activeTab, setActiveTab] = useState("personal");
   const Id = useSelector(state => state.adminSlice.id)
   const [editingId, setEditingId] = useState(null);
   const [editedData, setEditedData] = useState({});
+   const [uploadFile, setUploadFile] = useState(null)
   const [currentPage, setCurrentPage] = useState(pageIndex || 1); 
   const itemsPerPage = isSearch ? pageSize : 10;
   useEffect(() => {
@@ -41,21 +42,52 @@ export default function User() {
   
 
   const handleDeleteClick = (id) => {
-  
     dispatch(openModalDelete(id));
-    console.log(Id)
   };
 
 
-  const handleEditClick = (user) => handleEdit(user, setEditingId, setEditedData);
+  const handleEditClick = (user) => handleEdit(user, setEditingId, setEditedData)
 
-  const handleSaveClick = () => handleSave('users', editedData, editingId, dispatch, setEditingId);
+  const handleSaveClick = () => {
+    handleSave("users",editedData, editingId, dispatch, setEditingId )
+      .then(() => {
+ 
+        Swal.fire({
+          icon: 'success',
+          title: 'Cập nhật thành công!',
+          text: 'Ảnh đại diện đã được cập nhật.',
+          confirmButtonText: 'OK',
+        });
+      })
+      .catch((error) => {
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Cập nhật thất bại!',
+          text: error.message || 'Đã xảy ra lỗi khi cập nhật.',
+          confirmButtonText: 'Thử lại',
+        });
+      });
+  
+   
+  };
+  
 
   const handleChange = (e) => handleInputChange(e, setEditedData);
-
-
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+   
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUploadFile(file)
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const renderTabContent = () => {
-    const filteredData = getFilteredData(users, searchResults, isSearch, currentPage, itemsPerPage);
+    const filteredData = isItemSearch ? searchItem : getFilteredData(users, searchResults, isSearch, currentPage, itemsPerPage);
     if (!isSearch && filteredData.length === 0) {
       return (
         <tr>
@@ -67,7 +99,6 @@ export default function User() {
     }
     return filteredData?.map((user) => (
       <tr className="hover:bg-gray-100" key={user.id}>
-        
         <td className="py-3 px-6">
           {editingId === user.id ? (
             <input
@@ -103,7 +134,6 @@ export default function User() {
                     className="text-sm px-2 py-1 border"
                   />
                 </td>
-                
                 <td className="text-sm py-3 px-6">
                   <input
                     type="text"
@@ -140,16 +170,15 @@ export default function User() {
                     <option value="false">Nữ</option>
                   </select>
                 </td>
+                {/* Input file cho avatar */}
                 <td className="py-3 px-6">
                   <input
-                    type="text"
-                    name="id"
-                    value={editedData.avatar || ""}
-                    onChange={handleChange}
+                    type="file"
+                    name="avatar"
+                    onChange={(e) => setEditedData({ ...editedData, avatar: e.target.files[0] })}
                     className="text-sm px-2 py-1 border"
                   />
                 </td>
-              
               </>
             ) : (
               <>
@@ -160,12 +189,22 @@ export default function User() {
                 <td className="py-3 px-6">{user.phone}</td>
                 <td className="py-3 px-6">{user.gender ? "Nam" : "Nữ"}</td>
                 <td className="py-3 px-6">
-          <img
-            src={user.avatar || "default-avatar-url.jpg"}
-            alt="Avatar"
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        </td>
+  {editingId === user.id ? (
+    <input
+      type="file"
+      name="avatar"
+      onChange={handleImageChange}  
+      className="text-sm px-2 py-1 border"
+    />
+  ) : (
+    <img
+      src={user.avatar || "default-avatar-url.jpg"}  
+      alt="Avatar"
+      className="w-10 h-10 rounded-full object-cover cursor-pointer" 
+    />
+  )}
+</td>
+
               </>
             )}
           </>
@@ -226,7 +265,7 @@ export default function User() {
               </button>
               <button
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => {dispatch(openModalDelete(user.id))}}
+                onClick={() => handleDeleteClick(user.id)}
               >
                 Xóa
               </button>

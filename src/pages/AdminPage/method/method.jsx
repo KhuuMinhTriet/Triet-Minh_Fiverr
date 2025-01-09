@@ -14,21 +14,22 @@ export const handleDelete = async(id, dispatch) => {
 
 };
 
-// Hàm xác nhận xóa người dùng
+// Hàm xác nhận xóa 
 export const confirmDelete = async (modalType, deleteId, dispatch) => {
   if (deleteId) {
     await dispatch(deleteItemAsync({ modalType: modalType, id: deleteId }));
   }
 };
 
-// Hàm xử lý việc chỉnh sửa người dùng
+// Hàm xử lý việc chỉnh sửa 
 export const handleEdit = (user, setEditingId, setEditedData) => {
   setEditingId(user.id);
   setEditedData(user);
 };
 
-// Hàm lưu thông tin người dùng đã chỉnh sửa
+// Hàm lưu thông tin đã chỉnh sửa
 export const handleSave = async (object, editedData, editingId, dispatch, setEditingId) => {
+
   if (editingId) {
     const { password, avatar, bookingJob, ...dataWithoutPasswordAndImage } = editedData;
     
@@ -38,8 +39,6 @@ export const handleSave = async (object, editedData, editingId, dispatch, setEdi
 
     setEditingId(null);
     dispatch(fetchData(object));
-
-    
   }
 };
 

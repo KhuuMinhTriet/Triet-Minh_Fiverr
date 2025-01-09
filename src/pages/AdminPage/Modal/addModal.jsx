@@ -45,35 +45,82 @@ const Modal = () => {
   };
 
 //validation
-  const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email("Email không hợp lệ")
-      .required("Email không được để trống"),
-    name: Yup.string()
-      .matches(/^[a-zA-Z\s]+$/, "Tên không chứa ký tự đặc biệt")
-      .required("Họ tên không được để trống"),
-    username: Yup.string()
-      .max(10, "Tên đăng nhập không được quá 10 ký tự"),
-    birthday: Yup.date()
-      .required("Ngày tháng không được để trống"),
-      id: Yup.string()
-      .required("Dữ liệu không được để trống"),
-      gender: Yup.string()
-      .required("Dữ liệu  không được để trống"),
-      password: Yup.string()
-      .required("Dữ liệu không được để trống"),
-      role: Yup.string()
-      .required("Dữ liệu không được để trống"),
-      phone: Yup.string()
-      .required("Dữ liệu không được để trống"),
-     
-  });
-
+  
+  const getValidationSchema = (modalType) => {
+    switch (modalType) {
+      case "user":
+      case "admin":
+        return Yup.object().shape({
+          email: Yup.string()
+          .email("Email không hợp lệ")
+          .required("Email không được để trống"),
+        name: Yup.string()
+          .matches(/^[a-zA-Z\s]+$/, "Tên không chứa ký tự đặc biệt")
+          .required("Họ tên không được để trống"),
+        username: Yup.string()
+          .max(10, "Tên đăng nhập không được quá 10 ký tự"),
+        birthday: Yup.date()
+          .required("Ngày tháng không được để trống"),
+          id: Yup.string()
+          .required("Dữ liệu không được để trống"),
+          gender: Yup.string()
+          .required("Dữ liệu  không được để trống"),
+          password: Yup.string()
+          .required("Dữ liệu không được để trống"),
+          role: Yup.string()
+          .required("Dữ liệu không được để trống"),
+          phone: Yup.string()
+          .required("Dữ liệu không được để trống"),
+          skill: Yup.string()
+          .required("Dữ liệu không được để trống"),
+          certification: Yup.string()
+          .required("Dữ liệu không được để trống"),
+        });
+      case "service":
+        return Yup.object().shape({
+          id: Yup.string()
+            .required("id không được để trống"),
+            maCongViec: Yup.string()
+            .required("Mã công việc không được để trống"),
+            maNguoiThue: Yup.string()
+            .required("Mã người thuê không được để trống"),
+            ngayThue: Yup.date()
+            .required("Ngày thuê không được để trống"),
+          hoanThanh: Yup.string().required("Mô tả công việc không được để trống"),
+        });
+      case "job":
+        return Yup.object().shape({
+          id: Yup.string()
+            .required("id không được để trống"),
+            tenCongViec: Yup.number()
+            .required("Tên công việc không được để trống"),
+            danhGia: Yup.number()
+            .required("Đánh giá không được để trống"),
+            giaTien: Yup.number()
+            .required("Giá tiền không được để trống"),
+            nguoiTao: Yup.number()
+            .required("Người tạo không được để trống"),
+            moTa: Yup.string()
+            .required("Mô tả không được để trống"),
+            maChiTietLoaiCongViec: Yup.number()
+            .required("Mã chi tiết không được để trống"),
+            moTaNgan: Yup.string()
+            .required("Mô tả ngắn không được để trống"),
+            saoCongViec: Yup.number()
+            .required("Sao công việc không được để trống"),
+        });
+      default:
+        return Yup.object().shape({
+          id: Yup.string().required("ID không được để trống"),
+          tenLoaiCongViec: Yup.string().required("Tên không được để trống"),
+        });
+    }
+  };
   // Formik
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
-    validationSchema: validationSchema,
+    validationSchema: getValidationSchema(modalType),
     onSubmit: async (values) => {
       const processedValues = { ...values };
   
@@ -102,17 +149,15 @@ const Modal = () => {
       }
     },
   });
-
   const renderFields = () => {
     return formRequest[modalType]?.map((field) => {
       const isSelectField = field.type === "select";
       const isGenderField = field.name === "gender" || field.name === "hoanThanh"; 
-      const isSkillOrCertification = field.name === "skill" || field.name === "certification";
-
+  
       return (
         <InputFieldContainer key={field.name}>
           <Label htmlFor={field.name}>{field.title}</Label>
-
+  
           {isSelectField ? (
             <Select
               name={field.name}
@@ -132,8 +177,12 @@ const Modal = () => {
               <Option value="">Chọn {field.title}</Option>
               {isGenderField ? (
                 <>
-                  <Option value="true">{field.name === 'gender'? 'Nam' : 'Đã hoàn thành'}</Option>
-                  <Option value="false">{field.name === 'gender'? 'Nữ' : 'Chưa hoàn thành'}</Option>
+                  <Option value="true">
+                    {field.name === "gender" ? "Nam" : "Đã hoàn thành"}
+                  </Option>
+                  <Option value="false">
+                    {field.name === "gender" ? "Nữ" : "Chưa hoàn thành"}
+                  </Option>
                 </>
               ) : (
                 field.options?.map((option, index) => (
@@ -143,17 +192,6 @@ const Modal = () => {
                 ))
               )}
             </Select>
-          ) : isSkillOrCertification ? (
-            <Input
-              type="text"
-              name={field.name}
-              id={field.name}
-              value={Array.isArray(formik.values[field.name]) ? formik.values[field.name].join(", ") : ""}
-              onChange={(e) => handleInputChange(e, field.name)}
-              onBlur={formik.handleBlur}
-              isError={formik.touched[field.name] && formik.errors[field.name]}
-              placeholder={`Nhập các ${field.title} (cách nhau bởi dấu phẩy)`}
-            />
           ) : (
             <Input
               type={field.type}
@@ -166,7 +204,7 @@ const Modal = () => {
               placeholder={field.placeholder}
             />
           )}
-
+  
           {formik.touched[field.name] && formik.errors[field.name] && (
             <ErrorMessage>{formik.errors[field.name]}</ErrorMessage>
           )}
@@ -174,7 +212,7 @@ const Modal = () => {
       );
     });
   };
-
+  
   return isVisible ? (
     <ModalOverlay>
       <ModalContainer>

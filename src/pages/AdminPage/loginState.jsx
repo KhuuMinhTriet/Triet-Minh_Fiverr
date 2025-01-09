@@ -6,7 +6,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
 import LogoutModal from './Modal/logoutModal';
 import UpdateModal from './Modal/updateModal'
-const LoginState = ({ adminName, adminImage }) => {
+const LoginState = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const user = JSON.parse(localStorage.getItem("USER_LOGIN")).user
   const open = Boolean(anchorEl);
@@ -44,7 +44,7 @@ const LoginState = ({ adminName, adminImage }) => {
     <IconButton onClick={handleMenuOpen}>
       <Avatar
         src={user.avatar}
-        alt={adminName}
+        alt={user.name}
         sx={{ width: 60, height: 60 }} 
       />
     </IconButton>

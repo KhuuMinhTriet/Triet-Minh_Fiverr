@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 import { fetchData, openModalDelete} from "../../redux/adminSlice";
-
 import DeleteModal from "./Modal/deleteModal";
 import formTable from "./formData/formTable.json";
 import Pagination from "./method/pagination";
@@ -18,10 +18,8 @@ export default function Job() {
   const dispatch = useDispatch();
   const { list: jobs, loading, error } = useSelector((state) => state.adminSlice);
   const { list: searchResults } = useSelector((state) => state.adminSlice.searchResults);
-  const { pageIndex, pageSize, isSearch } = useSelector((state) => state.adminSlice.pagination);
-  
-  const [deleteId, setDeleteId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isSearch } = useSelector((state) => state.adminSlice.pagination);
+  const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [activeTab, setActiveTab] = useState(1);
@@ -43,11 +41,29 @@ export default function Job() {
   const handleEditClick = (job) => {
     handleEdit(job, setEditingRow, setEditedData);
   };
-
   // Save edited data
   const handleSaveEdit = (id) => {
-    handleSave('jobs', editedData, id, dispatch, setEditingRow);
-  };
+    handleSave('jobs', editedData, id, dispatch, setEditingRow).then(() => {
+        
+               Swal.fire({
+                 icon: 'success',
+                 title: 'Cập nhật thành công!',
+                 text: 'Ảnh đại diện đã được cập nhật.',
+                 confirmButtonText: 'OK',
+               });
+             })
+             .catch((error) => {
+       
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Cập nhật thất bại!',
+                 text: error.message || 'Đã xảy ra lỗi khi cập nhật.',
+                 confirmButtonText: 'Thử lại',
+               });
+             });
+ }
+
+  
 
   // Handle input change when editing a job
   const handleInputChangeEvent = (field, value) => {
@@ -61,7 +77,6 @@ export default function Job() {
       activeTab === 1
         ? fields.slice(0, fields.findIndex((field) => field.name === "hinhAnh") + 1)
         : fields.slice(fields.findIndex((field) => field.name === "maChiTietLoaiCongViec"));
-
     return (
       <tr>
         {tabFields.map((field) => (

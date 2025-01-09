@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import { fetchData, openModalDelete } from "../../redux/adminSlice";
 import DeleteModal from "./Modal/deleteModal";
 import Pagination from "./method/pagination";
@@ -17,7 +18,7 @@ export default function JobType() {
   const { list: jobTypes, loading, error } = useSelector((state) => state.adminSlice);
   const { list: searchResults } = useSelector((state) => state.adminSlice.searchResults);
   const { pageIndex, pageSize, isSearch } = useSelector((state) => state.adminSlice.pagination);
-
+ const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
   const [editingId, setEditingId] = useState(null);
   const [editMode, setEditMode] = useState({});
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -32,13 +33,32 @@ export default function JobType() {
       dispatch(fetchData("jobTypes", currentPage, pageSize));
     }, [dispatch, currentPage, pageSize]);
   
-  const handleDeleteClick = (id) => handleDelete(id, setDeleteTarget, () => setDeleteTarget(id));
   const confirmDeleteHandler = () => confirmDelete(deleteTarget, dispatch, () => setDeleteTarget(null));
   const handleEditClick = (job) => {
     setEditingId(job.id);
-    setEditMode({ name: job.tenLoaiCongViec }); 
+    setEditMode({ id: job.id, tenLoaiCongViec: job.tenLoaiCongViec }); 
   };
-  const handleSaveEdit = () => handleSave("jobTypes", editMode, editingId, dispatch, setEditingId);
+  
+  const handleSaveEdit = () => {
+    handleSave("jobTypes", editMode, editingId, dispatch, setEditingId).then(() => {
+        
+               Swal.fire({
+                 icon: 'success',
+                 title: 'Cập nhật thành công!',
+                 text: 'Ảnh đại diện đã được cập nhật.',
+                 confirmButtonText: 'OK',
+               });
+             })
+             .catch((error) => {
+       
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Cập nhật thất bại!',
+                 text: error.message || 'Đã xảy ra lỗi khi cập nhật.',
+                 confirmButtonText: 'Thử lại',
+               });
+             });
+ }
 
   const handlePageChange = ({ selected }) => {
     const pageNumber = selected + 1;
@@ -49,7 +69,7 @@ export default function JobType() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
-    const filteredData = getFilteredData(jobTypes, searchResults, isSearch, currentPage, itemsPerPage);
+    const filteredData = isItemSearch? searchItem : getFilteredData(jobTypes, searchResults, isSearch, currentPage, itemsPerPage);
 
     return filteredData?.map((job) => (
       <tr className="hover:bg-gray-100" key={job.id}>
@@ -58,8 +78,8 @@ export default function JobType() {
           {editingId === job.id ? (
             <input
               className="border px-2 py-1"
-              name="name"
-              value={editMode.name || ''}
+              name="tenLoaiCongViec"
+              value={editMode.tenLoaiCongViec}
               onChange={(e) => handleInputChange(e, setEditMode)}
             />
           ) : (

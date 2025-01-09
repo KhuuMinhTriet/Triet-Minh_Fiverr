@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fiverrService } from '../services/fetchAPI';
+import Swal from 'sweetalert2';
 import formTable from '../pages/AdminPage/formData/formTable.json'
 // Hàm xử lý trạng thái của các resources
 const handleResourceState = (state, resource, status, action) => {
@@ -126,13 +127,13 @@ export const updateItem = createAsyncThunk(
         case "services":
           response = await fiverrService.capNhatDichVu(id, formData);
           break;
+        case 'image': 
+          response = await fiverrService.CapNhatAvatar(formData);
+        break;
         default:
           throw new Error("Modal type không hợp lệ");
       }
-
-      console.log(`${modalType} đã cập nhật thành công:`, response.data);
-
-      return { modalType, id, data: response.data };
+      return response?.data.content || []
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
       throw error;
@@ -205,6 +206,7 @@ const adminSlice = createSlice({
     updateModal: false,
     modalType: null,
     currentPage: 'admin',
+    isItemSearch: false,
     pagination: {
       currentPage: 1,
       totalPages: 1,
@@ -212,6 +214,7 @@ const adminSlice = createSlice({
       pageSize: 10,
       isSearch: false,
     },
+    searchItem:[],
     id: 0,
     list: [],
     originalData: [],
@@ -225,6 +228,9 @@ const adminSlice = createSlice({
     setPage: (state, action) => {
       state.currentPage = action.payload;
     },
+    setItemSearch: (state, action) => {
+      state.isItemSearch = action.payload
+    },
     setActiveTable: (state, action) => {
       const tableName = action.payload;
       state.activeTable = tableName;
@@ -232,13 +238,14 @@ const adminSlice = createSlice({
    
       state.list = state.originalData
     },
-
+    setSearchItem : (state, action) => {
+      state.searchItem = action.payload
+    },
     setSearchResults: (state, action) => {
       const newPageSize = action.payload.pageSize;
       state.pagination.pageSize = newPageSize;
       state.pagination.pageIndex = action.payload.pageIndex; 
-    
-     
+      state.isItemSearch = false
       state.pagination.currentPage = state.pagination.pageIndex;
     
 
@@ -255,6 +262,7 @@ const adminSlice = createSlice({
     resetSearchResults: (state) => {
       state.searchResults.list = [];  
       state.pagination.isSearch = false;
+      state.isItemSearch = false
       state.list = [...state.originalData];  
     },
     openModal: (state, action) => {
@@ -346,5 +354,5 @@ const adminSlice = createSlice({
   },
 });
 
-export const {setSearchResults, openLogoutModal, closeLogoutModal, openUpdateModal, closeUpdateModal, openModalDelete, closeModalDelete, setDeleteId, setActiveTable, resetSearchResults, deleteItem, setPage, openModal, closeModal, setComponent } = adminSlice.actions;
+export const {setSearchResults, setItemSearch, setSearchItem,  openLogoutModal, closeLogoutModal, openUpdateModal, closeUpdateModal, openModalDelete, closeModalDelete, setDeleteId, setActiveTable, resetSearchResults, deleteItem, setPage, openModal, closeModal, setComponent } = adminSlice.actions;
 export default adminSlice.reducer;

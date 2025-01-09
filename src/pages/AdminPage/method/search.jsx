@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import { setSearchResults, searchUserOnPage, resetSearchResults, searchJob, searchTypeJob, searchService, openModal } from '../../../redux/adminSlice';
+import { setSearchResults, setItemSearch, setSearchItem, searchUserOnPage, resetSearchResults, searchJob, searchTypeJob, searchService, openModal } from '../../../redux/adminSlice';
+import { DataArray } from '@mui/icons-material';
 
 const SearchMenu = () => {
   const dispatch = useDispatch();
@@ -14,7 +15,9 @@ const SearchMenu = () => {
   // Pagination states
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(1);
-  const {list} = useSelector(state => state.adminSlice)
+  const [user, searchUser] = useState("");
+  const [item, searchItem] = useState([]);
+  const {originalData,isItemSearch } = useSelector(state => state.adminSlice)
   const handleOpenModal = (modalType) => {
     switch(modalType) {
       case 'người dùng': dispatch(openModal('user'));
@@ -29,30 +32,53 @@ const SearchMenu = () => {
     }
       dispatch(openModal(modalType));
     };
+  const handleSearchChange = (e) => {
+    const itemSearch = e.target.value
+    searchUser(itemSearch);
+    if (itemSearch !== ''){
+      dispatch(setItemSearch(true))
+    } else {
+      dispatch(setItemSearch(false))
+    };
+    const searchData = originalData.filter(data => {
+      const searchTerm = itemSearch.toLowerCase();
+      const regex = new RegExp(`^${searchTerm}`);
+      const trangThai = data.hoanThanh ? "Đã hoàn thành" : "CHưa hoàn thành"; 
+      return (
+        regex.test(data.name?.toLowerCase()) ||  
+        regex.test(data.email?.toLowerCase()) || 
+        regex.test(data.tenCongViec?.toLowerCase()) || 
+        regex.test(data.tenLoaiCongViec?.toLowerCase()) ||
+        regex.test(trangThai?.toLowerCase())||  
+        regex.test(data.id?.toString()) 
+      );
+    });
     
+    
+    dispatch(setSearchItem(searchData))
+  }
  // Handle search
  const handleSearch = () => {
-  const payload = { pageIndex, pageSize };
-  switch (page) {
-    case "người dùng":
-      dispatch(searchUserOnPage(payload));
-      break;
-    case "công việc":
-      dispatch(searchJob(payload));
-      break;
-    case "loại công việc":
-      dispatch(searchTypeJob(payload));
-      break;
-    case "dịch vụ":
-      dispatch(searchService(payload));
-      break;
-    default:
-      break;
+    const payload = { pageIndex, pageSize };
+    switch (page) {
+      case "người dùng":
+        dispatch(searchUserOnPage(payload));
+        break;
+      case "công việc":
+        dispatch(searchJob(payload));
+        break;
+      case "loại công việc":
+        dispatch(searchTypeJob(payload));
+        break;
+      case "dịch vụ":
+        dispatch(searchService(payload));
+        break;
+      default:
+        break;
+    }
+    dispatch(setSearchResults(payload));
+  
   }
-  dispatch(setSearchResults(payload));
-  console.log(list)
-};
-
 // Reset search results
 const handleResetSearch = () => {
   dispatch(resetSearchResults());
@@ -119,7 +145,8 @@ const handleResetSearch = () => {
        <div className="mt-4 md:mt-0 relative w-full md:w-auto">
         <input
           type="text"
-          placeholder="Nhập vào tài khoản hoặc họ tên người dùng..."
+          placeholder={page === 'người dùng' ? 'Tìm kiếm theo tên người dùng hoặc email' : `Tìm kiếm ${page}`}
+          onChange = {handleSearchChange}
           className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none pl-10"
         />
         <svg
