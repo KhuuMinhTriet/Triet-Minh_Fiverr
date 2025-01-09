@@ -125,5 +125,18 @@ export let fiverrService = {
       } catch (error) {
         console.error('Error uploading file:', error);
   }
+},
+CapNhatAvatarCongViec : async (file, maCongViec) => {
+  const formData = new FormData();
+  formData.append('formFile', file); 
+  try {
+   await http.post(`/api/cong-viec/upload-hinh-cong-viec/${maCongViec}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+}
 }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2"; 
 import { fiverrService } from '../../../services/fetchAPI';
-import { closeUpdateModal, updateItem } from "../../../redux/adminSlice";
+import {closeUpdateModal, updateItem } from "../../../redux/adminSlice";
 import { FaPencilAlt } from "react-icons/fa";
 
 const UpdateModal = () => {
@@ -18,11 +18,12 @@ const UpdateModal = () => {
     phone: user?.phone || "",
     birthday: user?.birthday || "",
     bookingJob: user?.bookingJob || "",
-    certification: user?.certification || "",
+    certification: user?.certification || [],
     password: user?.password || "",
     role: user?.role || "",
-    gender: user?.gender ? "Nam" : "Nữ" || "",
+    gender: user?.gender ? "Nam" : "Nữ" ,
     avatar: user?.avatar || "",
+    skill: user?.skill || [],
   });
 
   // State để lưu trạng thái chỉnh sửa
@@ -59,38 +60,54 @@ const UpdateModal = () => {
 
   const handleConfirm = async () => {
     try {
+      // Tạo đối tượng cập nhật người dùng
       const userUpdate = {
         ...userInfo,
         gender: userInfo.gender === "Nam" ? true : false,
+        skill: [...userInfo.skill],
+        certification: [...userInfo.certification]
       };
-      dispatch(updateItem({
-        modalType: 'image',
-        formData: uploadFile
-      }))
-     dispatch(updateItem({
+      const { avatar, bookingJob, password, ...user } = userUpdate;
+  
+      // dispatch cập nhật ảnh trước
+      if (uploadFile) {
+        await dispatch(updateItem({
+          modalType: 'image',
+          formData: uploadFile
+        }));
+      }
+  
+      // Cập nhật người dùng sau
+      await dispatch(updateItem({
         modalType: "users",
         id: userInfo.id,
-        formData: userUpdate,
+        formData: user,
       }));
-     
+  
+    
       const response = await fiverrService.layUserTheoID(userInfo.id);
       const updatedUser = response.data.content;
-      const storedUser = JSON.parse(localStorage.getItem("USER_LOGIN"));
+  
+        const storedUser = JSON.parse(localStorage.getItem("USER_LOGIN"));
       localStorage.setItem("USER_LOGIN", JSON.stringify({ ...storedUser, user: updatedUser }));
-      
-      setUserInfo(updatedUser);
-
+  
+      // Cập nhật lại state userInfo
+      setUserInfo({ ...updatedUser, gender: updatedUser.gender ? "Nam" : "Nữ" });
+  
+      // Hiển thị thông báo thành công
       Swal.fire({
         title: "Thành công!",
         text: "Thông tin người dùng đã được cập nhật.",
         icon: "success",
         confirmButtonText: "OK",
       });
-
+  
+      // Đóng modal
       dispatch(closeUpdateModal(false));
+  
     } catch (error) {
       console.error("Cập nhật thất bại:", error);
-
+  
       Swal.fire({
         title: "Lỗi!",
         text: "Có lỗi xảy ra khi cập nhật thông tin người dùng.",
@@ -99,7 +116,7 @@ const UpdateModal = () => {
       });
     }
   };
-
+  
   return updateModal ? (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 w-96">
@@ -129,11 +146,13 @@ const UpdateModal = () => {
 
         {/* Render các trường */}
         {[{ label: "Tên", field: "name" },
+        { label: "Số thứ tự", field: "id" },
           { label: "Email", field: "email" },
           { label: "Số điện thoại", field: "phone" },
           { label: "Ngày sinh", field: "birthday", type: "date" },
-          { label: "Công việc", field: "bookingJob" },
+          { label: "Kỹ năng", field: "skill" },
           { label: "Chứng chỉ", field: "certification" },
+          { label: "Chức vụ", field: "role" }
         ].map(({ label, field, type }) => (
           <div key={field} className="mb-4">
             <label className="block text-sm font-medium mb-1">{label}</label>
@@ -163,18 +182,17 @@ const UpdateModal = () => {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Giới tính</label>
           {editingField === "gender" ? (
-            <select
-              name="gender"
-              value={userInfo.gender}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              autoFocus
-            >
-              <option value="">Chọn giới tính</option>
-              <option value="Nam">Nam</option>
-              <option value="Nữ">Nữ</option>
-            </select>
+          <select
+          name="gender"
+          value={userInfo.gender}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+        >
+          <option value="Nam">Nam</option>
+          <option value="Nữ">Nữ</option>
+        </select>
+        
           ) : (
             <div className="flex items-center">
               <span className="flex-grow">{userInfo.gender}</span>

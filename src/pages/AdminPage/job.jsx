@@ -88,7 +88,6 @@ export default function Job() {
       </tr>
     );
   };
-
   const renderTableContent = () => {
     const paginatedData = getPaginatedData();
     const fields = formTable.jobs;
@@ -96,18 +95,45 @@ export default function Job() {
       activeTab === 1
         ? fields.slice(0, fields.findIndex((field) => field.name === "hinhAnh") + 1)
         : fields.slice(fields.findIndex((field) => field.name === "maChiTietLoaiCongViec"));
-
+  
     return paginatedData?.map((job, index) => (
       <tr className="hover:bg-gray-100" key={index}>
         {tabFields.map((field) => (
           <td key={field.name} className="py-3 px-6">
             {editingRow === job.id ? (
-              <input
-                type={field.type === "number" ? "number" : "text"}
-                value={editedData[field.name] || ""}
-                onChange={(e) => handleInputChangeEvent(field.name, e.target.value)}
-                className="w-full p-2 border rounded"
-              />
+              field.name === "hinhAnh" ? (
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          handleInputChangeEvent(field.name, reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="w-full p-2 border rounded"
+                  />
+                  {editedData[field.name] && (
+                    <img
+                      src={editedData[field.name]}
+                      alt="Xem trước"
+                      className="w-20 h-20 object-cover mt-2"
+                    />
+                  )}
+                </div>
+              ) : (
+                <input
+                  type={field.type === "number" ? "number" : "text"}
+                  value={editedData[field.name] || ""}
+                  onChange={(e) => handleInputChangeEvent(field.name, e.target.value)}
+                  className="w-full p-2 border rounded"
+                />
+              )
             ) : field.name === "hinhAnh" ? (
               <img
                 src={job[field.name]}
@@ -155,6 +181,7 @@ export default function Job() {
       </tr>
     ));
   };
+  
 
   return (
     <div className="overflow-x-auto">
