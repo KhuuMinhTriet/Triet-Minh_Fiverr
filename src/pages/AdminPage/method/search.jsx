@@ -207,59 +207,98 @@ const SearchMenu = () => {
           className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none pl-10"
         />
 
-        {page === 'công việc' && (
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="flex flex-col">
-              <label htmlFor="filterPrice" className="block text-sm font-medium">
-                Giá tiền
-              </label>
-              <select
-                id="filterPrice"
-                onChange={(e) => handlePriceSearch(e)}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
-              >
-                <option value="">Tất cả</option>
-                <option value="low">Thấp (Nhỏ hơn 20)</option>
-                <option value="medium">Trung bình (20 đến 50)</option>
-                <option value="high">Cao (50 trở lên)</option>
-              </select>
-            </div>
+{page === 'công việc' && (
+  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="flex flex-col">
+      <label htmlFor="filterPrice" className="block text-sm font-medium">
+        Giá tiền
+      </label>
+      <select
+        id="filterPrice"
+        onChange={(e) => handlePriceSearch(e)}
+        className="border border-gray-300 rounded-md px-3 py-2 w-full"
+      >
+        <option value="">Tất cả</option>
+        <option value="low">Thấp (Nhỏ hơn 20)</option>
+        <option value="medium">Trung bình (20 đến 50)</option>
+        <option value="high">Cao (50 trở lên)</option>
+      </select>
+    </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="filterRating" className="block text-sm font-medium">
-                Đánh giá
-              </label>
-              <select
-                id="filterRating"
-                onChange={(e) => handleRatinSearch(e)}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
-              >
-                <option value="">Tất cả</option>
-                <option value="1">20-50</option>
-                <option value="2">50-100</option>
-                <option value="3">100-250</option>
-                <option value="4">250-500</option>
-                <option value="5">Lớn hơn 500</option>
-              </select>
-            </div>
+    <div className="flex flex-col">
+      <label htmlFor="filterRating" className="block text-sm font-medium">
+        Đánh giá
+      </label>
+      <select
+        id="filterRating"
+        onChange={(e) => handleRatinSearch(e)}
+        className="border border-gray-300 rounded-md px-3 py-2 w-full"
+      >
+        <option value="">Tất cả</option>
+        <option value="1">20-50</option>
+        <option value="2">50-100</option>
+        <option value="3">100-250</option>
+        <option value="4">250-500</option>
+        <option value="5">Lớn hơn 500</option>
+      </select>
+    </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="filterStars" className="block text-sm font-medium">
-                Sao
-              </label>
-              <select
-                id="filterStars"
-                onChange={(e) => handleStarSearch(e)}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
-              >
-                <option value="">Tất cả</option>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <option value={star} key={star}>
-                    {star} sao
-                  </option>
-                ))}
-              </select>
-            </div>
+    <div className="flex flex-col">
+      <label htmlFor="filterStars" className="block text-sm font-medium">
+        Sao
+      </label>
+      <select
+        id="filterStars"
+        onChange={(e) => handleStarSearch(e)}
+        className="border border-gray-300 rounded-md px-3 py-2 w-full"
+      >
+        <option value="">Tất cả</option>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <option value={star} key={star}>
+            {star} sao
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Nút Tìm kiếm */}
+    <div className="flex items-end">
+      <button
+        onClick={handleJobChange}
+        className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md w-full sm:w-auto"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-5 h-5 inline-block"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 3 7.5a7.5 7.5 0 0 0 13.65 9.15z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+)}
+ {page === 'dịch vụ' && (
+          <div className="mt-4">
+            <label htmlFor="filterStatus" className="block text-sm font-medium">
+              Trạng thái hoàn thành công việc
+            </label>
+            <select
+              id="filterStatus"
+              onChange={handleSearchChange}
+              className="border border-gray-300 rounded-md px-3 py-2 w-full"
+            >
+              <option value="">Tất cả</option>
+              <option value="Đã hoàn thành">Đã hoàn thành</option>
+              <option value="Chưa hoàn thành">Chưa hoàn thành</option>
+            </select>
           </div>
         )}
       </div>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { fetchData, openModalDelete} from "../../redux/adminSlice";
+import { fetchData, openModalDelete, setItemSearch} from "../../redux/adminSlice";
 import Pagination from './method/pagination'
 import DeleteModal from "./Modal/deleteModal";
 import {

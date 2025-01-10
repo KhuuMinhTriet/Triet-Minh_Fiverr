@@ -66,7 +66,7 @@ const userSlice = createSlice({
   reducers: {
     // tạo action để dispatch từ component
     setUserAction: (state, action) => {
-      state.dataLogin = action.payload;
+      state.dataLogin = action.payload;//kiểm soát trạng thái đăng nhập
     },
     updateAvatarAction: (state, action) => {
       state.avatar = action.payload;
