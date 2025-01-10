@@ -35,7 +35,7 @@ const AdminHeader = () => {
       </button>
 
       {/* LoginState Component */}
-      <LoginState />
+  
     </div>
   );
 };

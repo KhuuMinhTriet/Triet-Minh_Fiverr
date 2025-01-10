@@ -28,7 +28,6 @@ const LoginState = () => {
     dispatch(openUpdateModal())
   }
   return (<div className="relative flex">
-    {/* Admin Avatar with Icon Button */}
     <MenuItem
         disabled
         className = 'bg-blue-600'

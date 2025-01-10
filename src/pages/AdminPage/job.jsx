@@ -186,7 +186,7 @@ export default function Job() {
   return (
     <div className="overflow-x-auto">
       {loading ? (
-        <p>Đang tải dữ liệu...</p>
+        <p>Loading...</p>
       ) : error ? (
         <p className="text-red-500">Lỗi: {error}</p>
       ) : (

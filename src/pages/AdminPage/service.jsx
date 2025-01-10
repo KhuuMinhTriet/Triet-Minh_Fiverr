@@ -17,7 +17,7 @@ export default function Service() {
   
   const { list: services, loading } = useSelector((state) => state.adminSlice);
   const {pageSize, isSearch, pageIndex } = useSelector(state => state.adminSlice.pagination);
-const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
+const {isItemSearch, list} = useSelector(state => state.adminSlice);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -48,7 +48,7 @@ const {isItemSearch, searchItem} = useSelector(state => state.adminSlice);
   }, [dispatch, pageIndex, pageSize]);
 
   const renderTabContent = () => {
-    const filteredData = isItemSearch ? searchItem : getFilteredData(services, [], isSearch, pageIndex, pageSize);
+    const filteredData = getFilteredData(services, [], isSearch, pageIndex, pageSize);
 
     if (filteredData.length === 0) {
       return (

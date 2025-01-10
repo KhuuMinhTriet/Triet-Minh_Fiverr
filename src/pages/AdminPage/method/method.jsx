@@ -9,10 +9,6 @@ export const getFilteredData = (users, searchResults, isSearch, currentPage, ite
     return Array.isArray(data)? data.slice(startIndex, startIndex + itemsPerPage) : users.slice(startIndex, startIndex + itemsPerPage);
   };
 
-// Hàm xử lý logic xóa người dùng
-export const handleDelete = async(id, dispatch) => {
-
-};
 
 // Hàm xác nhận xóa 
 export const confirmDelete = async (modalType, deleteId, dispatch) => {

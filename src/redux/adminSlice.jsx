@@ -32,28 +32,6 @@ export const fetchPaginatedData = createAsyncThunk(
     };
   }
 );
-export const fetchDetail = createAsyncThunk("data/fetchDetail", async (resourceType, id) => {
-  let response;
-  
-  switch (resourceType) {
-    case 'jobs':
-      response = await fiverrService.layCongViecChitiet();
-      break;
-    case 'users':
-      response = await fiverrService.layUserTheoID();
-      break;
-    case 'jobTypes':
-      response = await fiverrService.layLoaiCongViecChiTiet();
-      break;
-    case 'services':
-      response = await fiverrService.LayLoaiDichVuChitiet();
-      break;
-    default:
-      throw new Error("Resource type not supported");
-  }
-  
-  return response?.data.content || [];
-});
 
 // Các async actions để fetch dữ liệu từ server
 export const fetchData = createAsyncThunk("data/fetchData", async (resourceType) => {
@@ -201,27 +179,27 @@ const adminSlice = createSlice({
     activeTable: "users", // Bảng mặc định ban đầu
     tableData: formTable.users, // Dữ liệu ban đầu cho bảng "users"
     isVisible: false,
-    deleteModal:false,
-    logoutModal: false,
-    updateModal: false,
-    modalType: null,
-    currentPage: 'admin',
-    isItemSearch: false,
-    pagination: {
+    deleteModal:false,//Modal xóa
+    logoutModal: false,//Modal đăng nhập
+    updateModal: false,//Modal cập nhật thông tin admin
+    modalType: null,//dựa vào kiểu modal trả về thông tin trong bảng add Modal
+    currentPage: 'admin',//Mặc định là admin page
+    isItemSearch: false,//trạng thái lọc điều kiện
+    pagination: {//kiểm soát render danh sách dựa vào số page/ số danh sách trên 1 page
       currentPage: 1,
       totalPages: 1,
       pageIndex: 1,
       pageSize: 10,
       isSearch: false,
     },
-    searchItem:[],
+    searchItem:[],//danh sách lọc điều kiện
     id: 0,
-    list: [],
-    originalData: [],
-    loading: false,
-    error: null,
+    list: [],//danh sách hiển thị ra component dựa vào pageIndex và pageSize
+    originalData: [],//danh sách tất cả dữ liệu trả gọi về từ api 
+    loading: false,//trạng thái chờ khi gọi api
+    error: null,//lỗi khi khi gọi api thất bại
     resourceType: '',  
-    searchResults: { list: [], originalData: [], loading: false, error: null },
+    searchResults: { list: [], originalData: [], loading: false, error: null },//k
     activeComponent: null, 
   },
   reducers: {
@@ -239,17 +217,15 @@ const adminSlice = createSlice({
       state.list = state.originalData
     },
     setSearchItem : (state, action) => {
-      state.searchItem = action.payload
+      state.searchItem = action.payload;
+      state.list = state.searchItem
     },
     setSearchResults: (state, action) => {
       const newPageSize = action.payload.pageSize;
       state.pagination.pageSize = newPageSize;
       state.pagination.pageIndex = action.payload.pageIndex; 
-      state.isItemSearch = false
-      state.pagination.currentPage = state.pagination.pageIndex;
-    
-
-      const totalItems = state.originalData.length;
+      state.pagination.currentPage = state.pagination.pageIndex
+      const totalItems = state.isItemSearch ? state.searchItem.length : state.list.length;
       const totalPages = Math.ceil(totalItems / state.pagination.pageSize);
       state.pagination.totalPages = totalPages;
     
@@ -260,7 +236,6 @@ const adminSlice = createSlice({
       state.list = state.originalData.slice(startIndex, endIndex);
     },
     resetSearchResults: (state) => {
-      state.searchResults.list = [];  
       state.pagination.isSearch = false;
       state.isItemSearch = false
       state.list = [...state.originalData];  
@@ -309,14 +284,14 @@ const adminSlice = createSlice({
       const { id } = action.payload;
       state.list = state.list.filter((item) => item.id !== id);
     },
-    //chuyển đổi nội dung table các component
+    //chuyển đổi nội dung table ứng với số trang index
     setComponent: (state, action) => {
       const { currentPage } = action.payload;
       state.activeComponent = currentPage;
       state.pagination.currentPage = currentPage;
       const startIndex = (currentPage - 1) * state.pagination.pageSize;
       const endIndex = startIndex + state.pagination.pageSize;
-      state.list = state.originalData.slice(startIndex, endIndex);
+      state.list = state.isItemSearch? state.searchItem.slice(startIndex, endIndex) : state.originalData.slice(startIndex, endIndex);
     }
   },
   extraReducers: (builder) => {
@@ -337,20 +312,7 @@ const adminSlice = createSlice({
         handleResourceState(state, action.meta.arg, 'rejected', action);
         state.error = true;
       })
-      builder
-      .addCase(fetchDetail.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchDetail.fulfilled, (state, action) => {
-        const { data } = action.payload;
-        state.searchResults.list = data;
-        state.loading = false;
-      })
-      .addCase(fetchDetail.rejected, (state) => {
-        state.loading = false;
-        state.error = "Error fetching search results";
-      });
-      ;
+  
   },
 });
 

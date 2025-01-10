@@ -14,7 +14,7 @@ export default function PrivateRoute({ component: Component, roleRequired, conte
   // Kiểm tra quyền truy cập: nếu yêu cầu admin mà người dùng không phải admin
   if (roleRequired === 'ADMIN' && user.user.role !== 'ADMIN') {
     return <Navigate to="/home" />;
-  }
+  } 
 
   // Kiểm tra nếu là trang người dùng, đảm bảo người dùng chỉ có thể truy cập trang của chính họ
   if (params.id && params.id !== user.user.id.toString()) {
