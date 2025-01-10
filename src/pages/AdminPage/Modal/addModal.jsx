@@ -216,14 +216,28 @@ const Modal = () => {
   return isVisible ? (
     <ModalOverlay>
       <ModalContainer>
-        <ModalHeader>
-          <h2>{modalType === "user" && "Thêm người dùng"}</h2>
-          <h2>{modalType === "job" && "Thêm công việc"}</h2>
-          <h2>{modalType === "service" && "Thêm dịch vụ"}</h2>
-          <h2>{modalType === "jobType" && "Thêm loại công việc"}</h2>
-          <h2>{modalType === "admin" && "Thêm quản trị viên"}</h2>
-          <CloseButton onClick={() => dispatch(closeModal())}>X</CloseButton>
-        </ModalHeader>
+      <ModalHeader>
+  <h2
+    className={`text-xl font-bold text-blue-600 ${
+      modalType === "user" ? "animate-pulse" : ""
+    }`}
+  >
+    {modalType === "user" && "Thêm người dùng"}
+  </h2>
+  <h2 className="text-xl font-bold text-green-600">
+    {modalType === "job" && "Thêm công việc"}
+  </h2>
+  <h2 className="text-xl font-bold text-purple-600">
+    {modalType === "service" && "Thêm dịch vụ"}
+  </h2>
+  <h2 className="text-xl font-bold text-red-600">
+    {modalType === "jobType" && "Thêm loại công việc"}
+  </h2>
+  <h2 className="text-xl font-bold text-yellow-600">
+    {modalType === "admin" && "Thêm quản trị viên"}
+  </h2>
+  <CloseButton onClick={() => dispatch(closeModal())}>X</CloseButton>
+</ModalHeader>
 
         <form onSubmit={formik.handleSubmit}>
           <ModalBody>
